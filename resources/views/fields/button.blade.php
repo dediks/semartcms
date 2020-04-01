@@ -1,0 +1,1 @@
+{!! Form::{$type}($text, $attrs) !!}

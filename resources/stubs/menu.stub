@@ -1,0 +1,5 @@
+<li class="{{ is_request_path('{model}*') ? ' active' : '' }}">
+    <a class="nav-link" href="{{ route('{route}.index') }}">
+    <i class="fas fa-circle"></i><span>{{ucfirst(trans('{modelPlural}'))}}</span>
+    </a>
+</li>

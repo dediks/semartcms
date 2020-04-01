@@ -1,0 +1,221 @@
+/**
+ *
+ * You can write your CSS code here, DO NOT touch the default JavaScript file
+ * because it will make it harder for you to update.
+ *
+ */
+
+body.sidebar-mini .main-sidebar::after,
+.main-sidebar {
+    background-color: #2a2a2a;
+}
+
+.main-sidebar .sidebar-menu li a {
+    color: #BCC0CC;
+}
+.main-sidebar .sidebar-menu li a:hover,
+.main-sidebar .sidebar-menu li.active a {
+    background-color: #4644C4;
+}
+.main-sidebar .sidebar-menu li.active a {
+    color: #fff;
+}
+
+body.sidebar-mini .main-sidebar .sidebar-menu li.active a {
+    background-color: #fff;
+    color: #2a2a2a;
+    box-shadow: none;
+}
+
+.navbar-bg,
+.navbar {
+    background-color: #fff;
+    right: 0;
+}
+
+body.sidebar-gone .navbar-bg,
+body.sidebar-gone .navbar,
+body.sidebar-show .navbar-bg,
+body.sidebar-show .navbar {
+    left: 0;
+}
+
+.navbar .nav-link.nav-link-lg {
+    line-height: 23px;
+}
+
+.navbar .nav-link.nav-link-user,
+.navbar .nav-link {
+    color: #000;
+}
+.navbar .nav-link.nav-link-user:hover,
+.navbar .nav-link:hover {
+    color: #000;
+    opacity: .6;
+}
+
+.navbar .form-inline .btn,
+.navbar .form-inline .form-control {
+    background-color: #F4F5F7;
+}
+
+.main-sidebar .sidebar-brand a {
+    color: #fff;
+}
+
+.main-sidebar .sidebar-menu li.menu-header {
+    color: #7877D2;
+}
+
+.fielder {
+    display: none;
+    padding: 30px;
+}
+
+.fielder .form-group label {
+    color: #fff;
+}
+
+.sidebar-wide .main-sidebar {
+    width: 350px;
+}
+.sidebar-wide .navbar {
+    left: 350px;
+}
+.sidebar-wide .main-footer,
+.sidebar-wide .main-content {
+    padding-left: 380px;
+}
+ 
+.radio-box label {
+    cursor: pointer;
+    display: flex;
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #e4e6fc;
+    border-radius: 3px;
+}
+
+.radio-box label:hover {
+    border-color: #D0D2E6;
+}
+
+.radio-box label i {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+    text-align: center;
+    line-height: 40px;
+    color: #6777ef;
+    border-radius: 50%;
+    background-color: #E3E6FC;
+}
+
+.radio-box input {
+    position: absolute;
+    visibility: hidden;
+}
+
+.radio-box input:checked + label {
+    border-color: #6777ef;
+}
+
+.radio-box input:checked + label span:first-child {
+    color: #6777ef !important;
+}
+.radio-box input:checked + label span {
+    color: inherit !important;
+}
+
+.radio-box label span:first-child {
+    margin-top: 3px;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+.radio-box label span {
+    display: block;
+    font-size: 12px;
+}
+
+table.dataTable {
+    margin: 0 !important;
+}
+
+table.dataTable thead th, table.dataTable thead td {
+    border-bottom: 1px solid #e9e9e9 !important;
+    border-top: 1px solid #e9e9e9 !important;
+    padding: 13px 28px !important;
+}
+
+table.dataTable tbody th, table.dataTable tbody td {
+    padding: 10px 28px !important;
+    border-bottom: 1px solid #f9f9f9 !important;
+}
+
+table.dataTable td,
+table.dataTable th {
+    vertical-align: initial;
+}
+
+table.dataTable .btn-group .btn {
+    margin-left: 10px;
+}
+
+.dataTables_filter label {
+    margin-bottom: 0;
+}
+
+table.dataTable td, table.dataTable th {
+    box-sizing: border-box;
+}
+
+table.dataTable thead .sorting:before, table.dataTable thead .sorting:after, table.dataTable thead .sorting_asc:before, table.dataTable thead .sorting_asc:after, table.dataTable thead .sorting_desc:before, table.dataTable thead .sorting_desc:after, table.dataTable thead .sorting_asc_disabled:before, table.dataTable thead .sorting_asc_disabled:after, table.dataTable thead .sorting_desc_disabled:before, table.dataTable thead .sorting_desc_disabled:after {
+    bottom: 1em;
+}
+
+.table-logs label {
+    margin-bottom: 0;
+}
+.table-logs .row:first-of-type,
+.table-logs .row:last-of-type {
+    align-items: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.midia-inline {
+    background-color: #fff;
+    animation: none;
+}
+.midia-inline * {
+    font-family: 'Nunito';
+}
+.midia-inline .midia-content {
+    animation: none;
+}
+
+.midia-inline .midia-content .midia-header .midia-title {
+    display: none;
+}
+
+pre.highlight {
+    position: relative;
+    padding: 20px;
+    padding-top: 60px;
+    background-color: #08122F;
+    color: #9097AA;
+}
+pre.highlight::before {
+    position: absolute;
+    top: 17px;
+    left: 18px;
+    padding: 3px 7px;
+    color: #4E5978;
+    border: 1px solid #4E5978;
+    border-radius: 3px;
+    content: attr(data-label);
+}

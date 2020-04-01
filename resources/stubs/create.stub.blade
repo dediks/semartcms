@@ -1,0 +1,9 @@
+@extends('layouts.app')
+
+@section('title', 'Create {Plural}')
+
+@include('{view}.form', [
+    'title' => 'Create New {Name}',
+    'action' => route('{route}.store'),
+    'button' => 'Create New'
+])

@@ -1,0 +1,1 @@
+{!! Form::{$type}($name, $options ?? [], $value, $attrs) !!}

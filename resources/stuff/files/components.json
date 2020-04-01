@@ -1,0 +1,621 @@
+[
+	{
+		"name": "fields",
+		"display_name": "Fields",
+		"children": [
+			{	
+				"name": "string",
+				"display_name": "String",
+				"icon": "<i class=\"fas fa-circle-notch\"></i>",
+				"droppable": false,
+				"input_type" : "text",
+				"html": "<div class='form-group'><label class='field_name'>Field Name</label><input type='text' name='field_name' class='form-control' disabled><div class='help-text'></div></div>",
+				"db_type" : "string",
+				"editable": [
+					{
+						"selector": "attr",
+						"store_to": "name",
+						"find": ":input",
+						"name": "input-name",
+						"display_name": "Name",
+						"type": "input"
+					},
+					{
+						"selector": "html",
+						"store_to": "this",
+						"find": "label",
+						"name": "input-display-name",
+						"display_name": "Display Name",
+						"type": "input"
+					},
+					{
+						"selector": "html",
+						"store_to": "this",
+						"find": ".help-text",
+						"name": "input-description",
+						"display_name": "Description",
+						"type": "input"
+					},
+					{
+						"selector": "attr",
+						"store_to": "required",
+						"find": ":input",
+						"name": "input-required",
+						"display_name": "Required",
+						"type": "select",
+						"options": [
+							{
+								"name": "input-required",
+								"display_name": "Required",
+								"primary": true,
+								"list": [
+									{
+										"name": "no",
+										"display_name": "No"
+									},
+									{
+										"name": "required",
+										"display_name": "Yes"
+									}
+								]
+							}
+						]
+					},
+					{
+						"selector": "attr",
+						"store_to": "max",
+						"find": ":input",
+						"name": "input-maxlength",
+						"display_name": "Max Length",
+						"type": "input"
+					},
+					{
+						"selector": "attr",
+						"store_to": "min",
+						"find": ":input",
+						"name": "input-minlength",
+						"display_name": "Min Length",
+						"type": "input"
+					}
+				]
+			},
+			{
+				"name": "text",
+				"display_name": "Text",
+				"icon": "<i class=\"fas fa-circle-notch\"></i>",
+				"droppable": false,
+				"db_type" : "text",
+				"input_type" : "text",
+				"html": "<div class='form-group'><label class='field_name'>Field Name</label><input type='richtext' disabled name='field_name' class='form-control'><div class='help-text'></div></div>",
+				"editable": [
+					{
+						"selector": "attr",
+						"store_to": "name",
+						"find": ":input",
+						"name": "input-name",
+						"display_name": "Name",
+						"type": "input"
+					},
+					{
+						"selector": "html",
+						"store_to": "this",
+						"find": "label",
+						"name": "input-display-name",
+						"display_name": "Display Name",
+						"type": "input"
+					},
+					{
+						"selector": "html",
+						"store_to": "this",
+						"find": ".help-text",
+						"name": "input-description",
+						"display_name": "Description",
+						"type": "input"
+					},
+					{
+						"selector": "attr",
+						"store_to": "required",
+						"find": ":input",
+						"name": "input-required",
+						"display_name": "Required",
+						"type": "select",
+						"options": [
+							{
+								"name": "input-required",
+								"display_name": "Required",
+								"primary": true,
+								"list": [
+									{
+										"name": "false",
+										"display_name": "No"
+									},
+									{
+										"name": "true",
+										"display_name": "Yes"
+									}
+								]
+							}
+						]
+					},
+					{
+						"selector": "attr",
+						"store_to": "max",
+						"find": ":input",
+						"name": "input-maxlength",
+						"display_name": "Max Length",
+						"type": "input"
+					},
+					{
+						"selector": "attr",
+						"store_to": "min",
+						"find": ":input",
+						"name": "input-minlength",
+						"display_name": "Min Length",
+						"type": "input"
+					}
+				]
+			},
+			{
+				"name": "richtext",
+				"display_name": "Richtext",
+				"icon": "<i class=\"fas fa-circle-notch\"></i>",
+				"droppable": false,
+				"db_type" : "longText",
+				"input_type" : "richtext",
+				"html": "<div class='form-group'><label class='field_name'>Field Name</label><input type='richtext' disabled name='field_name' class='form-control'><div class='help-text'></div></div>",
+				"editable": [
+					{
+						"selector": "attr",
+						"store_to": "name",
+						"find": ":input",
+						"name": "input-name",
+						"display_name": "Name",
+						"type": "input"
+					},
+					{
+						"selector": "html",
+						"store_to": "this",
+						"find": "label",
+						"name": "input-display-name",
+						"display_name": "Display Name",
+						"type": "input"
+					},
+					{
+						"selector": "html",
+						"store_to": "this",
+						"find": ".help-text",
+						"name": "input-description",
+						"display_name": "Description",
+						"type": "input"
+					},
+					{
+						"selector": "attr",
+						"store_to": "required",
+						"find": ":input",
+						"name": "input-required",
+						"display_name": "Required",
+						"type": "select",
+						"options": [
+							{
+								"name": "input-required",
+								"display_name": "Required",
+								"primary": true,
+								"list": [
+									{
+										"name": "false",
+										"display_name": "No"
+									},
+									{
+										"name": "true",
+										"display_name": "Yes"
+									}
+								]
+							}
+						]
+					},
+					{
+						"selector": "attr",
+						"store_to": "max",
+						"find": ":input",
+						"name": "input-maxlength",
+						"display_name": "Max Length",
+						"type": "input"
+					},
+					{
+						"selector": "attr",
+						"store_to": "min",
+						"find": ":input",
+						"name": "input-minlength",
+						"display_name": "Min Length",
+						"type": "input"
+					}
+				]
+			},
+			{
+				"name": "float",
+				"display_name": "Float",
+				"icon": "<i class=\"fas fa-circle-notch\"></i>",
+				"droppable": false,
+				"db_type":"float",
+				"input_type" : "number",
+				"html": "<div class='form-group'><label class='field_name'>Field Name</label><input type='text' name='field_name' class='form-control currency' disabled><div class='help-text'></div></div>",
+				"editable": [
+					{
+						"selector": "attr",
+						"store_to": "name",
+						"find": ":input",
+						"name": "input-name",
+						"display_name": "Name",
+						"type": "input"
+					},
+					{
+						"selector": "html",
+						"store_to": "this",
+						"find": "label",
+						"name": "input-display-name",
+						"display_name": "Display Name",
+						"type": "input"
+					},
+					{
+						"selector": "html",
+						"store_to": "this",
+						"find": ".help-text",
+						"name": "input-description",
+						"display_name": "Description",
+						"type": "input"
+					},
+					{
+						"selector": "attr",
+						"store_to": "required",
+						"find": ":input",
+						"name": "input-required",
+						"display_name": "Required",
+						"type": "select",
+						"options": [
+							{
+								"name": "input-required",
+								"display_name": "Required",
+								"primary": true,
+								"list": [
+									{
+										"name": "false",
+										"display_name": "No"
+									},
+									{
+										"name": "true",
+										"display_name": "Yes"
+									}
+								]
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "integer",
+				"display_name": "Integer",
+				"icon": "<i class=\"fas fa-circle-notch\"></i>",
+				"droppable": false,
+				"db_type" : "integer",
+				"input_type" : "number",
+				"html": "<div class='form-group'><label class='field_name'>Field Name</label><input type='number' disabled name='field_name' class='form-control'><div class='help-text'></div></div>",
+				"editable": [
+					{
+						"selector": "attr",
+						"store_to": "name",
+						"find": ":input",
+						"name": "input-name",
+						"display_name": "Name",
+						"type": "input"
+					},
+					{
+						"selector": "html",
+						"store_to": "this",
+						"find": "label",
+						"name": "input-display-name",
+						"display_name": "Display Name",
+						"type": "input"
+					},
+					{
+						"selector": "html",
+						"store_to": "this",
+						"find": ".help-text",
+						"name": "input-description",
+						"display_name": "Description",
+						"type": "input"
+					},
+					{
+						"selector": "attr",
+						"store_to": "required",
+						"find": ":input",
+						"name": "input-required",
+						"display_name": "Required",
+						"type": "select",
+						"options": [
+							{
+								"name": "input-required",
+								"display_name": "Required",
+								"primary": true,
+								"list": [
+									{
+										"name": "false",
+										"display_name": "No"
+									},
+									{
+										"name": "true",
+										"display_name": "Yes"
+									}
+								]
+							}
+						]
+					},
+					{
+						"selector": "attr",
+						"store_to": "max",
+						"find": ":input",
+						"name": "input-maxlength",
+						"display_name": "Max Length",
+						"type": "input"
+					},
+					{
+						"selector": "attr",
+						"store_to": "min",
+						"find": ":input",
+						"name": "input-minlength",
+						"display_name": "Min Length",
+						"type": "input"
+					}
+				]
+			},
+			{
+				"name": "input-image",
+				"display_name": "Image",
+				"icon": "<i class=\"fas fa-circle-notch\"></i>",
+				"droppable": false,
+				"db_type" : "string",
+				"input_type" : "file",
+				"html": "<div class='form-group'><label class='field_name'>Field Name</label><input type='file' name='field_name' class='form-control'><div class='help-text' disabled></div></div>",
+				"editable": [
+					{
+						"selector": "attr",
+						"store_to": "name",
+						"find": ":input",
+						"name": "input-name",
+						"display_name": "Name",
+						"type": "input"
+					},
+					{
+						"selector": "html",
+						"store_to": "this",
+						"find": "label",
+						"name": "input-display-name",
+						"display_name": "Display Name",
+						"type": "input"
+					},
+					{
+						"selector": "html",
+						"store_to": "this",
+						"find": ".help-text",
+						"name": "input-description",
+						"display_name": "Description",
+						"type": "input"
+					},
+					{
+						"selector": "attr",
+						"store_to": "required",
+						"find": ":input",
+						"name": "input-required",
+						"display_name": "Required",
+						"type": "select",
+						"options": [
+							{
+								"name": "input-required",
+								"display_name": "Required",
+								"primary": true,
+								"list": [
+									{
+										"name": "false",
+										"display_name": "No"
+									},
+									{
+										"name": "true",
+										"display_name": "Yes"
+									}
+								]
+							}
+						]
+					},
+					{
+						"selector": "attr",
+						"store_to": "max-filesize",
+						"find": ":input",
+						"name": "input-maxfilesize",
+						"display_name": "Max File Size",
+						"placeholder": "in MB",
+						"type": "input"
+					}
+				]
+			},
+			{
+				"name": "input-date",
+				"display_name": "Date",
+				"icon": "<i class=\"fas fa-circle-notch\"></i>",
+				"droppable": false,
+				"db_type" : "date",
+				"input_type" : "date",
+				"html": "<div class='form-group'><label class='field_name'>Field Name</label><input type='text' name='field_name' class='form-control' disabled><div class='help-text' disabled></div></div>",
+				"editable": [
+					{
+						"selector": "attr",
+						"store_to": "name",
+						"find": ":input",
+						"name": "input-name",
+						"display_name": "Name",
+						"type": "input"
+					},
+					{
+						"selector": "html",
+						"store_to": "this",
+						"find": "label",
+						"name": "input-display-name",
+						"display_name": "Display Name",
+						"type": "input"
+					},
+					{
+						"selector": "html",
+						"store_to": "this",
+						"find": ".help-text",
+						"name": "input-description",
+						"display_name": "Description",
+						"type": "input"
+					},
+					{
+						"selector": "attr",
+						"store_to": "required",
+						"find": ":input",
+						"name": "input-required",
+						"display_name": "Required",
+						"type": "select",
+						"options": [
+							{
+								"name": "input-required",
+								"display_name": "Required",
+								"primary": true,
+								"list": [
+									{
+										"name": "false",
+										"display_name": "No"
+									},
+									{
+										"name": "true",
+										"display_name": "Yes"
+									}
+								]
+							}
+						]
+					}
+				]
+			},
+			{	
+				"name": "enum",
+				"display_name": "Enum",
+				"icon": "<i class=\"fas fa-circle-notch\"></i>",
+				"droppable": false,
+				"input_type" : "select",
+				"html": "<div class='form-group'><label class='field_name'>Field Name</label><input type='text' name='field_name' class='form-control' disabled><div class='help-text'></div></div>",
+				"db_type" : "enum",
+				"editable": [
+					{
+						"selector": "attr",
+						"store_to": "name",
+						"find": ":input",
+						"name": "input-name",
+						"display_name": "Name",
+						"type": "input"
+					},
+					{
+						"selector": "html",
+						"store_to": "this",
+						"find": "label",
+						"name": "input-display-name",
+						"display_name": "Display Name",
+						"type": "input"
+					},
+					{
+						"selector": "html",
+						"store_to": "this",
+						"find": ".help-text",
+						"name": "input-description",
+						"display_name": "Description",
+						"type": "input"
+					},
+					{
+						"selector": "attr",
+						"store_to": "required",
+						"find": ":input",
+						"name": "input-required",
+						"display_name": "Required",
+						"type": "select",
+						"options": [
+							{
+								"name": "input-required",
+								"display_name": "Required",
+								"primary": true,
+								"list": [
+									{
+										"name": "no",
+										"display_name": "No"
+									},
+									{
+										"name": "required",
+										"display_name": "Yes"
+									}
+								]
+							}
+						]
+					}
+				]
+			},
+			{	
+				"name": "relation",
+				"display_name": "Relation",
+				"icon": "<i class=\"fas fa-circle-notch\"></i>",
+				"droppable": false,
+				"input_type" : "relation",
+				"html": "<div class='form-group'><label class='field_name'>Field Name</label><input type='text' name='field_name' class='form-control' disabled><div class='help-text'></div></div>",
+				"db_type" : "references",
+				"editable": [
+					{
+						"selector": "attr",
+						"store_to": "name",
+						"find": ":input",
+						"name": "input-name",
+						"display_name": "Name",
+						"type": "input"
+					},
+					{
+						"selector": "html",
+						"store_to": "this",
+						"find": "label",
+						"name": "input-display-name",
+						"display_name": "Display Name",
+						"type": "input"
+					},
+					{
+						"selector": "html",
+						"store_to": "this",
+						"find": ".help-text",
+						"name": "input-description",
+						"display_name": "Description",
+						"type": "input"
+					},
+					{
+						"selector": "attr",
+						"store_to": "required",
+						"find": ":input",
+						"name": "input-required",
+						"display_name": "Required",
+						"type": "select",
+						"options": [
+							{
+								"name": "input-required",
+								"display_name": "Required",
+								"primary": true,
+								"list": [
+									{
+										"name": "no",
+										"display_name": "No"
+									},
+									{
+										"name": "required",
+										"display_name": "Yes"
+									}
+								]
+							}
+						]
+					}
+				]
+			}
+		]
+	}
+]
