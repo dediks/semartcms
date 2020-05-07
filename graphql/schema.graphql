@@ -1,15 +1,20 @@
-"A datetime string with format `Y-m-d H:i:s`, e.g. `2018-01-01 13:00:00`."
-scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
-
 "A date string with format `Y-m-d`, e.g. `2011-05-23`."
 scalar Date @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date")
+
+"A datetime string with format `Y-m-d H:i:s`, e.g. `2018-05-23 13:43:32`."
+scalar DateTime
+    @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+
+"A datetime and timezone string in ISO 8601 format `Y-m-dTH:i:sO`, e.g. `2020-04-20T13:53:12+02:00`."
+scalar DateTimeTz
+    @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTimeTz")
 
 type Query {
     users: [User!]! @paginate(defaultCount: 10)
     user(id: ID @eq): User @find
 
-    blog_posts: [BlogPost!]! @paginate(defaultCount: 10)
-    blog_post(id: ID @eq): BlogPost @find
+    customers: [Customer!]! @paginate(defaultCount: 10)
+    customer(id: ID @eq): User @find
 }
 
 type User {
@@ -20,10 +25,9 @@ type User {
     updated_at: DateTime!
 }
 
-type BlogPost {
+type Customer {
     id: ID!
-    title: String!
-    body: String!
+    nama: String!
     created_at: DateTime!
     updated_at: DateTime!
 }
