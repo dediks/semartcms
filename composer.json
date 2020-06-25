@@ -3,7 +3,7 @@
     "type": "project",
     "description": "The Flexible CMS",
     "keywords": [
-        "cmss",
+        "cms",
         "Headless CMS"
     ],
     "license": "MIT",
@@ -52,7 +52,9 @@
             "database/seeds",
             "database/factories"
         ],
-        "files": ["app/Helpers/Helpers.php"]
+        "files": [
+            "app/Helpers/Helpers.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

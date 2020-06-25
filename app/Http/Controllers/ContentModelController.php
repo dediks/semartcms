@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Storage;
 use Services\ContentModelService;
 
 class ContentModelController extends Controller
-{  
+{
     protected $contentModelService;
 
     public function __construct(ContentModelService $cm)
@@ -19,18 +19,13 @@ class ContentModelController extends Controller
         $this->contentModelService = $cm;
     }
 
-    public function edit($table_name){
-        $result = EntityStore::where('table_name', $table_name)->first();
+    public function index($cm_url = 'index')
+    {
 
-        return response()->json($result);
-    }
+        $cm = EntityStore::where('table_name', $cm_url)->first();
+        $cm_list = EntityStore::all();
 
-    public function index($cm_url = 'index'){        
-
-        $cm = EntityStore::where('table_name', $cm_url)->first();        
-        $cm_list = EntityStore::all();       
-        
-        if(!$cm && $cm_url == 'index'){
+        if (!$cm && $cm_url == 'index') {
             $cm = [
                 'table_display_name' => 'Index',
                 'table_description' => 'Manage Your Content Model',
@@ -40,32 +35,50 @@ class ContentModelController extends Controller
             $cm = (object) $cm;
         }
 
-		return view('content_model.index', compact('cm_list', 'cm'));
+        // dd($cm);
+
+        return view('content_model.index', compact('cm_list', 'cm'));
     }
 
-    public function deleteField(Request $request){
 
-           // drop table
+    public function builder()
+    {
+        return view('content_model.builder');
+    }
+
+    public function edit($table_name)
+    {
+        $result = EntityStore::where('table_name', $table_name)->first();
+
+        return response()->json($result);
+    }
+
+
+    public function deleteField(Request $request)
+    {
+
+        // drop table
         $exitCode = Artisan::call('cm:delete_field', [
-            'args' => [ $request->table_name, $request->field_name ]
+            'args' => [$request->table_name, $request->field_name]
         ]);
 
-        $this->updateJson($request->table_name, $request->model);            
+        $this->updateJson($request->table_name, $request->model);
     }
 
-    public function update(Request $request){
+    public function update(Request $request)
+    {
         $entity = EntityStore::where('table_name', $request->model_table_name)->first();
         $entity->table_display_name = $request->model_dis_name;
         $entity->table_description = $request->model_desc;
 
         $status = $entity->save();
 
-        if($status){
+        if ($status) {
             $this->updateJson($request->model_table_name, $request->info_model);
 
             return response()->json([
                 'message' => 'Data Update successfully!'
-              ]);
+            ]);
         }
 
         return response()->json([
@@ -75,14 +88,15 @@ class ContentModelController extends Controller
 
     public function updateJson($table_name, $json)
     {
-        $status = Storage::disk('cm')->put(Str::singular($table_name).'.json', response()->json($json)->getContent());
+        $status = Storage::disk('cm')->put(Str::singular($table_name) . '.json', response()->json($json)->getContent());
     }
 
-    public function save(){
-
+    public function save()
+    {
     }
 
-    public function destroy($table_name){
+    public function destroy($table_name)
+    {
         //delete entity record
         $removedTable = EntityStore::where('table_name', $table_name)->first()->delete();
 
@@ -94,39 +108,40 @@ class ContentModelController extends Controller
         ]);
 
         // delete json file
-        $exitCode = Storage::disk('cm')->delete(Str::singular($table_name).'.json');
+        $exitCode = Storage::disk('cm')->delete(Str::singular($table_name) . '.json');
 
         // remove route
         $this->removeRoute($table_name);
-        
+
         // remove menu
         $this->removeMenu($table_name);
-        
+
         // remove view
         $this->removeView($table_name);
 
         // remove controller
-        $this->removeController($table_name);      
-        
+        $this->removeController($table_name);
+
         //delete Model
         $this->removeModel($table_name);
 
         // remove request
-        $this->removeRequest($table_name);        
+        $this->removeRequest($table_name);
 
         //remove services
-        $this->removeService($table_name);        
+        $this->removeService($table_name);
 
         flash('Content Model deleted successfully')->success();
 
         return redirect(route('content_model.index'));
     }
 
-    public function removeModel($table_name){
-        $name_studly = Str::studly(Str::singular($table_name)); 
+    public function removeModel($table_name)
+    {
+        $name_studly = Str::studly(Str::singular($table_name));
         $model_path = app_path($name_studly . '.php');
 
-        if(file_exists($model_path)){
+        if (file_exists($model_path)) {
             return unlink($model_path);
         };
 
@@ -136,11 +151,10 @@ class ContentModelController extends Controller
     public function removeService($table_name)
     {
         $name = underscore_to_space($table_name);
-        $name_studly = Str::studly(Str::singular($name)); 
+        $name_studly = Str::studly(Str::singular($name));
         $path_service = app_path('Services/' . $name_studly . 'Service.php');
 
-        if(file_exists($path_service))
-        {
+        if (file_exists($path_service)) {
             return unlink($path_service);
         }
 
@@ -151,11 +165,10 @@ class ContentModelController extends Controller
     {
         $name = underscore_to_space($table_name);
         $name_studly = Str::studly(Str::singular($name));
-        $path_create = app_path('Http/Requests/' . $name_studly .'CreateRequest.php');
-        $path_update = app_path('Http/Requests/' . $name_studly .'UpdateRequest.php');
-        
-        if(file_exists($path_create))
-        {
+        $path_create = app_path('Http/Requests/' . $name_studly . 'CreateRequest.php');
+        $path_update = app_path('Http/Requests/' . $name_studly . 'UpdateRequest.php');
+
+        if (file_exists($path_create)) {
             unlink($path_create);
             return unlink($path_update);
         }
@@ -167,10 +180,10 @@ class ContentModelController extends Controller
     {
         $name_singular = Str::singular($table_name);
         $name_singular_studly = Str::studly($name_singular);
-        $path = app_path('Http/Controllers/'. $name_singular_studly.'Controller.php');
+        $path = app_path('Http/Controllers/' . $name_singular_studly . 'Controller.php');
 
-        if(file_exists($path)){
-            return unlink($path);            
+        if (file_exists($path)) {
+            return unlink($path);
         }
 
         return false;
@@ -178,9 +191,9 @@ class ContentModelController extends Controller
 
     public function removeView($table_name)
     {
-        $path = resource_path('views/'. $table_name);
+        $path = resource_path('views/' . $table_name);
 
-        if(file_exists($path)){            
+        if (file_exists($path)) {
             $status = $this->rrmdir($path);
 
             return $status;
@@ -189,21 +202,22 @@ class ContentModelController extends Controller
         return false;
     }
 
-    function rrmdir($dir) 
-    { 
-        if (is_dir($dir)) { 
-            $objects = scandir($dir); 
-            foreach ($objects as $object) { 
-                if ($object != "." && $object != "..") { 
-                    if (filetype($dir."/".$object) == "dir") 
-                        $this->rrmdir($dir."/".$object); else unlink($dir."/".$object); 
-                } 
-            } 
-            reset($objects); 
+    function rrmdir($dir)
+    {
+        if (is_dir($dir)) {
+            $objects = scandir($dir);
+            foreach ($objects as $object) {
+                if ($object != "." && $object != "..") {
+                    if (filetype($dir . "/" . $object) == "dir")
+                        $this->rrmdir($dir . "/" . $object);
+                    else unlink($dir . "/" . $object);
+                }
+            }
+            reset($objects);
 
-            return rmdir($dir); 
-        } 
-    } 
+            return rmdir($dir);
+        }
+    }
 
     public function removeMenu($table_name)
     {
@@ -223,18 +237,17 @@ class ContentModelController extends Controller
         $data = str_replace('{model}', $name_studly, $data);
         $data = str_replace('{modelPlural}', $name_studly_plural, $data);
 
-        if (Str::contains($existing_menu_contents, $data))
-        {
-            $new_menu = str_replace($data, '', $existing_menu_contents);  
-            file_put_contents($path, $new_menu);              
-        }          
+        if (Str::contains($existing_menu_contents, $data)) {
+            $new_menu = str_replace($data, '', $existing_menu_contents);
+            file_put_contents($path, $new_menu);
+        }
     }
 
     public function removeRoute($table_name)
     {
         $name_plural_kebab = Str::kebab($table_name);
         $name_plural_studly = Str::studly($table_name);
-        
+
         $route_path = base_path('routes/cm/cm_route.php');
         $existing_route_contents = file_get_contents($route_path);
         $route_stub_path = resource_path('stubs/routes.stub');
@@ -243,17 +256,16 @@ class ContentModelController extends Controller
         $data = str_replace('{Route}', $name_plural_kebab, $route_template);
         $data = str_replace('{Model}', Str::singular($name_plural_studly), $data);
 
-        if (Str::contains($existing_route_contents, $data))
-        {
-            $new_routes = str_replace($data,'',$existing_route_contents);         
-            file_put_contents($route_path, $new_routes);        
-        }            
+        if (Str::contains($existing_route_contents, $data)) {
+            $new_routes = str_replace($data, '', $existing_route_contents);
+            file_put_contents($route_path, $new_routes);
+        }
     }
 
-    public function getAttributes($cm_url="blog_posts")
+    public function getAttributes($cm_url = "blog_posts")
     {
         $cm_url_singular = Str::singular($cm_url);
-        $json = Storage::disk('cm')->get($cm_url_singular.'.json');
+        $json = Storage::disk('cm')->get($cm_url_singular . '.json');
         $json = json_decode($json, true);
 
         return $json;
@@ -264,17 +276,17 @@ class ContentModelController extends Controller
         return view('content_model.layout');
     }
 
-    public function generate(Request $request) 
+    public function generate(Request $request)
     {
-        $properties = $request->properties;    
-        $fields = $request->fields_collection;        
+        $properties = $request->properties;
+        $fields = $request->fields_collection;
 
-        $json_fields = $this->generateModelJson($fields, $properties);        
+        $json_fields = $this->generateModelJson($fields, $properties);
 
-        $properties = json_decode($properties);   
+        $properties = json_decode($properties);
         $name = $properties->name;
 
-        $this->insertCMInfo($properties, $json_fields);    
+        $this->insertCMInfo($properties, $json_fields);
 
         $this->generateMigration($name, $fields);
         $this->pushRoute($name);
@@ -301,7 +313,7 @@ class ContentModelController extends Controller
         $name_plural = Str::plural($properties->name);
         $display_name = $properties->display_name;
         $description = $properties->description;
-        
+
         //save entity
         $entity_store = new EntityStore;
         $entity_store->table_name = $name_plural;
@@ -314,19 +326,19 @@ class ContentModelController extends Controller
     public function generateModelJson($fields, $properties)
     {
         $new = [];
-        $prop = json_decode($properties);   
+        $prop = json_decode($properties);
         $name = $prop->name;
 
         foreach ($fields as $key => $value) {
-            $new[$value['name']] = $value;           
-        }   
+            $new[$value['name']] = $value;
+        }
 
         $data_model = [];
-        $data_model["info"] = json_decode($properties,TRUE);
-        $data_model["attributes"] = $new;       
-        
-        Storage::disk('cm')->put($name.'.json', response()->json($data_model)->getContent());
-        $data_model =json_encode($data_model, JSON_PRETTY_PRINT);
+        $data_model["info"] = json_decode($properties, TRUE);
+        $data_model["attributes"] = $new;
+
+        Storage::disk('cm')->put($name . '.json', response()->json($data_model)->getContent());
+        $data_model = json_encode($data_model, JSON_PRETTY_PRINT);
 
         return $data_model;
     }
@@ -344,10 +356,10 @@ class ContentModelController extends Controller
         $route_template = file_get_contents($route_stub_path);
         $data = str_replace('{Route}', $name_plural_kebab, $route_template);
         $data = str_replace('{Model}', $name_plural_studly, $data);
-        $route_contents .= "\n\n".$data;
+        $route_contents .= "\n\n" . $data;
 
-        if (!Str::contains($existing_route_contents, $data))            
-            file_put_contents($route_path, $route_contents);        
+        if (!Str::contains($existing_route_contents, $data))
+            file_put_contents($route_path, $route_contents);
     }
 
 
@@ -367,10 +379,10 @@ class ContentModelController extends Controller
         $data = str_replace('{route}', $name_kebab_plural, $menu_template);
         $data = str_replace('{model}', $name_studly, $data);
         $data = str_replace('{modelPlural}', $name_studly_plural, $data);
-        $menu_contents .= "\n\n".$data;
+        $menu_contents .= "\n\n" . $data;
 
-        if (!Str::contains($existing_menu_contents, $data))            
-            file_put_contents($path, $menu_contents);        
+        if (!Str::contains($existing_menu_contents, $data))
+            file_put_contents($path, $menu_contents);
     }
 
     protected function generateRequest($name, $requestType)
@@ -379,14 +391,14 @@ class ContentModelController extends Controller
         $name_studly = Str::studly($name);
 
         $path = app_path('Http/Requests/');
-        
-        if(!file_exists($path))
+
+        if (!file_exists($path))
             mkdir($path);
 
-        $path = app_path('Http/Requests/' . $name_studly . $requestType .'Request.php');
+        $path = app_path('Http/Requests/' . $name_studly . $requestType . 'Request.php');
         copy(resource_path('stubs/request.stub.php'), $path);
         $data = file_get_contents($path);
-        $data = str_replace('{Model}', $name_studly.$requestType , $data);
+        $data = str_replace('{Model}', $name_studly . $requestType, $data);
         file_put_contents($path, $data);
     }
 
@@ -394,7 +406,7 @@ class ContentModelController extends Controller
     {
         $name = Str::snake($name);
         $path = resource_path('views/' . Str::plural($name));
-        if(!file_exists($path))
+        if (!file_exists($path))
             mkdir($path);
 
         $vars = [
@@ -418,17 +430,17 @@ class ContentModelController extends Controller
         $field_index_header = "";
 
         foreach ($fields as $field) {
-           $field_form .= "@field([
-                'label' => \"".$field['display_name']."\",
-                'name' => \"".$field['name']."\",
-                'type' => \"".$field['input_type']."\",
-            ])\n";           
+            $field_form .= "@field([
+                'label' => \"" . $field['display_name'] . "\",
+                'name' => \"" . $field['name'] . "\",
+                'type' => \"" . $field['input_type'] . "\",
+            ])\n";
 
-            $field_index .= "<td>{{ $".$vars['var']."->".$field['name']." }}</td>\n";           
-            $field_index_header .= "<th> ".$field['display_name']."</th>\n";           
-        };        
+            $field_index .= "<td>{{ $" . $vars['var'] . "->" . $field['name'] . " }}</td>\n";
+            $field_index_header .= "<th> " . $field['display_name'] . "</th>\n";
+        };
 
-        foreach($files as $view) {
+        foreach ($files as $view) {
             $file = str_replace('stub.blade', 'blade.php', $view);
             copy(resource_path('stubs/' . $view), $path . '/' . $file);
 
@@ -471,13 +483,14 @@ class ContentModelController extends Controller
         $data = str_replace('{var}', $vars['var'], $data);
         $data = str_replace('{route}', $vars['route'], $data);
         $data = str_replace('{view}', $vars['view'], $data);
-        file_put_contents($path, $data);        
+        file_put_contents($path, $data);
     }
 
-    public function generateModel($name){
+    public function generateModel($name)
+    {
         // $name = underscore_to_space($name);
-        $name_studly = Str::studly($name); 
-        $name_plural = Str::plural($name); 
+        $name_studly = Str::studly($name);
+        $name_plural = Str::plural($name);
         // dd($name_studly);
         $path = app_path($name_studly . '.php');
         copy(resource_path('stubs/model.stub.php'), $path);
@@ -487,19 +500,20 @@ class ContentModelController extends Controller
         file_put_contents($path, $data);
     }
 
-    public function create() {
+    public function create()
+    {
         return view('content_model.create');
     }
 
     protected function generateService($name)
     {
         $name = underscore_to_space($name);
-        $name_studly = Str::studly($name); 
-        $name_camel = Str::camel($name); 
+        $name_studly = Str::studly($name);
+        $name_camel = Str::camel($name);
         $service = resource_path('stubs/service.stub.php');
         $path = app_path('Services/');
 
-        if(!file_exists($path))
+        if (!file_exists($path))
             mkdir(app_path('Services/'));
 
         $path = app_path('Services/' . $name_studly . 'Service.php');
@@ -515,14 +529,14 @@ class ContentModelController extends Controller
     {
         $name_plural = Str::plural($name);
         $name_plural_studly = Str::studly($name_plural);
-        $fileName = date('Y_m_d_His').'_'.'create_'.strtolower($name_plural).'_table.php';
-        $path = database_path('migrations/'. $fileName);
+        $fileName = date('Y_m_d_His') . '_' . 'create_' . strtolower($name_plural) . '_table.php';
+        $path = database_path('migrations/' . $fileName);
         copy(resource_path('stubs/migration.stub'), $path);
         $templateData = file_get_contents($path);
-        $templateData = str_replace('{TABLE_NAME_TITLE}', $name_plural_studly, $templateData);            
-        $templateData = str_replace('{TABLE_NAME}', $name_plural, $templateData);            
+        $templateData = str_replace('{TABLE_NAME_TITLE}', $name_plural_studly, $templateData);
+        $templateData = str_replace('{TABLE_NAME}', $name_plural, $templateData);
         $fields_migration = $this->generateFields($fields);
-        $templateData = str_replace('{FIELDS}', $fields_migration, $templateData);        
+        $templateData = str_replace('{FIELDS}', $fields_migration, $templateData);
         file_put_contents($path, $templateData);
     }
 
@@ -530,8 +544,8 @@ class ContentModelController extends Controller
     {
         $fieldsnya = [];
 
-        foreach ($fields as $field) {          
-            $fieldsnya[] = $this->prepareMigrationText($field['db_type'], $field['name'] );
+        foreach ($fields as $field) {
+            $fieldsnya[] = $this->prepareMigrationText($field['db_type'], $field['name']);
         }
 
         return implode(infy_nl_tab(1, 3), $fieldsnya);
@@ -544,18 +558,18 @@ class ContentModelController extends Controller
 
         $fieldTypeParams = explode(',', array_shift($inputsArr));
         $fieldType = array_shift($fieldTypeParams);
-        $migration_text .= $fieldType."('".$name."'";
+        $migration_text .= $fieldType . "('" . $name . "'";
 
         if ($fieldType == 'enum') {
             $migration_text .= ', [';
             foreach ($fieldTypeParams as $param) {
-                $migration_text .= "'".$param."',";
+                $migration_text .= "'" . $param . "',";
             }
             $migration_text = substr($migration_text, 0, strlen($migration_text) - 1);
             $migration_text .= ']';
         } else {
             foreach ($fieldTypeParams as $param) {
-                $migration_text .= ', '.$param;
+                $migration_text .= ', ' . $param;
             }
         }
 
@@ -567,9 +581,9 @@ class ContentModelController extends Controller
             if ($functionName == 'foreign') {
                 $foreignTable = array_shift($inputParams);
                 $foreignField = array_shift($inputParams);
-                $this->foreignKeyText .= "\$table->foreign('".$name."')->references('".$foreignField."')->on('".$foreignTable."');";
+                $this->foreignKeyText .= "\$table->foreign('" . $name . "')->references('" . $foreignField . "')->on('" . $foreignTable . "');";
             } else {
-                $migration_text .= '->'.$functionName;
+                $migration_text .= '->' . $functionName;
                 $migration_text .= '(';
                 $migration_text .= implode(', ', $inputParams);
                 $migration_text .= ')';

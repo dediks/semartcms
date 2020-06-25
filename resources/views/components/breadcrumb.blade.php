@@ -1,5 +1,5 @@
 <div class="breadcrumb-item">
-	<a href="@routeAdmin('dashboard')">Dashboard</a> 
+	<a href="@routeAdmin('dashboard.index')">Dashboard</a> 
 </div>
 
 @if($segments)

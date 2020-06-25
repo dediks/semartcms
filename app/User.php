@@ -46,12 +46,22 @@ class User extends Authenticatable implements MustVerifyEmail
     protected static $logFillable = true;
 
     public function getAllpermissionsAttribute()
-    {   $res = [];
+    {
+        $res = [];
         $allPermissions = $this->getAllPermissions();
-        foreach($allPermissions as $p)
-        {
+        foreach ($allPermissions as $p) {
             $res[] = $p->name;
         }
         return $res;
+    }
+
+    public function projects()
+    {
+        return $this->belongsToMany('App\Project');
+    }
+
+    public function entities()
+    {
+        return $this->belongsToMany('App\EntityStore');
     }
 }
