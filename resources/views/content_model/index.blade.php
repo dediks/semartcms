@@ -129,7 +129,7 @@
                                         <div class="card-title">${ attributes[i].display_name }</div>
                                         <span class="badge badge-pill badge-light">${ attributes[i].db_type }</span>
                                         ${ attributes[i].required ? `
-                                        <span class="badge badge-pill badge-warning   ">${ attributes[i].required }</span>` : ''}
+                                        <span class="badge badge-pill badge-warning">${ attributes[i].required }</span>` : ''}
                                         ${ attributes[i].max ? `
                                         <span class="badge badge-pill badge-warning">${ attributes[i].max }</span>` : ''}
                                         ${ attributes[i].min ? `
@@ -248,7 +248,7 @@
                                             text: 'Content Model Info Updated Successfully',
                                             icon: 'success'
                                         }).then(function() {				
-                                                            window.location = '{{ route('content_model.index') }}';
+                                            window.location = '{{ route('content_model.index') }}';
                                         });
                                     }
                                 })

@@ -24,6 +24,7 @@
               <form action="{{ route('dashboard.go')}}" method="POST">
                 @csrf
               <input type="hidden" name="project_id" value="{{ $project->id }}">
+              <input type="hidden" name="project_name" value="{{ $project->name }}">
               <button type="submit" clasas="btn btn-primary">Go</button>
               </form>
               </div>

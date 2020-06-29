@@ -1,0 +1,78 @@
+[
+    {
+        "name": "fields",
+        "display_name": "Fields",
+        "children": {
+            "string": {
+                "name": "string",
+                "display_name": "Single Line Text",
+                "icon": "<i class=\"fas fa-circle-notch\"></i>",
+                "description": "description",
+                "input_type": "text",
+                "db_type": "string",
+                "validation": {
+                  "required" : {
+                    "name": "irequired",
+                    "display_name": "Required",
+                    "type": "input",
+                    "value": false,
+                    "input_type": "checkbox",
+                    "options": 
+                        {
+                            "name": "input-required",
+                            "display_name": "Required",
+                            "list": [
+                                {
+                                    "name": "no",
+                                    "display_name": "No"
+                                },
+                                {
+                                    "name": "required",
+                                    "display_name": "Yes"
+                                }
+                            ]
+                        }
+                    
+                },
+                "unique":{
+                    "name": "input-unique",
+                    "display_name": "Unique",
+                    "type": "input",
+                    "input_type": "checkbox",
+                    "value": false,
+                    "options": 
+                        {
+                            "name": "input-unique",
+                            "display_name": "Uniqure",
+                            "primary": true,
+                            "list": [
+                                {
+                                    "name": "no",
+                                    "display_name": "No"
+                                },
+                                {
+                                    "name": "required",
+                                    "display_name": "Yes"
+                                }
+                            ]
+                        }
+                },
+                "maxLength" : {
+                    "name": "input-maxlength",
+                    "value": 255,
+                    "display_name": "Max Length",
+                    "type": "input",
+                    "input_type": "number"
+                },
+                {
+                    "value": 0,
+                    "name": "input-minlength",
+                    "display_name": "Min Length",
+                    "type": "input",
+                    "input_type": "number"
+                }
+              }
+            }
+        }
+    }
+]

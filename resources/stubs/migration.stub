@@ -16,6 +16,7 @@ class Create{TABLE_NAME_TITLE}Table extends Migration
         Schema::create('{TABLE_NAME}', function (Blueprint $table) {
             $table->bigIncrements('id');
             {FIELDS}
+            {FOREIGNKEY}
             $table->unsignedBigInteger('project_id');
             $table->timestamps();
         });

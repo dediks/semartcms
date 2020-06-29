@@ -29,14 +29,31 @@
 				</div>
 			</div>
 		</div>
-	
+		<div class="row bg-white p-3" style="margin : -10px 35px -20px 0px">
+			<div class="col d-flex">
+				<div class="text-bold">
+					<b>Name : </b> 
+				</div> 
+				<div class="ml-2" id="content-model-name"></div>
+			</div>
+			<div class="col d-flex">
+				<div class="font-bold">
+					<b>Display Name : </b>  
+				</div> 
+				<div class="ml-2" id="content-model-display-name"></div>
+			</div>
+		</div>
 		<div class="section-body">
 				<div class="row mt-5">
-						<div class="col-9">
-							<div id="editor_area"></div>
-							<textarea id="source_area" class="hide"></textarea>
+					<div class="col-9">
+						<div id="editor_area"></div>
+						<textarea id="source_area" class="hide"></textarea>
+						<div class="bg-white mt-4 p-4">
+							<h5>List Relations</h5>
+							<div id="list-of-relations"></div>
 						</div>
-						<div class="col-3">
+					</div>
+					<div class="col-3">
 								<div class="sidemenu">
 										<div class="sidemenu-inner">            
 												<ul>
@@ -50,11 +67,106 @@
 																</li>
 															</ul>
 														</li>
+														<li>
+															<div class="relation-field m-4">
+																<button class="btn btn-block btn-primary" type="button" data-toggle="modal"  data data-target="#exampleModal" data-backdrop="false" id="addRelationButton">Add Relation</button>
+															</div>
+														</li>
 													</ul>
 										</div>
 								</div>
-						</div>
 					</div>
+				</div>
+		</div>
+
+		<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="margin-top: 10px">
+			<div class="modal-dialog" role="document">
+				<form>
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="exampleModalLabel">Add Relation field</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+							<div class="form-group">
+								<label for="name-relation">Name</label>
+								<input type="text" name="name-relation" class="form-control" id="name-relation" placeholder="Enter relation name" required>
+							</div>
+							<div class="form-group">
+								<label for="relation-description">Description</label>
+								<textarea name="relation-description" id="relation-description" cols="30" rows="10" class="form-control"></textarea>
+							</div>
+							<div class="form-group">
+								<label for="relation-option">Relation type</label>
+								<select name="relation-type" id="relation-option" class="form-control" onclick="selectRelation()" required>
+									<option value="">Select Relation Type</option>
+									<option value="one-one">One on One</option>
+									<option value="one-many">One to Many</option>
+									<option value="many-many">Many to Many</option>
+								</select>
+							</div>
+							<div class="form-group">
+								<div id="whats"></div>
+								<div id="whats2"></div>
+								<div id="pivot-table-container"></div>
+								<div id="referenced-model">
+								</div>
+							</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						<button type="button" class="btn btn-primary" onclick="setRelation()" data-dismiss="modal">Set Relation</button>
+					</div>
+				</form>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal fade" id="modalEditRelation" tabindex="-1" role="dialog" aria-labelledby="editRelationModalLabel" aria-hidden="true" style="margin-top: 10px">
+			<div class="modal-dialog" role="document">
+				<form>
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="exampleModalLabel">Add Relation field</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+							<div class="form-group">
+								<label for="name-relation">Name</label>
+								<input type="text" name="name-relation" class="form-control" id="name-relation" placeholder="Enter relation name" required>
+							</div>
+							<div class="form-group">
+								<label for="relation-description">Description</label>
+								<textarea name="relation-description" id="relation-description" cols="30" rows="10" class="form-control"></textarea>
+							</div>
+							<div class="form-group">
+								<label for="relation-option">Relation type</label>
+								<select name="relation-type" id="relation-option" class="form-control" onclick="selectRelation()" required>
+									<option value="">Select Relation Type</option>
+									<option value="one-one">One on One</option>
+									<option value="one-many">One to Many</option>
+									<option value="many-many">Many to Many</option>
+								</select>
+							</div>
+							<div class="form-group">
+								<div id="whats"></div>
+								<div id="whats2"></div>
+								<div id="pivot-table-container"></div>
+								<div id="referenced-model">
+								</div>
+							</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						<button type="button" class="btn btn-primary" onclick="setRelation()">Set Relation</button>
+					</div>
+				</form>
+				</div>
+			</div>
 		</div>
 @endsection
 
@@ -77,6 +189,202 @@
 <script src="{{ asset('scripts/htmlbeautify/htmlbeautify.min.js') }}"></script>
 <script src="{{ asset('js/custom.js') }}"></script>
 <script>
+	$('#addRelationButton').click(function(){
+		let cm_name = localStorage.getItem('_content_model_generator_setting')["name"];		
+	});
+
+	let temp = [];
+	function setRelation()
+	{
+		let relation_name = $('#name-relation').val();
+		let relation_description = $('#relation-description').val();
+		let relation_type = $('#relation-option').val();
+		let pivot_table = $('#pivot-table').val();
+		let relation_model_target = $('#relation-model').val();
+		let oneone = $('#oneOne').val();
+		let onemany = $('#oneMany').val();
+
+		let relation_data = { 
+				"name" : relation_name,
+				"description" : relation_description,
+				'type' : relation_type,			
+				"target" : relation_model_target,
+				"pivot_table" : pivot_table,
+				"identifier" : {
+					"oneone" : oneone,
+					"onemany" : onemany
+				}
+		};
+
+		let info_cm = JSON.parse(localStorage.getItem('_content_model_generator_setting'));		
+
+		relation_element = `
+			<div class="for-relation form-group editor-draggable-element ui-droppable ui-draggable ui-draggable-handle" data-element-name="relation" data-element-db-type="references" id="${relation_name}RelationField" onClick="editRelationField()">
+				<label class="field_name" data-store-input-display-name="Relasi"> ${ relation_name} </label>
+				<input type="text" name="relasi" class="form-control bg-danger" disabled="disabled" data-store-input-name="reaasi" value="${relation_name}">
+				 <div class="help-text">
+					${ info_cm.display_name } 
+					${ relation_type === 'many-many' ? "BelongsTo" : ''}
+					${ relation_type === 'one-one' ? oneone : ''}						
+					${ relation_type === 'one-many' ? onemany : ''}						
+					${ relation_model_target }
+				</div>
+			</div>`
+
+		check_relation_element = localStorage.getItem('saved_relation_element');
+		
+		_relation_data = localStorage.getItem("relation_data");
+
+		if(_relation_data == undefined || _relation_data == null)
+		{
+			temp.push(relation_data);
+			localStorage.setItem("relation_data", JSON.stringify(temp));
+		}else{
+			_relation_data = JSON.parse(_relation_data);
+			_relation_data.push(relation_data);
+			localStorage.setItem("relation_data", JSON.stringify(_relation_data));
+		}
+
+		if(check_relation_element != undefined)
+		{
+			check_relation_element += relation_element;
+			localStorage.setItem('saved_relation_element', check_relation_element);
+			// $('#list-of-relations').append(check_relation_element);
+
+			
+			// return;
+		}else{
+			localStorage.setItem('saved_relation_element', relation_element);
+		}
+		
+		$('#list-of-relations').append(relation_element);
+	}
+
+	function editRelationField()
+	{
+		$('#modalEditRelation').modal(
+			{
+				backdrop: false, 
+				dismiss: true, 
+				keyboard: true, 
+				focus: true
+			});
+	}
+
+	function loadContentModel()
+	{           
+		if ($('#relation-model > option').length == 1) {
+			$('#relation-model').empty().append('<option>select</option>');
+
+				$.ajax({
+						url: '{{ route('content_model.load') }}',
+						dataType: 'json',
+						type: 'POST',
+						headers: {
+							'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+						},
+						success: function(res) {
+								res.forEach(function(cm){
+									// console.log(cm);
+									$("#relation-model").append(`<option value="${ cm.id }">${ cm.table_name }</option>`);
+								});
+
+						},
+						error: function(x, e) {
+							console.log(x);
+						}
+				});
+			}
+	}
+
+	function selectRelation()
+	{
+		let selected_relation = $('#relation-option').val();
+
+
+		if(selected_relation === 'one-one')
+		{
+			if ($('#oneOne').length == 0) 
+			{
+				let one_one_element = `
+					<div id="whatsrole" class="mb-4">
+						<label for="oneone">What ?</label>
+						<select id="oneOne" class="form-control" name="oneOneSelect">
+							<option value="hasOne">Has One</option>
+							<option value="belongsTo">Belongs To</option>
+						</select>
+					</div>
+				`;
+	
+				$("#whats").html(one_one_element);
+			};
+			
+		}else{
+			$("#whatsrole").remove();
+		};
+
+		if(selected_relation === 'one-many')
+		{
+			if ($('#oneMany').length == 0) 
+			{
+				let one_many_element = `
+					<div id="whatsrole2" class="mb-4" >
+						<label for="oneMany">What ?</label>
+						<select id="oneMany" class="form-control" name="oneManySelect">
+							<option value="hasMany">Has Many</option>
+							<option value="belongsTo">Belongs To</option>
+						</select>
+					</div>
+				`;
+	
+				$("#whats2").html(one_many_element);
+			};
+			
+		}else{
+			$("#whatsrole2").remove();
+		};
+
+		//show pivot table field
+		if(selected_relation === 'many-many')
+		{
+			if ($('#pivot-table').length == 0) 
+			{
+				let pivot_table_element = `
+					<div id="pivot-table-hmmm" class="mb-4">
+						<label for="pivot-table">Pivot Table</label>
+						<input type="text" id="pivot-table" name="pivot-table" class="form-control">
+					</div>
+				`;
+	
+				$("#pivot-table-container").append(pivot_table_element);
+			};
+			
+		}else{
+			$("#pivot-table-hmmm").remove();
+		};
+
+		//target model
+		if(selected_relation != "")
+		{
+			if ($('#relation-model-div').length == 0) 
+			{
+				let referenced_model_element = `
+					<div id="relation-model-div">
+						<label for="relation-model">Referenced Model</label>
+						<select name="relation-model" id="relation-model" class="form-control" onclick="loadContentModel()" required>
+						<option value="no-model">Select content model</option>
+						</select>
+					</div>
+				`;
+
+					$("#referenced-model").html(referenced_model_element);
+
+			}else{
+				$("#relation-model-div").remove();
+			}
+		}
+	}
+	// ------------------------------------------------------------
 	let is_recover = false,
 			is_ws = false;
 
@@ -90,11 +398,29 @@
 		setTimeout(() => {
 			localStorage.setItem('_content_model_generator_layout', _saved_layout);
 		}, 1000);
+
+		let get_setting = localStorage.getItem("_content_model_generator_setting");
+		if(get_setting) {
+			get_setting = JSON.parse(get_setting);
+		}
+
+		let name = (get_setting.name ? get_setting.name : ""),
+				display_name = (get_setting.display_name ? get_setting.display_name : ""),
+				description = (get_setting.description ? get_setting.description : "");
+
+		$('#content-model-name').html(`
+			${name}
+		`);
+		
+		$('#content-model-display-name').html(`
+			${ display_name }
+		`);
+
 		bsModal.create({
 			title: '<i class="fas fa-heart-broken"></i> Recover Layout',
 			body: 'We have found your last work <code>'+(_saved_setting.display_name ? _saved_setting.display_name : 'Untitled Content Model')+'</code>, would you like to recover it?',
 			options: {
-				backdrop: 'static'
+				'backdrop' : 'static'
 			},
 			buttons: [
 				{
@@ -103,6 +429,7 @@
 					handler: function(b) {
 						localStorage.setItem('_content_model_generator_layout', _saved_layout);
 						selector.source_area.val(_saved_layout);
+						$("#list-of-relations").append(localStorage.getItem("saved_relation_element"));
 						source.init();
 						bsModal.hide();
 					}
@@ -111,6 +438,7 @@
 					text: 'Destroy',
 					class: 'btn btn-default',
 					handler: function(b) {
+						localStorage.removeItem("saved_relation_element")
 						localStorage.removeItem('_content_model_generator_layout');
 						localStorage.removeItem('_content_model_generator_setting');
 						welcome_screen();
@@ -150,7 +478,7 @@
 
 		bsModal.create({
 			options: {
-				backdrop: 'static'
+				'backdrop' : 'static'
 			},
 			class: 'modal-lg mt-5',
 			title: '<i class="fas fa-flask"></i> Welcome to Content Model Builder',
@@ -160,7 +488,7 @@
 					text: 'Cancel',
 					class: 'btn btn-default',
 					handler: function() {
-						document.location = '{{ route('dashboard') }}';
+						document.location = '{{ route('dashboard.index') }}';
 					}
 				},
 				{
@@ -222,7 +550,7 @@
 		init: function() {
 			let _source = selector.source_area.val();
 
-			if(_source) {
+			if(_source) {				
 				let html = source.toHTML(_source);
 				editor_area.update(html);
 			}else{
@@ -1172,8 +1500,11 @@
 								_data_to_send = {
 									field_collection_in_html : _saved_layout,
 									properties : _saved_setting,
-									fields_collection : _saved_fields
+									fields_collection : _saved_fields,
+									relation_data :JSON.parse(localStorage.getItem("relation_data"))									
 								};
+
+								// console.log(_data_to_send);
 
 						$.ajax({
 							url: request_url.generate,
@@ -1190,7 +1521,8 @@
 								button.html('Generating Conten Model ...');
 								button.addClass('disabled');								
 							},
-							complete: function() {
+							complete: function(e) {
+								console.log(e);								
 								button.html(_button_text);
 								button.removeClass('disabled');		
 

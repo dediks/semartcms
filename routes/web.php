@@ -10,6 +10,8 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::get('/tess', 'ContentModelController@tes');
+
 Route::get('/', function () {
     return view('home');
     // return redirect('/dashboard');
@@ -20,10 +22,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/projects', 'ProjectController@store')->name('project.store');
 
     Route::post('/dashboard', 'DashboardController@go')->name('dashboard.go');
+    Route::get('/extension', 'ExtensionController@index')->name('extension.index');
 
     Route::middleware(['has_project'])->group(function () {
         Route::get('/dashboard', 'DashboardController@index')->name('dashboard.index');
-        Route::get('/extension', 'ExtensionController@index')->name('extension.index');
 
         Route::prefix('content-model')->name('content_model.')->group(function () {
             Route::get('/builder', 'ContentModelController@builder');
@@ -39,6 +41,9 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('/edit/{cm}', 'ContentModelController@edit')->name('edit');
             Route::post('/update/{cm}', 'ContentModelController@update')->name('update');
             Route::post('/{cm}/delete-field', 'ContentModelController@deleteField')->name('delete-field');
+
+
+            Route::post('/load', 'ContentModelController@load')->name('load');
         });
     });
 

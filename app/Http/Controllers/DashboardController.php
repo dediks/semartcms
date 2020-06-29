@@ -14,7 +14,7 @@ class DashboardController extends Controller
     public function go()
     {
         // dd(request()->project_id);
-        request()->session()->put('project', request()->project_id);
+        request()->session()->put('project', ["id" => request()->project_id, "name" => request()->project_name]);
 
         return view('dashboard.index');
     }

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b68c39234da1677e93f496cf4ec1e258",
+    "content-hash": "328fce2697d00a87680db8c0ff5c5908",
     "packages": [
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -1505,16 +1505,16 @@
         },
         {
             "name": "nuwave/lighthouse",
-            "version": "v4.12.4",
+            "version": "v4.15.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nuwave/lighthouse.git",
-                "reference": "a6b689a466009645ce24520363e9f8b951cffae1"
+                "reference": "35b852063d1368d479ff14198067e1fa7cef17a7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nuwave/lighthouse/zipball/a6b689a466009645ce24520363e9f8b951cffae1",
-                "reference": "a6b689a466009645ce24520363e9f8b951cffae1",
+                "url": "https://api.github.com/repos/nuwave/lighthouse/zipball/35b852063d1368d479ff14198067e1fa7cef17a7",
+                "reference": "35b852063d1368d479ff14198067e1fa7cef17a7",
                 "shasum": ""
             },
             "require": {
@@ -1541,10 +1541,10 @@
                 "laravel/scout": "^4.0 || ^5.0 || ^6.0 || ^7.0",
                 "mll-lab/graphql-php-scalars": "^2.1",
                 "mockery/mockery": "^1.0",
-                "nunomaduro/larastan": "^0.5.2",
+                "nunomaduro/larastan": "^0.6.0",
                 "orchestra/database": "3.5.* || 3.6.* || 3.7.* || 3.8.* || 3.9.* || ^4.0 || ^5.0",
                 "orchestra/testbench": "3.5.* || 3.6.* || 3.7.* || 3.8.* || 3.9.* || ^4.0 || ^5.0",
-                "phpbench/phpbench": "@dev",
+                "phpbench/phpbench": "^0.17.0",
                 "phpstan/phpstan-mockery": "^0.12.5",
                 "phpunit/phpunit": "^6.5 || ^7.5 || ^8.4",
                 "pusher/pusher-php-server": "^3.2"
@@ -1597,7 +1597,78 @@
                 "laravel",
                 "laravel-graphql"
             ],
-            "time": "2020-04-30T20:27:05+00:00"
+            "time": "2020-06-24T13:12:04+00:00"
+        },
+        {
+            "name": "nwidart/laravel-modules",
+            "version": "7.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nWidart/laravel-modules.git",
+                "reference": "245426d4d0c0293a44e4cc8cc44d1c5d50e0d0ba"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nWidart/laravel-modules/zipball/245426d4d0c0293a44e4cc8cc44d1c5d50e0d0ba",
+                "reference": "245426d4d0c0293a44e4cc8cc44d1c5d50e0d0ba",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "php": "^7.2.5"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.16",
+                "laravel/framework": "^7.0",
+                "mockery/mockery": "~1.0",
+                "orchestra/testbench": "^5.0",
+                "phpstan/phpstan": "^0.12.14",
+                "phpunit/phpunit": "^8.5",
+                "spatie/phpunit-snapshot-assertions": "^2.1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Nwidart\\Modules\\LaravelModulesServiceProvider"
+                    ],
+                    "aliases": {
+                        "Module": "Nwidart\\Modules\\Facades\\Module"
+                    }
+                },
+                "branch-alias": {
+                    "dev-master": "7.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Nwidart\\Modules\\": "src"
+                },
+                "files": [
+                    "src/helpers.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Widart",
+                    "email": "n.widart@gmail.com",
+                    "homepage": "https://nicolaswidart.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Laravel Module management",
+            "keywords": [
+                "laravel",
+                "module",
+                "modules",
+                "nwidart",
+                "rad"
+            ],
+            "time": "2020-04-14T17:21:11+00:00"
         },
         {
             "name": "opis/closure",

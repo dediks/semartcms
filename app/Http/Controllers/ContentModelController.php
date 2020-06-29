@@ -19,6 +19,55 @@ class ContentModelController extends Controller
         $this->contentModelService = $cm;
     }
 
+    public function tes()
+    {
+        $data = (object) array(
+            "nama" => "Relasi Phone ke Customer",
+            "description" => "Desc Phone ke customer",
+            "type" => "one-one",
+            "target" => "customer",
+            "identifier" => [
+                "oneone" => "hasOne"
+            ]
+        );
+
+        $model_domain = "phone";
+
+        $fields = array(
+            [
+                "db_type" => "string",
+                "display_name" => "Name",
+                "name" => "name",
+                "input_type" => "text",
+                "max" => 100,
+                "max_filesize" => null,
+                "min" => 10,
+                "required" => "required",
+            ],
+            [
+                "db_type" => "string",
+                "display_name" => "Alamat",
+                "name" => "alamat",
+                "input_type" => "text",
+                "max" => null,
+                "max_filesize" => null,
+                "min" => null,
+                "required" => null,
+            ]
+        );
+
+        $this->generateMigration($model_domain, $fields, "customer");
+    }
+
+    public function load()
+    {
+        $entity = EntityStore::select(['id', 'table_name'])->get();
+
+        // dd($entity);
+
+        return response()->json($entity);
+    }
+
     public function index($cm_url = 'index')
     {
 
@@ -278,34 +327,39 @@ class ContentModelController extends Controller
 
     public function generate(Request $request)
     {
-        $properties = $request->properties;
-        $fields = $request->fields_collection;
 
-        $json_fields = $this->generateModelJson($fields, $properties);
+        $relation = $request->fields_collection;
 
-        $properties = json_decode($properties);
-        $name = $properties->name;
+        return $relation;
 
-        $this->insertCMInfo($properties, $json_fields);
+        // $properties = $request->properties;
+        // $fields = $request->fields_collection;
 
-        $this->generateMigration($name, $fields);
-        $this->pushRoute($name);
-        $this->generateModel($name);
-        $this->generateService($name);
-        $this->generateRequest($name, "Create");
-        $this->generateRequest($name, "Update");
-        $this->generateController($name);
-        $this->generateMenu($name);
-        $this->generateView($name, $fields);
+        // $json_fields = $this->generateModelJson($fields, $properties);
 
-        // Artisan::call('migrate:fresh', [
-        //     '--force' => true,
-        // ]);
-        Artisan::call('migrate');
+        // $properties = json_decode($properties);
+        // $name = $properties->name;
 
-        flash('Content Model created successfully')->success();
+        // $this->insertCMInfo($properties, $json_fields);
 
-        return redirect(route('content_model.index'));
+        // $this->generateMigration($name, $fields);
+        // $this->pushRoute($name);
+        // $this->generateModel($name);
+        // $this->generateService($name);
+        // $this->generateRequest($name, "Create");
+        // $this->generateRequest($name, "Update");
+        // $this->generateController($name);
+        // $this->generateMenu($name);
+        // $this->generateView($name, $fields);
+
+        // // Artisan::call('migrate:fresh', [
+        // //     '--force' => true,
+        // // ]);
+        // Artisan::call('migrate');
+
+        // flash('Content Model created successfully')->success();
+
+        // return redirect(route('content_model.index'));
     }
 
     public function insertCMInfo($properties, $json_fields)
@@ -525,7 +579,7 @@ class ContentModelController extends Controller
         file_put_contents($path, $data);
     }
 
-    protected function generateMigration($name, $fields)
+    protected function generateMigration($name, $fields, $name_target = "nothing")
     {
         $name_plural = Str::plural($name);
         $name_plural_studly = Str::studly($name_plural);
@@ -537,6 +591,15 @@ class ContentModelController extends Controller
         $templateData = str_replace('{TABLE_NAME}', $name_plural, $templateData);
         $fields_migration = $this->generateFields($fields);
         $templateData = str_replace('{FIELDS}', $fields_migration, $templateData);
+
+        if ($name_target != "nothing") {
+            $name_target .= "_id";
+            $structure = "\$table->unsignedBigInteger('$name_target');";
+            $templateData = str_replace('{FOREIGNKEY}', $structure, $templateData);
+        } else {
+            $templateData = str_replace('{FOREIGNKEY}', "", $templateData);
+        }
+
         file_put_contents($path, $templateData);
     }
 
@@ -551,13 +614,14 @@ class ContentModelController extends Controller
         return implode(infy_nl_tab(1, 3), $fieldsnya);
     }
 
-    protected function prepareMigrationText($fieldnya, $name)
+    protected function prepareMigrationText($fieldnya, $name, $name_target = 'nothing')
     {
         $inputsArr = explode(':', $fieldnya);
         $migration_text = '$table->';
 
         $fieldTypeParams = explode(',', array_shift($inputsArr));
         $fieldType = array_shift($fieldTypeParams);
+
         $migration_text .= $fieldType . "('" . $name . "'";
 
         if ($fieldType == 'enum') {
