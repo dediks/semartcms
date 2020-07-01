@@ -204,17 +204,28 @@
 		let oneone = $('#oneOne').val();
 		let onemany = $('#oneMany').val();
 
-		let relation_data = { 
-				"name" : relation_name,
-				"description" : relation_description,
-				'type' : relation_type,			
-				"target" : relation_model_target,
-				"pivot_table" : pivot_table,
-				"identifier" : {
-					"oneone" : oneone,
-					"onemany" : onemany
+		let modifier;
+
+		if(oneone){
+			modifier = oneone;
+		}else if(onemany){
+			modifier = onemany;
+		}else{
+			modifier = "belongsTo";
+		}
+
+		let relation_data = {
+			"nama" : relation_name,
+			"description" : relation_description,
+			"type" : {
+					"name" : relation_type,
+					"modifier" : modifier,
+					"pivot" : pivot_table
+				},
+			"target_model" : {
+					"name" : relation_model_target
 				}
-		};
+		}
 
 		let info_cm = JSON.parse(localStorage.getItem('_content_model_generator_setting'));		
 
@@ -286,7 +297,7 @@
 						success: function(res) {
 								res.forEach(function(cm){
 									// console.log(cm);
-									$("#relation-model").append(`<option value="${ cm.id }">${ cm.table_name }</option>`);
+									$("#relation-model").append(`<option value="${ cm.table_name }">${ cm.table_name }</option>`);
 								});
 
 						},
@@ -1504,7 +1515,7 @@
 									relation_data :JSON.parse(localStorage.getItem("relation_data"))									
 								};
 
-								// console.log(_data_to_send);
+								console.log(_data_to_send);
 
 						$.ajax({
 							url: request_url.generate,

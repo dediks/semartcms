@@ -21,17 +21,19 @@ class ContentModelController extends Controller
 
     public function tes()
     {
-        $data = (object) array(
+        $data_relation = array(
             "nama" => "Relasi Phone ke Customer",
             "description" => "Desc Phone ke customer",
-            "type" => "one-one",
-            "target" => "customer",
-            "identifier" => [
-                "oneone" => "hasOne"
-            ]
+            "type" => [
+                "name" => "many-many",
+                "modifier" => "belongsTo",
+            ],
+            "target_model" => [
+                "name" => "customer"
+            ],
         );
 
-        $model_domain = "phone";
+        $name = "phone";
 
         $fields = array(
             [
@@ -56,7 +58,129 @@ class ContentModelController extends Controller
             ]
         );
 
-        $this->generateMigration($model_domain, $fields, "customer");
+        $this->generateTrait($name, $data_relation);
+        $this->generateModel($name);
+    }
+
+    public function createPivotTableMigration($model1, $model2)
+    {
+        $model1_in_lowercase = Str::lower(Str::singular($model1));
+        $model2_in_lowercase = Str::lower(Str::singular($model2));
+
+        $model1_in_studly = Str::studly(Str::singular($model1));
+        $model2_in_studly = Str::studly(Str::singular($model2));
+
+        $fileName = date('Y_m_d_His') . '_' . 'create_' . strtolower($model1_in_lowercase . '_' . $model2_in_lowercase) . '_table.php';
+        $path = database_path('migrations/' . $fileName);
+        copy(resource_path('stubs/pivot_table_migration.stub'), $path);
+        $templateData = file_get_contents($path);
+        $templateData = str_replace('{Model1}', $model1_in_studly, $templateData);
+        $templateData = str_replace('{Model2}', $model2_in_studly, $templateData);
+        $templateData = str_replace('{Model1Lowercase}', $model1_in_lowercase, $templateData);
+        $templateData = str_replace('{Model2Lowercase}', $model2_in_lowercase, $templateData);
+
+        file_put_contents($path, $templateData);
+    }
+
+    public function isManytoMany($name, $relation_data)
+    {
+        foreach ($relation_data as $data) {
+            $relation_type = $data["type"]["name"];
+            $target = $data["target_model"]["name"];
+
+            if ($relation_type == "many-many") {
+                // many to many
+
+                // create migration
+                $compare_model_name = strcmp($target, $name);
+
+                $model1 = null; //lebih kecil secara alphabet
+                $model2 = null; //lebih beasr secara alphabet
+
+                if ($compare_model_name < 0) {
+                    $model1 = $target;
+                    $model2 = $name;
+                } else {
+                    $model2 = $target;
+                    $model1 = $name;
+                }
+
+                $this->createPivotTableMigration($model1, $model2);
+            }
+        }
+    }
+
+    public function generate(Request $request)
+    {
+
+        $properties = $request->properties;
+        $fields = $request->fields_collection;
+
+        $json_fields = $this->generateModelJson($fields, $properties);
+
+        $properties = json_decode($properties);
+        $name = $properties->name;
+        $relation_data = $request->relation_data;
+
+        // $relation_type = $relation_data[0]["type"]["name"];
+        // $target = $relation_data[0]["target_model"]["name"];
+
+        $this->insertCMInfo($properties, $json_fields);
+        $this->isManytoMany($name, $relation_data);
+        $this->generateMigration($name, $fields, $relation_data);
+        $this->generateTrait($name, $relation_data);
+        $this->pushRoute($name);
+        $this->generateModel($name);
+        $this->generateService($name);
+        $this->generateRequest($name, "Create");
+        $this->generateRequest($name, "Update");
+        $this->generateController($name);
+        $this->generateMenu($name);
+        $this->generateView($name, $fields);
+
+        // Artisan::call('migrate:fresh', [
+        //     '--force' => true,
+        // ]);
+        Artisan::call('migrate');
+
+        flash('Content Model created successfully')->success();
+
+        // return redirect(route('content_model.index'));
+    }
+
+    public function generateTrait($name, $relation_data)
+    {
+        // return $relation_data[0]["type"]["modifier"];
+
+        $name_singular = Str::singular($name);
+        $name_studly = Str::studly($name_singular);
+
+        $template = '';
+        foreach ($relation_data as $data) {
+            $model_target = $data["target_model"]["name"];
+            $model_target = Str::singular($model_target);
+            $name_studly_target = Str::studly($model_target);
+
+            $relation_type = $data["type"]["name"];
+            $modifier = $data["type"]["modifier"];
+
+            if (($relation_type == "one-many" && $modifier == "hasMany") || ($relation_type === "many-many")) {
+                $model_target = Str::plural($model_target);
+            }
+
+            $template .= '            
+    public function ' . $model_target . '()
+    {
+        return $this->' . $modifier . '("App\\' . $name_studly_target . '");            
+    }';
+        }
+
+        $path = app_path('Traits/' . $name_studly . 'Trait.php');
+        copy(resource_path('stubs/relation_trait.stub.php'), $path);
+        $data = file_get_contents($path);
+        $data = str_replace('{Name}', $name_studly, $data);
+        $data = str_replace('{Relation}', $template, $data);
+        file_put_contents($path, $data);
     }
 
     public function load()
@@ -325,43 +449,6 @@ class ContentModelController extends Controller
         return view('content_model.layout');
     }
 
-    public function generate(Request $request)
-    {
-
-        $relation = $request->fields_collection;
-
-        return $relation;
-
-        // $properties = $request->properties;
-        // $fields = $request->fields_collection;
-
-        // $json_fields = $this->generateModelJson($fields, $properties);
-
-        // $properties = json_decode($properties);
-        // $name = $properties->name;
-
-        // $this->insertCMInfo($properties, $json_fields);
-
-        // $this->generateMigration($name, $fields);
-        // $this->pushRoute($name);
-        // $this->generateModel($name);
-        // $this->generateService($name);
-        // $this->generateRequest($name, "Create");
-        // $this->generateRequest($name, "Update");
-        // $this->generateController($name);
-        // $this->generateMenu($name);
-        // $this->generateView($name, $fields);
-
-        // // Artisan::call('migrate:fresh', [
-        // //     '--force' => true,
-        // // ]);
-        // Artisan::call('migrate');
-
-        // flash('Content Model created successfully')->success();
-
-        // return redirect(route('content_model.index'));
-    }
-
     public function insertCMInfo($properties, $json_fields)
     {
         $name_plural = Str::plural($properties->name);
@@ -369,12 +456,14 @@ class ContentModelController extends Controller
         $description = $properties->description;
 
         //save entity
-        $entity_store = new EntityStore;
-        $entity_store->table_name = $name_plural;
-        $entity_store->table_display_name = $display_name;
-        $entity_store->table_description = $description;
-        $entity_store->field_collections = $json_fields;
-        $entity_store->save();
+        $entity_store = EntityStore::firstOrCreate(
+            [
+                "table_name" => $name_plural,
+                "table_display_name" => $display_name,
+                "table_description" => $description,
+                "field_collections" => $json_fields
+            ]
+        );
     }
 
     public function generateModelJson($fields, $properties)
@@ -579,7 +668,7 @@ class ContentModelController extends Controller
         file_put_contents($path, $data);
     }
 
-    protected function generateMigration($name, $fields, $name_target = "nothing")
+    protected function generateMigration($name, $fields, $relation_data = null)
     {
         $name_plural = Str::plural($name);
         $name_plural_studly = Str::studly($name_plural);
@@ -592,12 +681,21 @@ class ContentModelController extends Controller
         $fields_migration = $this->generateFields($fields);
         $templateData = str_replace('{FIELDS}', $fields_migration, $templateData);
 
-        if ($name_target != "nothing") {
-            $name_target .= "_id";
-            $structure = "\$table->unsignedBigInteger('$name_target');";
-            $templateData = str_replace('{FOREIGNKEY}', $structure, $templateData);
-        } else {
-            $templateData = str_replace('{FOREIGNKEY}', "", $templateData);
+        // for one many relationship
+
+        foreach ($relation_data as $data) {
+            $relation_type = $data["type"]["name"];
+            $target = $data["target_model"]["name"];
+            $target = Str::singular($target);
+            $modifier = $data["type"]["modifier"];
+
+            if ($relation_type != "many-many" || ($relation_type == "one-many" && $modifier == 'hasMany')) {
+                $target .= "_id";
+                $structure = "\$table->unsignedBigInteger('$target');";
+                $templateData = str_replace('{FOREIGNKEY}', $structure, $templateData);
+            } else {
+                $templateData = str_replace('{FOREIGNKEY}', "", $templateData);
+            }
         }
 
         file_put_contents($path, $templateData);
