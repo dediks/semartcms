@@ -1,3 +1,6 @@
+import app/Modules/*/Graphql/*.graphql
+import app/Graphql/Phone/*.graphql
+
 "A date string with format `Y-m-d`, e.g. `2011-05-23`."
 scalar Date @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date")
 
