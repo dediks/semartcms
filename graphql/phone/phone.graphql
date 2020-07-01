@@ -1,0 +1,14 @@
+#import */*.graphql
+
+extend type Query {
+    phones: [Phone!]! @paginate(defaultCount: 10)
+    phone(id: ID @eq): Phone @find
+}
+
+type Phone {
+    id: ID!
+    nomor: String!
+    created_at: DateTime!
+    updated_at: DateTime!
+    customers: [Customer!]! @belongsTo
+}

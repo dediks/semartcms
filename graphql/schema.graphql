@@ -1,6 +1,3 @@
-import app/Modules/*/Graphql/*.graphql
-import app/Graphql/Phone/*.graphql
-
 "A date string with format `Y-m-d`, e.g. `2011-05-23`."
 scalar Date @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date")
 
@@ -12,25 +9,8 @@ scalar DateTime
 scalar DateTimeTz
     @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTimeTz")
 
-type Query {
-    users: [User!]! @paginate(defaultCount: 10)
-    user(id: ID @eq): User @find
+type Query
 
-    customers: [Customer!]! @paginate(defaultCount: 10)
-    customer(id: ID @eq): User @find
-}
+type Mutation
 
-type User {
-    id: ID!
-    name: String!
-    email: String!
-    created_at: DateTime!
-    updated_at: DateTime!
-}
-
-type Customer {
-    id: ID!
-    nama: String!
-    created_at: DateTime!
-    updated_at: DateTime!
-}
+#import */*.graphql

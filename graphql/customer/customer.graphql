@@ -1,0 +1,13 @@
+#import */*.graphql
+
+extend type Query {
+    customers: [Customer!]! @paginate(defaultCount: 10)
+    customer(id: ID @eq): Customer @find
+}
+
+type Customer {
+    id: ID!
+    nama: String!
+    created_at: DateTime!
+    updated_at: DateTime!
+}

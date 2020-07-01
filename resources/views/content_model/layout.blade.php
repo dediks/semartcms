@@ -211,7 +211,7 @@
 		}else if(onemany){
 			modifier = onemany;
 		}else{
-			modifier = "belongsTo";
+			modifier = "belongsToMany";
 		}
 
 		let relation_data = {
