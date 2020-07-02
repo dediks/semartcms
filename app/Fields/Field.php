@@ -7,12 +7,12 @@ class Field
 	public $fields;
 	protected $type;
 
-	public function __construct($type=false)
+	public function __construct($type = false)
 	{
 
 		$this->register();
 
-		if($type)
+		if ($type)
 			$this->type = $type;
 	}
 
@@ -37,6 +37,7 @@ class Field
 			'datepicker' => DatepickerField::class,
 			'timepicker' => TimepickerField::class,
 			'currency' => CurrencyField::class,
+			'email' => EmailField::class,
 		];
 	}
 
@@ -56,8 +57,7 @@ class Field
 	{
 		$field = optional($this->fields)[$this->type];
 
-		if(!class_exists($field))
-		{
+		if (!class_exists($field)) {
 			throw new \Exception("The '$this->type' type isn't supported.", 1);
 		}
 

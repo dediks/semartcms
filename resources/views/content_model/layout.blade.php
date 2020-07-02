@@ -449,7 +449,8 @@
 					text: 'Destroy',
 					class: 'btn btn-default',
 					handler: function(b) {
-						localStorage.removeItem("saved_relation_element")
+						localStorage.removeItem("saved_relation_element");
+						localStorage.removeItem("relation_data");
 						localStorage.removeItem('_content_model_generator_layout');
 						localStorage.removeItem('_content_model_generator_setting');
 						welcome_screen();

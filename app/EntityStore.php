@@ -17,6 +17,6 @@ class EntityStore extends Model
 
     public function users()
     {
-        return $this->belongsToMany('App\User', 'entity_user', 'user_id', 'entity_id');
+        return $this->belongsToMany('App\User', 'entity_user', 'user_id', 'entity_id')->withTimestamps();
     }
 }

@@ -62,6 +62,6 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function entities()
     {
-        return $this->belongsToMany('App\EntityStore');
+        return $this->belongsToMany('App\EntityStore', 'entity_user', 'entity_id', 'user_id')->withTimestamps();
     }
 }

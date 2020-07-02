@@ -29,8 +29,9 @@
             <div class="col-md-8">
                 @if($cm->table_name != null)
                     <div class="card card-primary">
-                        <div class="card-header">
-                            <h4 class="card-title">{!! $cm->table_display_name !!}</h4>
+                        <div class="card-header d-inline">
+                            <h4 class="card-title d-inline">{!! $cm->table_display_name !!}</h4>
+                            <a href="{{ route('content_model.layout') }}" class="btn btn-primary float-right"> Add New Content Model</a>
                         </div>
                         <div class="ml-4">
                             @deletebutton([
@@ -51,6 +52,9 @@
                     </div>
                 @else
                     <div class="card card-primary">
+                        <div class="card-header d-inline">
+                            <a href="{{ route('content_model.layout') }}" class="btn btn-primary float-right"> Add New Content Model</a>
+                        </div>
                         <div class="card-body d-flex justify-content-center" id="content-field" style="min-height: 300px ">
                             <span class="align-self-center">Choose the content Model on the left</span>
                         </div>

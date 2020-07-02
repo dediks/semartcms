@@ -1,15 +1,15 @@
 <?php
 
 namespace App;
-use App\Traits\{Name}Trait;
+use App\Traits\OrderTrait;
 
 use Illuminate\Database\Eloquent\Model;
 
-class {Name} extends Model
+class Order extends Model
 {
-	use {Name}Trait;
+	use OrderTrait;
 
-	protected $table = '{plural}';
+	protected $table = 'orders';
 	protected $guarded  = [];
 
 	public function project()

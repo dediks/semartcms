@@ -1,15 +1,15 @@
 <?php
 
 namespace App;
-use App\Traits\{Name}Trait;
+use App\Traits\BookTrait;
 
 use Illuminate\Database\Eloquent\Model;
 
-class {Name} extends Model
+class Book extends Model
 {
-	use {Name}Trait;
+	use BookTrait;
 
-	protected $table = '{plural}';
+	protected $table = 'books';
 	protected $guarded  = [];
 
 	public function project()

@@ -2,7 +2,7 @@
     <section class="section">
       <div class="section-header">
         <div class="section-header-back">
-            <a class="btn" href="{{ route('{route}.index') }}"><i class="fas fa-chevron-left"></i></a>
+            <a class="btn" href="{{ route('orders.index') }}"><i class="fas fa-chevron-left"></i></a>
         </div>
         <h1>{{$title}}</h1>
       </div>
@@ -18,14 +18,47 @@
     	            </div>
     	            <div class="card-body">
                         @isset($edit)
-                        {{ Form::model(${var}, ['route' => [$action, $id], 'enctype' => 'multipart/form-data']) }}
+                        {{ Form::model($order, ['route' => [$action, $id], 'enctype' => 'multipart/form-data']) }}
                         @else
     	            	<form method="post" action="{{ $action }}" enctype="multipart/form-data">
                         @endisset
                             @csrf
                             {{ isset($method) ? method_field($method) : '' }}
 
-                            {form_fields}
+                            @field([
+                'label' => "Total Price",
+                'name' => "total_price",
+                'type' => "text",
+                'validation'=>[
+                    'required' => "",
+                    'unique' => "",
+                    'max' => "",
+                    'min' => "",
+                ]
+            ])
+@field([
+                'label' => "Invoice Number",
+                'name' => "invoice_number",
+                'type' => "text",
+                'validation'=>[
+                    'required' => "",
+                    'unique' => "",
+                    'max' => "",
+                    'min' => "",
+                ]
+            ])
+@field([
+                'label' => "Status",
+                'name' => "status",
+                'type' => "text",
+                'validation'=>[
+                    'required' => "",
+                    'unique' => "",
+                    'max' => "",
+                    'min' => "",
+                ]
+            ])
+
 										<input type="hidden" name="project_id" value="{{ request()->session()->get('project')['id'] }}">
     		                <div class="form-group row mb-4">
     		                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3"></label>

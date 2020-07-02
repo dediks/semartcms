@@ -7,6 +7,7 @@ use App\EntityStore;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Services\ContentModelService;
 
@@ -86,8 +87,12 @@ class ContentModelController extends Controller
         file_put_contents($path, $templateData);
     }
 
-    public function isManytoMany($name, $relation_data)
+    public function isManytoMany($name, $relation_data = null)
     {
+        if ($relation_data == null) {
+            return;
+        }
+
         foreach ($relation_data as $data) {
             $relation_type = $data["type"]["name"];
             $target = $data["target_model"]["name"];
@@ -205,7 +210,7 @@ class ContentModelController extends Controller
 
         flash('Content Model created successfully')->success();
 
-        return redirect(route('content_model.index'));
+        // return redirect(route('content_model.index'));
     }
 
     protected function generateView($name, $fields)
@@ -270,36 +275,45 @@ class ContentModelController extends Controller
         }
     }
 
-    public function generateTrait($name, $relation_data)
+    public function generateTrait($name, $relation_data = null)
     {
         $name_singular = Str::singular($name);
         $name_studly = Str::studly($name_singular);
 
         $template = '';
-        foreach ($relation_data as $data) {
-            $model_target = $data["target_model"]["name"];
-            $model_target = Str::singular($model_target);
-            $name_studly_target = Str::studly($model_target);
 
-            $relation_type = $data["type"]["name"];
-            $modifier = $data["type"]["modifier"];
+        if ($relation_data != null) {
+            foreach ($relation_data as $data) {
+                $model_target = $data["target_model"]["name"];
+                $model_target = Str::singular($model_target);
+                $name_studly_target = Str::studly($model_target);
 
-            if (($relation_type == "one-many" && $modifier == "hasMany") || ($relation_type === "many-many")) {
-                $model_target = Str::plural($model_target);
+                $relation_type = $data["type"]["name"];
+                $modifier = $data["type"]["modifier"];
+
+                if (($relation_type == "one-many" && $modifier == "hasMany") || ($relation_type === "many-many")) {
+                    $model_target = Str::plural($model_target);
+                }
+
+                $template .= '            
+        public function ' . $model_target . '()
+        {
+            return $this->' . $modifier . '("App\\' . $name_studly_target . '");            
+        }';
             }
-
-            $template .= '            
-    public function ' . $model_target . '()
-    {
-        return $this->' . $modifier . '("App\\' . $name_studly_target . '");            
-    }';
         }
 
         $path = app_path('Traits/' . $name_studly . 'Trait.php');
         copy(resource_path('stubs/relation_trait.stub.php'), $path);
         $data = file_get_contents($path);
         $data = str_replace('{Name}', $name_studly, $data);
-        $data = str_replace('{Relation}', $template, $data);
+
+        if ($template != '') {
+            $data = str_replace('{Relation}', $template, $data);
+        } else {
+            $data = str_replace('{Relation}', '', $data);
+        }
+
         file_put_contents($path, $data);
     }
 
@@ -598,6 +612,8 @@ class ContentModelController extends Controller
                 "field_collections" => $json_fields
             ]
         );
+
+        $entity_store->users()->syncWithoutDetaching(Auth::user());
     }
 
     public function generateModelJson($fields, $properties)
@@ -745,19 +761,23 @@ class ContentModelController extends Controller
 
         // for one many relationship
 
-        foreach ($relation_data as $data) {
-            $relation_type = $data["type"]["name"];
-            $target = $data["target_model"]["name"];
-            $target = Str::singular($target);
-            $modifier = $data["type"]["modifier"];
+        if ($relation_data != null) {
+            foreach ($relation_data as $data) {
+                $relation_type = $data["type"]["name"];
+                $target = $data["target_model"]["name"];
+                $target = Str::singular($target);
+                $modifier = $data["type"]["modifier"];
 
-            if ($relation_type != "many-many" || ($relation_type == "one-many" && $modifier == 'hasMany')) {
-                $target .= "_id";
-                $structure = "\$table->unsignedBigInteger('$target');";
-                $templateData = str_replace('{FOREIGNKEY}', $structure, $templateData);
-            } else {
-                $templateData = str_replace('{FOREIGNKEY}', "", $templateData);
+                if ($relation_type != "many-many" || ($relation_type == "one-many" && $modifier == 'hasMany')) {
+                    $target .= "_id";
+                    $structure = "\$table->unsignedBigInteger('$target');";
+                    $templateData = str_replace('{FOREIGNKEY}', $structure, $templateData);
+                } else {
+                    $templateData = str_replace('{FOREIGNKEY}', "", $templateData);
+                }
             }
+        } else {
+            $templateData = str_replace('{FOREIGNKEY}', "", $templateData);
         }
 
         file_put_contents($path, $templateData);
