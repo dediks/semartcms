@@ -177,12 +177,11 @@ class ContentModelController extends Controller
         $properties = $request->properties;
         $fields = $request->fields_collection;
         $fields_in_html = $request->field_collection_in_html;
+        $relation_data = $request->relation_data;
 
         $properties = json_decode($properties, true);
         $fields = $this->changeInputType($fields);
         $name = $properties["name"];
-
-        $relation_data = $request->relation_data;
 
         $json_fields = $this->generateModelJson($fields, $properties);
 
@@ -414,6 +413,9 @@ class ContentModelController extends Controller
         // remove controller
         $this->removeController($table_name);
 
+        //delete trait
+        $this->removeTrait($table_name);
+
         //delete Model
         $this->removeModel($table_name);
 
@@ -448,6 +450,19 @@ class ContentModelController extends Controller
 
         if (file_exists($path_service)) {
             return unlink($path_service);
+        }
+
+        return false;
+    }
+
+    public function removeTrait($table_name)
+    {
+        $name = underscore_to_space($table_name);
+        $name_studly = Str::studly(Str::singular($name));
+        $path_trait = app_path('Traits/' . $name_studly . 'Trait.php');
+
+        if (file_exists($path_trait)) {
+            return unlink($path_trait);
         }
 
         return false;
