@@ -1497,12 +1497,15 @@
 							_saved_fields[i] = {								
 								name: nama,
 								display_name: $(this).find("label").html(),
-								required: optional($(this).find(":input").attr('required')),
 								input_type : optional($(this).find(":input").attr('type')),
 								db_type : optional($(this).attr("data-element-db-type")),
-								max: optional($(this).find(":input").attr('max')),
-								min: optional($(this).find(":input").attr('min')),
-								max_filesize: optional($(this).find(":input").attr('max-filesize'))
+								"validation" : {
+									required: optional($(this).find(":input").attr('required')),
+									unique: optional($(this).find(":input").attr('unique')),
+									max: optional($(this).find(":input").attr('max')),
+									min: optional($(this).find(":input").attr('min')),
+									max_filesize: optional($(this).find(":input").attr('max-filesize'))
+								},
 							}
 						});
 
@@ -1515,7 +1518,7 @@
 									relation_data :JSON.parse(localStorage.getItem("relation_data"))									
 								};
 
-								console.log(_data_to_send);
+								// console.log(_data_to_send);
 
 						$.ajax({
 							url: request_url.generate,
@@ -1526,7 +1529,7 @@
 							type: 'POST',
 							dataType: 'json',
 							error: function(xhr) {
-								// console.log(xhr)
+								console.log(xhr)
 							},
 							beforeSend: function() {
 								button.html('Generating Conten Model ...');
@@ -1534,6 +1537,7 @@
 							},
 							complete: function(e) {
 								console.log(e);								
+								
 								button.html(_button_text);
 								button.removeClass('disabled');		
 

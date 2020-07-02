@@ -1,0 +1,13 @@
+#import */*.graphql
+
+extend type Query {
+    {Name_Plural_Camel}: [{Name_Singular_Studly}!]! @paginate(defaultCount: 10)
+    {Name_Singular_Camel}(id: ID @eq): {Name_Singular_Studly} @find
+}
+
+type {Name_Singular_Studly} {
+    id: ID!
+    {Fields}
+    created_at: DateTime!
+    updated_at: DateTime!
+}

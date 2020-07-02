@@ -13,8 +13,8 @@
 Route::get('/tess', 'ContentModelController@tes');
 
 Route::get('/', function () {
-    return view('home');
-    // return redirect('/dashboard');
+    // return view('home');
+    return redirect('/dashboard');
 });
 
 Route::group(['middleware' => 'auth'], function () {

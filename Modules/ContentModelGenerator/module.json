@@ -1,0 +1,13 @@
+{
+    "name": "ContentModelGenerator",
+    "alias": "contentmodelgenerator",
+    "description": "",
+    "keywords": [],
+    "order": 0,
+    "providers": [
+        "Modules\\ContentModelGenerator\\Providers\\ContentModelGeneratorServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

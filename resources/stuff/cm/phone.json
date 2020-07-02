@@ -1,1 +1,0 @@
-{"info":{"name":"phone","display_name":"Phone","description":"Phone content model"},"attributes":{"nomor":{"name":"nomor","display_name":"Nomor","required":null,"input_type":"text","db_type":"string","max":null,"min":null,"max_filesize":null}}}

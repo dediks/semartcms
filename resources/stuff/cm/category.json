@@ -1,1 +1,0 @@
-{"info":{"name":"category","display_name":"Category","description":""},"attributes":{"name":{"name":"name","display_name":"Name","required":null,"input_type":"text","db_type":"string","max":null,"min":null,"max_filesize":null},"slug":{"name":"slug","display_name":"Slug","required":null,"input_type":"text","db_type":"string","max":null,"min":null,"max_filesize":null}}}

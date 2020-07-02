@@ -1,3 +1,4 @@
 {
-    "ContentModelGenerator": true
+    "ContentModelGenerator": true,
+    "AssetManager": true
 }

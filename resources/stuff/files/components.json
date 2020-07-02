@@ -63,6 +63,31 @@
                     },
                     {
                         "selector": "attr",
+                        "store_to": "unique",
+                        "find": ":input",
+                        "name": "input-unique",
+                        "display_name": "Unique",
+                        "type": "select",
+                        "options": [
+                            {
+                                "name": "input-unique",
+                                "display_name": "Unique",
+                                "primary": true,
+                                "list": [
+                                    {
+                                        "name": "no",
+                                        "display_name": "No"
+                                    },
+                                    {
+                                        "name": "unique",
+                                        "display_name": "Yes"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "selector": "attr",
                         "store_to": "max",
                         "find": ":input",
                         "name": "input-maxlength",

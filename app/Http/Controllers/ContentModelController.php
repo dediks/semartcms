@@ -19,6 +19,10 @@ class ContentModelController extends Controller
         $this->contentModelService = $cm;
     }
 
+    public function generateGraphQLSchema()
+    {
+    }
+
     public function tes()
     {
         $data_relation = array(
@@ -110,20 +114,77 @@ class ContentModelController extends Controller
         }
     }
 
+    protected function generateRequest($name, $fields, $requestType)
+    {
+        $name = underscore_to_space($name);
+        $name_studly = Str::studly($name);
+
+        $path = app_path('Http/Requests/');
+
+        if (!file_exists($path))
+            mkdir($path);
+
+        $validation = '';
+        foreach ($fields as $field) {
+            $field_name = "
+                    '" . $field['name'] . "'" . " => ";
+
+            $required = $field['validation']['required'] != null ? "required" : "";
+
+            $isRequestTypeisUpdate = $requestType == "Update";
+            $isUniqueExist =  $field['validation']['unique'] != null;
+
+            $unique = '';
+            if ($isUniqueExist && $isRequestTypeisUpdate) {
+                $unique = "| unique:" . Str::plural($name)  . "," . $field['name'] . "'.\$this->id,";
+            } else if ($isUniqueExist) {
+                $unique = "| unique:" . Str::plural($name)  . "," . $field['name'] . "',";
+            } else {
+                $unique = "',";
+            }
+
+            $max = $field['validation']['max'] != null ? "| max:" . $field['validation']['max'] : "";
+            $min = $field['validation']['min'] != null ? "| min:" . $field['validation']['min'] : "";
+
+            $validation .= $field_name . "'" . $required . $max . $min . $unique;
+        };
+
+        $path = app_path('Http/Requests/' . $name_studly . $requestType . 'Request.php');
+        copy(resource_path('stubs/request.stub.php'), $path);
+        $data = file_get_contents($path);
+        $data = str_replace('{Model}', $name_studly . $requestType, $data);
+        $data = str_replace('{Validation}', $validation, $data);
+        file_put_contents($path, $data);
+    }
+
+    public function changeInputType($fields)
+    {
+        foreach ($fields as $key => $field) {
+            if ($field["name"] === "password") {
+                $fields[$key]["input_type"] = "password";
+            }
+            if ($field["name"] === "email") {
+                $fields[$key]["input_type"] = "email";
+            }
+        }
+
+        return $fields;
+    }
+
     public function generate(Request $request)
     {
 
         $properties = $request->properties;
         $fields = $request->fields_collection;
+        $fields_in_html = $request->field_collection_in_html;
 
-        $json_fields = $this->generateModelJson($fields, $properties);
+        $properties = json_decode($properties, true);
+        $fields = $this->changeInputType($fields);
+        $name = $properties["name"];
 
-        $properties = json_decode($properties);
-        $name = $properties->name;
         $relation_data = $request->relation_data;
 
-        // $relation_type = $relation_data[0]["type"]["name"];
-        // $target = $relation_data[0]["target_model"]["name"];
+        $json_fields = $this->generateModelJson($fields, $properties);
 
         $this->insertCMInfo($properties, $json_fields);
         $this->isManytoMany($name, $relation_data);
@@ -132,8 +193,8 @@ class ContentModelController extends Controller
         $this->pushRoute($name);
         $this->generateModel($name);
         $this->generateService($name);
-        $this->generateRequest($name, "Create");
-        $this->generateRequest($name, "Update");
+        $this->generateRequest($name, $fields, "Create");
+        $this->generateRequest($name, $fields, "Update");
         $this->generateController($name);
         $this->generateMenu($name);
         $this->generateView($name, $fields);
@@ -145,13 +206,73 @@ class ContentModelController extends Controller
 
         flash('Content Model created successfully')->success();
 
-        // return redirect(route('content_model.index'));
+        return redirect(route('content_model.index'));
+    }
+
+    protected function generateView($name, $fields)
+    {
+        $name = Str::snake($name);
+        $path = resource_path('views/' . Str::plural($name));
+        if (!file_exists($path))
+            mkdir($path);
+
+        $vars = [
+            'Name' => $name,
+            'Plural' => Str::title(Str::plural($name)),
+            'var' => Str::camel($name),
+            'var_plural' => Str::camel(Str::plural($name)),
+            'view' => Str::snake(Str::plural($name)),
+            'route' => Str::kebab(underscore_to_space(Str::plural($name)))
+        ];
+
+        $files = [
+            'index.stub.blade',
+            'form.stub.blade',
+            'create.stub.blade',
+            'edit.stub.blade',
+        ];
+
+        $field_form = "";
+        $field_index = "";
+        $field_index_header = "";
+
+        foreach ($fields as $field) {
+            $field_form .= "@field([
+                'label' => \"" . $field['display_name'] . "\",
+                'name' => \"" . $field['name'] . "\",
+                'type' => \"" . $field['input_type'] . "\",
+                'validation'=>[
+                    'required' => \"" . $field["validation"]['required'] . "\",
+                    'unique' => \"" . $field["validation"]['unique'] . "\",
+                    'max' => \"" . $field["validation"]['max'] . "\",
+                    'min' => \"" . $field["validation"]['min'] . "\",
+                ]
+            ])\n";
+
+            $field_index .= "<td>{{ $" . $vars['var'] . "->" . $field['name'] . " }}</td>\n";
+            $field_index_header .= "<th> " . $field['display_name'] . "</th>\n";
+        };
+
+        foreach ($files as $view) {
+            $file = str_replace('stub.blade', 'blade.php', $view);
+            copy(resource_path('stubs/' . $view), $path . '/' . $file);
+
+            $data = file_get_contents($path . '/' . $file);
+            $data = str_replace('{Name}', $vars['Name'], $data);
+            $data = str_replace('{Plural}', $vars['Plural'], $data);
+            $data = str_replace('{var}', $vars['var'], $data);
+            $data = str_replace('{var_plural}', $vars['var_plural'], $data);
+            $data = str_replace('{route}', $vars['route'], $data);
+            $data = str_replace('{form_fields}', $field_form, $data);
+            $data = str_replace('{index_fields}', $field_index, $data);
+            $data = str_replace('{index_header_fields}', $field_index_header, $data);
+            $data = str_replace('{view}', $vars['view'], $data);
+            file_put_contents($path . '/' . $file, $data);
+        }
     }
 
     public function generateTrait($name, $relation_data)
     {
-        // return $relation_data[0]["type"]["modifier"];
-
         $name_singular = Str::singular($name);
         $name_studly = Str::studly($name_singular);
 
@@ -186,8 +307,6 @@ class ContentModelController extends Controller
     public function load()
     {
         $entity = EntityStore::select(['id', 'table_name'])->get();
-
-        // dd($entity);
 
         return response()->json($entity);
     }
@@ -451,9 +570,9 @@ class ContentModelController extends Controller
 
     public function insertCMInfo($properties, $json_fields)
     {
-        $name_plural = Str::plural($properties->name);
-        $display_name = $properties->display_name;
-        $description = $properties->description;
+        $name_plural = Str::plural($properties["name"]);
+        $display_name = $properties["display_name"];
+        $description = $properties["description"];
 
         //save entity
         $entity_store = EntityStore::firstOrCreate(
@@ -469,15 +588,15 @@ class ContentModelController extends Controller
     public function generateModelJson($fields, $properties)
     {
         $new = [];
-        $prop = json_decode($properties);
-        $name = $prop->name;
+        // $prop = json_decode($properties, true);
+        $name = $properties["name"];
 
         foreach ($fields as $key => $value) {
             $new[$value['name']] = $value;
         }
 
         $data_model = [];
-        $data_model["info"] = json_decode($properties, TRUE);
+        $data_model["info"] = $properties;
         $data_model["attributes"] = $new;
 
         Storage::disk('cm')->put($name . '.json', response()->json($data_model)->getContent());
@@ -528,79 +647,6 @@ class ContentModelController extends Controller
             file_put_contents($path, $menu_contents);
     }
 
-    protected function generateRequest($name, $requestType)
-    {
-        $name = underscore_to_space($name);
-        $name_studly = Str::studly($name);
-
-        $path = app_path('Http/Requests/');
-
-        if (!file_exists($path))
-            mkdir($path);
-
-        $path = app_path('Http/Requests/' . $name_studly . $requestType . 'Request.php');
-        copy(resource_path('stubs/request.stub.php'), $path);
-        $data = file_get_contents($path);
-        $data = str_replace('{Model}', $name_studly . $requestType, $data);
-        file_put_contents($path, $data);
-    }
-
-    protected function generateView($name, $fields)
-    {
-        $name = Str::snake($name);
-        $path = resource_path('views/' . Str::plural($name));
-        if (!file_exists($path))
-            mkdir($path);
-
-        $vars = [
-            'Name' => $name,
-            'Plural' => Str::title(Str::plural($name)),
-            'var' => Str::camel($name),
-            'var_plural' => Str::camel(Str::plural($name)),
-            'view' => Str::snake(Str::plural($name)),
-            'route' => Str::kebab(underscore_to_space(Str::plural($name)))
-        ];
-
-        $files = [
-            'index.stub.blade',
-            'form.stub.blade',
-            'create.stub.blade',
-            'edit.stub.blade',
-        ];
-
-        $field_form = "";
-        $field_index = "";
-        $field_index_header = "";
-
-        foreach ($fields as $field) {
-            $field_form .= "@field([
-                'label' => \"" . $field['display_name'] . "\",
-                'name' => \"" . $field['name'] . "\",
-                'type' => \"" . $field['input_type'] . "\",
-            ])\n";
-
-            $field_index .= "<td>{{ $" . $vars['var'] . "->" . $field['name'] . " }}</td>\n";
-            $field_index_header .= "<th> " . $field['display_name'] . "</th>\n";
-        };
-
-        foreach ($files as $view) {
-            $file = str_replace('stub.blade', 'blade.php', $view);
-            copy(resource_path('stubs/' . $view), $path . '/' . $file);
-
-            $data = file_get_contents($path . '/' . $file);
-            $data = str_replace('{Name}', $vars['Name'], $data);
-            $data = str_replace('{Plural}', $vars['Plural'], $data);
-            $data = str_replace('{var}', $vars['var'], $data);
-            $data = str_replace('{var_plural}', $vars['var_plural'], $data);
-            $data = str_replace('{route}', $vars['route'], $data);
-            $data = str_replace('{form_fields}', $field_form, $data);
-            $data = str_replace('{index_fields}', $field_index, $data);
-            $data = str_replace('{index_header_fields}', $field_index_header, $data);
-            $data = str_replace('{view}', $vars['view'], $data);
-            file_put_contents($path . '/' . $file, $data);
-        }
-    }
-
     protected function generateController($name)
     {
         $name = underscore_to_space($name);
@@ -642,6 +688,7 @@ class ContentModelController extends Controller
         $data = str_replace('{plural}', $name_plural, $data);
         file_put_contents($path, $data);
     }
+
 
     public function create()
     {
@@ -706,13 +753,13 @@ class ContentModelController extends Controller
         $fieldsnya = [];
 
         foreach ($fields as $field) {
-            $fieldsnya[] = $this->prepareMigrationText($field['db_type'], $field['name']);
+            $fieldsnya[] = $this->prepareMigrationText($field['db_type'], $field['name'], $field['validation']);
         }
 
         return implode(infy_nl_tab(1, 3), $fieldsnya);
     }
 
-    protected function prepareMigrationText($fieldnya, $name, $name_target = 'nothing')
+    protected function prepareMigrationText($fieldnya, $name, $validation)
     {
         $inputsArr = explode(':', $fieldnya);
         $migration_text = '$table->';
@@ -736,6 +783,10 @@ class ContentModelController extends Controller
         }
 
         $migration_text .= ')';
+
+        if ($validation["unique"] != null) {
+            $migration_text .= "->unique()";
+        };
 
         foreach ($inputsArr as $input) {
             $inputParams = explode(',', $input);
