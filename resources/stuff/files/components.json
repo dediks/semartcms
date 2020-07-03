@@ -449,7 +449,7 @@
                 "droppable": false,
                 "db_type": "string",
                 "input_type": "file",
-                "html": "<div class='form-group'><label class='field_name'>Field Name</label><input type='file' name='field_name' class='form-control'><div class='help-text' disabled></div></div>",
+                "html": "<div class='form-group'><label class='field_name'>Field Name</label><input type='text' name='field_name' class='form-control' disabled><div class='help-text' disabled></div></div>",
                 "editable": [
                     {
                         "selector": "attr",

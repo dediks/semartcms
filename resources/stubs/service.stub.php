@@ -31,6 +31,12 @@ class {Model}Service
 	{
 		$input = $request->all();
 
+		if (count($request->files) > 0) {
+			foreach ($request->file() as $key => $image) {
+				$input[$key] = $this->fileUpload($request, $key);
+			}
+		}
+
 		$create = $this->model()->create($input);
 
 		return $create;
@@ -45,6 +51,22 @@ class {Model}Service
 		$update = ${var}->update($input);
 
 		return $update;
+	}
+
+	public function fileUpload($request, $input_name)
+	{
+		// $this->validate($request, [
+		// 	$input_name => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+		// ]);
+
+		if ($request->hasFile($input_name)) {
+			$image = $request->file($input_name);
+			$name = time() . '.' . $image->getClientOriginalExtension();
+			$destinationPath = public_path('/images');
+			$image->move($destinationPath, $name);
+
+			return "/images/" . $name;
+		}
 	}
 
 	public function destroy($id)

@@ -183,11 +183,9 @@ class ContentModelController extends Controller
         $fields = $request->fields_collection;
         $fields_in_html = $request->field_collection_in_html;
         $relation_data = $request->relation_data;
-
         $properties = json_decode($properties, true);
         $fields = $this->changeInputType($fields);
         $name = $properties["name"];
-
         $json_fields = $this->generateModelJson($fields, $properties);
 
         $this->insertCMInfo($properties, $json_fields);
@@ -215,6 +213,8 @@ class ContentModelController extends Controller
 
     protected function generateView($name, $fields)
     {
+        // return $fields;
+
         $name = Str::snake($name);
         $path = resource_path('views/' . Str::plural($name));
         if (!file_exists($path))
@@ -253,7 +253,16 @@ class ContentModelController extends Controller
                 ]
             ])\n";
 
-            $field_index .= "<td>{{ $" . $vars['var'] . "->" . $field['name'] . " }}</td>\n";
+            if ($field["input_type"] === "file") {
+
+                $field_index .= "
+                <td>
+                    <img src=\"{{ asset($" . $vars['var'] . "->" . $field['name'] . " ) }}\" alt=\"\" width=\"50\" height=\"50\">
+                </td>\n";
+            } else {
+                $field_index .= "<td>{{ $" . $vars['var'] . "->" . $field['name'] . " }}</td>\n";
+            }
+
             $field_index_header .= "<th> " . $field['display_name'] . "</th>\n";
         };
 
