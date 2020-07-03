@@ -1,0 +1,17 @@
+#import */*.graphql
+
+extend type Query {
+    books: [Book!]! @paginate(defaultCount: 10)
+    book(id: ID @eq): Book @find
+}
+
+type Book {
+    id: ID!
+    title: String!
+    slug: String!
+    description: String!
+    author: String!
+    publisher: String!
+    created_at: DateTime!
+    updated_at: DateTime!
+}
