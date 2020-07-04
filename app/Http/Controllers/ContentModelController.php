@@ -297,7 +297,7 @@ class ContentModelController extends Controller
         
                         <div class=\"col-sm-12 col-md-7\">            
                             <button class=\"btn btn-primary\" type=\"button\" data-id=\"" . $data_relation["target_model"]["name"] . "\" id=\"selectRelation\" onclick=\"selectRelatedRelation('" . $data_relation["target_model"]["name"] . "','" . $data_relation["type"]["name"] . "','" . $data_relation["type"]["modifier"] . "')\")>Select " . $data_relation["target_model"]["name"] . "</button>
-                            <div id=\"view_selected_" . $data_relation["target_model"]["name"] . "\" class=\"mt-1\">No categories selected</div>
+                            <div id=\"view_selected_" . $data_relation["target_model"]["name"] . "\" class=\"mt-1\">No" . $data_relation["target_model"]["name"] . " selected</div>
                         </div>
                         <input type=\"hidden\" value=\"\" name=\"temp_data_selected[]\" id=\"temp_data_selected\">
                         <input type=\"hidden\" value=\"" . $data_relation["target_model"]["name"] . "," . $data_relation["type"]["name"] . "," . $data_relation["type"]["modifier"] . "\" name=\"data_target\" id=\"data_target\">
@@ -820,7 +820,7 @@ class ContentModelController extends Controller
                 $target = Str::singular($target);
                 $modifier = $data["type"]["modifier"];
 
-                if ($relation_type != "many-many" || ($relation_type == "one-many" && $modifier == 'hasMany')) {
+                if (($relation_type != "many-many") && ($relation_type == "one-many" && $modifier != 'hasMany')) {
                     $target .= "_id";
                     $structure = "\$table->unsignedBigInteger('$target');";
                     $templateData = str_replace('{FOREIGNKEY}', $structure, $templateData);

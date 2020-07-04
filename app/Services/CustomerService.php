@@ -2,15 +2,18 @@
 
 namespace Services;
 
-use App\{Model};
+use App\Customer;
 use Illuminate\Support\Arr;
 use Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use PhpParser\Node\Stmt\Else_;
 
-class {Model}Service
+class CustomerService
 {
 	public function model()
 	{
-		return new {Model};
+		return new Customer;
 	}
 
 	public function all()
@@ -101,11 +104,11 @@ class {Model}Service
 
 	public function findAndUpdate($request, $id)
 	{
-		${var} = $this->find($id);
+		$customer = $this->find($id);
 
 		$input = $request->all();
 
-		$update = ${var}->update($input);
+		$update = $customer->update($input);
 
 		return $update;
 	}

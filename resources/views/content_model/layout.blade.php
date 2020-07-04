@@ -111,8 +111,8 @@
 								<div id="whats"></div>
 								<div id="whats2"></div>
 								<div id="pivot-table-container"></div>
-								<div id="referenced-model">
-								</div>
+								<div id="referenced-model"></div>
+								<div id="custom-referenced-model"></div>
 							</div>
 					</div>
 					<div class="modal-footer">
@@ -201,6 +201,11 @@
 		let relation_type = $('#relation-option').val();
 		let pivot_table = $('#pivot-table').val();
 		let relation_model_target = $('#relation-model').val();
+		
+		if(relation_model_target === "hmmm"){
+			relation_model_target = $('#custom-relation-model').val();
+		}
+
 		let oneone = $('#oneOne').val();
 		let onemany = $('#oneMany').val();
 
@@ -226,6 +231,8 @@
 					"name" : relation_model_target
 				}
 		}
+
+		console.log(relation_data);
 
 		let info_cm = JSON.parse(localStorage.getItem('_content_model_generator_setting'));		
 
@@ -285,7 +292,7 @@
 	function loadContentModel()
 	{           
 		if ($('#relation-model > option').length == 1) {
-			$('#relation-model').empty().append('<option>select</option>');
+			$('#relation-model').empty().append('<option value="hmmm">No of these</option>');
 
 				$.ajax({
 						url: '{{ route('content_model.load') }}',
@@ -312,7 +319,6 @@
 	function selectRelation()
 	{
 		let selected_relation = $('#relation-option').val();
-
 
 		if(selected_relation === 'one-one')
 		{
@@ -383,18 +389,31 @@
 				let referenced_model_element = `
 					<div id="relation-model-div">
 						<label for="relation-model">Referenced Model</label>
-						<select name="relation-model" id="relation-model" class="form-control" onclick="loadContentModel()" required>
+						<select name="relation-model" id="relation-model" class="form-control" onclick="loadContentModel()" required onchange="referencedModelSelect(this)">
 						<option value="no-model">Select content model</option>
 						</select>
 					</div>
 				`;
 
 					$("#referenced-model").html(referenced_model_element);
-
 			}else{
 				$("#relation-model-div").remove();
 			}
 		}
+	}
+
+	function referencedModelSelect(selectModel){
+		console.log(selectModel.value ==="hmmm");
+		if(selectModel.value === "hmmm"){
+			let temp = `
+			<div id="custom-referenced-model-div" class="mt-2">
+				<input type="text" name="custom-relation-model" id="custom-relation-model" class="form-control" placeholder="type your reference content model that didnt exist" required>
+				</div>
+			`;
+				$("#custom-referenced-model").append(temp);									
+		}else{
+			$("#custom-referenced-model-div").remove();
+		};
 	}
 	// ------------------------------------------------------------
 	let is_recover = false,
@@ -429,7 +448,7 @@
 		`);
 
 		bsModal.create({
-			title: '<i class="fas fa-heart-broken"></i> Recover Layout',
+			title: '<i class="fas fa-heart-broken"></input> Recover Layout',
 			body: 'We have found your last work <code>'+(_saved_setting.display_name ? _saved_setting.display_name : 'Untitled Content Model')+'</code>, would you like to recover it?',
 			options: {
 				'backdrop' : 'static'
