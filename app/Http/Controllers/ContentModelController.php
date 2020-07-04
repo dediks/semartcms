@@ -168,9 +168,7 @@ class ContentModelController extends Controller
         $id_of_selected_record = request()->data;
         $data_relation = request()->data_relation;
 
-        if ($data_relation["name"] == "many-many") 
-        {
-            
+        if ($data_relation["name"] == "many-many") {
         }
 
         return;
@@ -298,8 +296,11 @@ class ContentModelController extends Controller
                         </label>
         
                         <div class=\"col-sm-12 col-md-7\">            
-                            <button class=\"btn btn-primary\" type=\"button\" data-id=\"" . $data_relation["target_model"]["name"] . "\" id=\"selectRelation\" onclick=\"selectRelatedRelation('" . $data_relation["target_model"]["name"] . "," . $data_relation["type"]["name"] . "," . $data_relation["type"]["modifier"] . "')\")>Select " . $data_relation["target_model"]["name"] . "</button>
+                            <button class=\"btn btn-primary\" type=\"button\" data-id=\"" . $data_relation["target_model"]["name"] . "\" id=\"selectRelation\" onclick=\"selectRelatedRelation('" . $data_relation["target_model"]["name"] . "','" . $data_relation["type"]["name"] . "','" . $data_relation["type"]["modifier"] . "')\")>Select " . $data_relation["target_model"]["name"] . "</button>
+                            <div id=\"view_selected_" . $data_relation["target_model"]["name"] . "\" class=\"mt-1\">No categories selected</div>
                         </div>
+                        <input type=\"hidden\" value=\"\" name=\"temp_data_selected[]\" id=\"temp_data_selected\">
+                        <input type=\"hidden\" value=\"" . $data_relation["target_model"]["name"] . "," . $data_relation["type"]["name"] . "," . $data_relation["type"]["modifier"] . "\" name=\"data_target\" id=\"data_target\">
                     </div>\n";
 
                 $field_index .= "<td>{{ $" . $vars['var'] . "->" . $data_relation["target_model"]["name"] . " }}</td>\n";

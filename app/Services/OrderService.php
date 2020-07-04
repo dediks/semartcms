@@ -2,15 +2,15 @@
 
 namespace Services;
 
-use App\{Model};
-use Illuminate\Support\Arr;
+use App\Order;
 use Auth;
+use Illuminate\Support\Arr;
 
-class {Model}Service
+class OrderService
 {
 	public function model()
 	{
-		return new {Model};
+		return new Order;
 	}
 
 	public function all()
@@ -44,6 +44,7 @@ class {Model}Service
 		$data_target_exploded = explode(',', $data_target); //0 : target_model, 1 : name, 2 : modifier
 		$target_model = $data_target_exploded[0];
 
+		// dd($input);
 		// dd($target_model);
 		$relation_type = $data_target_exploded[1];
 		$modifier = $data_target_exploded[2];
@@ -59,6 +60,7 @@ class {Model}Service
 				// dd($datum_decoded);
 			}
 		} else {
+
 			dd("tidak ada");
 		}
 		// dd($input);
@@ -74,22 +76,21 @@ class {Model}Service
 		if ($data_relation) {
 			$new_input = Arr::except($input, ['temp_data_selected', 'data_target']);
 			$create = $this->model()->create($new_input);
+			$this->setRelation($input, $create);
 		} else {
 			$create = $this->model()->create($input);
 		}
-
-		$this->setRelation($input, $create);
 
 		return $create;
 	}
 
 	public function findAndUpdate($request, $id)
 	{
-		${var} = $this->find($id);
+		$order = $this->find($id);
 
 		$input = $request->all();
 
-		$update = ${var}->update($input);
+		$update = $order->update($input);
 
 		return $update;
 	}

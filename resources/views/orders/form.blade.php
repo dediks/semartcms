@@ -2,7 +2,7 @@
     <section class="section">
       <div class="section-header">
         <div class="section-header-back">
-            <a class="btn" href="{{ route('{route}.index') }}"><i class="fas fa-chevron-left"></i></a>
+            <a class="btn" href="{{ route('orders.index') }}"><i class="fas fa-chevron-left"></i></a>
         </div>
         <h1>{{$title}}</h1>
       </div>
@@ -18,14 +18,59 @@
     	            </div>
     	            <div class="card-body">
                         @isset($edit)
-                        {{ Form::model(${var}, ['route' => [$action, $id], 'enctype' => 'multipart/form-data']) }}
+                        {{ Form::model($order, ['route' => [$action, $id], 'enctype' => 'multipart/form-data']) }}
                         @else
     	            	<form method="post" action="{{ $action }}" enctype="multipart/form-data">
                         @endisset
                             @csrf
                             {{ isset($method) ? method_field($method) : '' }}
 
-                            {form_fields}
+                            @field([
+                'label' => "Invoice Number",
+                'name' => "invoice_number",
+                'type' => "text",
+                'validation'=>[
+                    'required' => "",
+                    'unique' => "",
+                    'max' => "",
+                    'min' => "",
+                ]
+            ])
+@field([
+                'label' => "Total Price",
+                'name' => "total_price",
+                'type' => "number",
+                'validation'=>[
+                    'required' => "",
+                    'unique' => "",
+                    'max' => "",
+                    'min' => "",
+                ]
+            ])
+@field([
+                'label' => "Status",
+                'name' => "status",
+                'type' => "text",
+                'validation'=>[
+                    'required' => "",
+                    'unique' => "",
+                    'max' => "",
+                    'min' => "",
+                ]
+            ])
+
+                    <div class="form-group row mb-4">
+                        <label for="field-title" class="col-form-label text-md-right col-12 col-md-3 col-lg-3 ">books
+                        </label>
+        
+                        <div class="col-sm-12 col-md-7">            
+                            <button class="btn btn-primary" type="button" data-id="books" id="selectRelation" onclick="selectRelatedRelation('books','many-many','belongsToMany')")>Select books</button>
+                            <div id="view_selected_books" class="mt-1">No categories selected</div>
+                        </div>
+                        <input type="hidden" value="" name="temp_data_selected[]" id="temp_data_selected">
+                        <input type="hidden" value="books,many-many,belongsToMany" name="data_target" id="data_target">
+                    </div>
+
 										<input type="hidden" name="project_id" value="{{ request()->session()->get('project')['id'] }}">
     		                <div class="form-group row mb-4">
     		                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3"></label>
@@ -155,7 +200,7 @@
        });
 
         $('#relationModalLabel').html("Select " +target_model);                
-        $('#relationModal').modal();
+        $('#relationModal').modal({'backdrop':false});
 
         $('#btn-submit').click(function(){
 
