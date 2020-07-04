@@ -14,12 +14,16 @@ class BookCreateRequest extends FormRequest
     public function rules()
     {
         return [
-            
-                    'title' => 'required',
-                    'slug' => 'required| unique:books,slug',
-                    'description' => '',
-                    'author' => '',
-                    'publisher' => '',
+
+            'title' => 'required',
+            'cover' => '',
+            'price' => 'required',
+            'slug' => 'required| unique:books,slug',
+            'author' => '',
+            'description' => '',
+            'publisher' => '',
+            'views' => '',
+            'stock' => '',
         ];
     }
 }

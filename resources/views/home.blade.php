@@ -54,7 +54,7 @@
             </div>
             <div class="form-group">
               <label for="description">Project Description</label>
-              <input type="text" class="form-control" id="description" placeholder="">
+              <textarea name="description" class="form-control" id="description" cols="30" rows="10"></textarea>
             </div>
         </div>
         <div class="modal-footer">
@@ -82,6 +82,7 @@
             description:description
           },
           success: function(e){
+            console.log(e);
             if (e === "success"){
               window.location.reload()
             }
@@ -89,7 +90,7 @@
 
         });
 
-        event.preventDefault();
+        // event.preventDefault();
       });
     </script>
   @endpush

@@ -17,6 +17,7 @@ class ProjectController extends Controller
 
     public function store(Request $request)
     {
+        // return $request;
         $data = $this->validate($request, [
             'name' => 'required',
             'description' => 'required',
@@ -25,7 +26,11 @@ class ProjectController extends Controller
         $project = Auth::user()->projects()->create($data);
 
         if ($project) {
+
             return "success";
+        } else {
+
+            return "fail";
         }
     }
 

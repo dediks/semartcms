@@ -93,7 +93,6 @@ function is_setting_avail($get)
 
 function field($type, $data=[])
 {
-
     if(is_array($type))
     {
         $data = $type;

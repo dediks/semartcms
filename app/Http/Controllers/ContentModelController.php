@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Services\ContentModelService;
 
@@ -162,6 +163,19 @@ class ContentModelController extends Controller
         file_put_contents($path, $data);
     }
 
+    public function submitRelatedModel()
+    {
+        $id_of_selected_record = request()->data;
+        $data_relation = request()->data_relation;
+
+        if ($data_relation["name"] == "many-many") 
+        {
+            
+        }
+
+        return;
+    }
+
     public function changeInputType($fields)
     {
         foreach ($fields as $key => $field) {
@@ -178,7 +192,7 @@ class ContentModelController extends Controller
 
     public function generate(Request $request)
     {
-
+        // return 'ok';
         $properties = $request->properties;
         $fields = $request->fields_collection;
         $fields_in_html = $request->field_collection_in_html;
@@ -199,7 +213,7 @@ class ContentModelController extends Controller
         $this->generateRequest($name, $fields, "Update");
         $this->generateController($name);
         $this->generateMenu($name);
-        $this->generateView($name, $fields);
+        $this->generateView($name, $fields, $relation_data);
 
         // Artisan::call('migrate:fresh', [
         //     '--force' => true,
@@ -211,7 +225,16 @@ class ContentModelController extends Controller
         // return redirect(route('content_model.index'));
     }
 
-    protected function generateView($name, $fields)
+    public function loadRelatedModel()
+    {
+        $target_model = request()->target_model;
+
+        $result = DB::table($target_model)->select('*')->get();
+
+        return response()->json($result);
+    }
+
+    protected function generateView($name, $fields, $relation_data = null)
     {
         // return $fields;
 
@@ -254,7 +277,6 @@ class ContentModelController extends Controller
             ])\n";
 
             if ($field["input_type"] === "file") {
-
                 $field_index .= "
                 <td>
                     <img src=\"{{ asset($" . $vars['var'] . "->" . $field['name'] . " ) }}\" alt=\"\" width=\"50\" height=\"50\">
@@ -265,6 +287,26 @@ class ContentModelController extends Controller
 
             $field_index_header .= "<th> " . $field['display_name'] . "</th>\n";
         };
+
+        if ($relation_data != null) {
+            foreach ($relation_data as $data_relation) {
+
+                $field_form .= "
+                    <div class=\"form-group row mb-4\">
+                        <label for=\"field-title\" class=\"col-form-label text-md-right col-12 col-md-3 col-lg-3 \">"
+                    . $data_relation["target_model"]["name"] . "
+                        </label>
+        
+                        <div class=\"col-sm-12 col-md-7\">            
+                            <button class=\"btn btn-primary\" type=\"button\" data-id=\"" . $data_relation["target_model"]["name"] . "\" id=\"selectRelation\" onclick=\"selectRelatedRelation('" . $data_relation["target_model"]["name"] . "," . $data_relation["type"]["name"] . "," . $data_relation["type"]["modifier"] . "')\")>Select " . $data_relation["target_model"]["name"] . "</button>
+                        </div>
+                    </div>\n";
+
+                $field_index .= "<td>{{ $" . $vars['var'] . "->" . $data_relation["target_model"]["name"] . " }}</td>\n";
+
+                $field_index_header .= "<th> " . $data_relation["target_model"]["name"] . "</th>\n";
+            }
+        }
 
         foreach ($files as $view) {
             $file = str_replace('stub.blade', 'blade.php', $view);

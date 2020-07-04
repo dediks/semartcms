@@ -295,6 +295,7 @@
 							'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 						},
 						success: function(res) {
+							// console.log(res);
 								res.forEach(function(cm){
 									// console.log(cm);
 									$("#relation-model").append(`<option value="${ cm.table_name }">${ cm.table_name }</option>`);
@@ -1498,7 +1499,8 @@
 							_saved_fields[i] = {								
 								name: nama,
 								display_name: $(this).find("label").html(),
-								input_type : optional($(this).find(":input").attr('type')),
+								// input_type : optional($(this).find(":input").attr('type')),
+								input_type : optional($(this).find(":input").attr('data-type')),
 								db_type : optional($(this).attr("data-element-db-type")),
 								"validation" : {
 									required: optional($(this).find(":input").attr('required')),
@@ -1519,7 +1521,7 @@
 									relation_data :JSON.parse(localStorage.getItem("relation_data"))									
 								};
 
-								// console.log(_data_to_send);
+								console.log(_data_to_send);
 
 						$.ajax({
 							url: request_url.generate,

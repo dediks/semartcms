@@ -5,8 +5,8 @@ namespace App\Traits;
 trait BookTrait
 {
               
-        public function orders()
+        public function categories()
         {
-            return $this->belongsToMany("App\Order");            
+            return $this->belongsToMany("App\Category");            
         }
 }

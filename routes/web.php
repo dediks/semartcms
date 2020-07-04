@@ -42,8 +42,9 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('/update/{cm}', 'ContentModelController@update')->name('update');
             Route::post('/{cm}/delete-field', 'ContentModelController@deleteField')->name('delete-field');
 
-
             Route::post('/load', 'ContentModelController@load')->name('load');
+            Route::post('/load-data', 'ContentModelController@loadRelatedModel')->name('load-related-model');
+            Route::post('/submit', 'ContentModelController@submitRelatedModel')->name('submit-related-model');
         });
     });
 
@@ -113,6 +114,7 @@ Route::group(['middleware' => 'auth'], function () {
 
 Route::middleware('auth')->get('logout', function () {
     Auth::logout();
+    request()->session()->forget('project');
     return redirect('/login')->withInfo('You have successfully logged out!');
 })->name('logout');
 
