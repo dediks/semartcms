@@ -4,6 +4,7 @@ namespace Services;
 
 use App\{Model};
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Auth;
 
 class {Model}Service
@@ -57,7 +58,7 @@ class {Model}Service
 
 					$created->{$target_model}()->attach($datum_decoded);
 				}
-			} else if ($relation_type == "one-many") {
+			} else if ($relation_type == "one-many" && $modifier == "hasMany") {
 				$new_name_target_model = Str::singular($target_model);
 				$new_name_target_model = Str::studly($new_name_target_model);
 
@@ -65,7 +66,7 @@ class {Model}Service
 					$datum_decoded = json_decode($datum_relation);
 					// dd($datum_decoded);
 
-					$className = 'App\\' . $new_name_target_model;
+					$className = '\App\\' . $new_name_target_model;
 					foreach ($datum_decoded as $a) {
 						$result = $className::find($a);
 						$created->{$target_model}()->save($result);
@@ -73,9 +74,24 @@ class {Model}Service
 
 					$created->refresh();
 				}
+			} else if ($modifier == "belongsTo" ||  $modifier == "hasOne") { //modifier belongsTo
+
+				// dd($data_relation[0]);
+				$new_name_target_model = Str::singular($target_model);
+				$new_name_target_model_in_studly = Str::studly($new_name_target_model);
+
+
+				$datum_decoded = json_decode($data_relation[0]);
+				$id = $datum_decoded[0];
+
+				$classTarget = 'App\\' . $new_name_target_model_in_studly;
+				$data_target = $classTarget::find($id);
+
+				$created->{$new_name_target_model}()->associate($data_target);
+				$created->save();
 			}
-		} else {
-			dd("tidak ada");
+		} else { //jika tidak ada relasi
+			dd("tidak ada relasi");
 		}
 		// dd($input);
 	}
@@ -84,20 +100,20 @@ class {Model}Service
 	{
 		$input = $request->all();
 
-		$data_relation = $input["temp_data_selected"]; // list id
+		$cek_relation_exists = array_key_exists("temp_data_selected", $input);
 		$this->checkIsAnyFileField($request);
 
-		if ($data_relation) {
+		if ($cek_relation_exists) {
 			$new_input = Arr::except($input, ['temp_data_selected', 'data_target']);
 			$create = $this->model()->create($new_input);
+			$this->setRelation($input, $create);
 		} else {
 			$create = $this->model()->create($input);
 		}
 
-		$this->setRelation($input, $create);
-
 		return $create;
 	}
+
 
 	public function findAndUpdate($request, $id)
 	{

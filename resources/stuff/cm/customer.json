@@ -1,1 +1,0 @@
-{"info":{"name":"customer","display_name":"Customer","description":""},"attributes":{"name":{"name":"name","display_name":"name","input_type":"text","db_type":"string","validation":{"required":null,"unique":null,"max":null,"min":null,"max_filesize":null}}}}
