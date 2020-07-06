@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use CM;
 use App\EntityStore;
+use App\Project;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Services\ContentModelService;
 
@@ -21,51 +23,63 @@ class ContentModelController extends Controller
         $this->contentModelService = $cm;
     }
 
-    public function generateGraphQLSchema()
+    public function generateGraphQLSchema($name, $fields, $relation_data)
     {
-    }
+        // return $relation_data;
 
-    public function tes()
-    {
-        $data_relation = array(
-            "nama" => "Relasi Phone ke Customer",
-            "description" => "Desc Phone ke customer",
-            "type" => [
-                "name" => "many-many",
-                "modifier" => "belongsTo",
-            ],
-            "target_model" => [
-                "name" => "customer"
-            ],
-        );
+        $singular_name = Str::singular($name);
+        $plural_name = Str::plural($name);
+        $singular_studly_name = Str::studly($singular_name);
+        $plural_camel_name = Str::camel($plural_name);
+        $singular_camel_name = Str::camel($singular_name);
 
-        $name = "phone";
+        $path = base_path("graphql/" . $singular_name);
 
-        $fields = array(
-            [
-                "db_type" => "string",
-                "display_name" => "Name",
-                "name" => "name",
-                "input_type" => "text",
-                "max" => 100,
-                "max_filesize" => null,
-                "min" => 10,
-                "required" => "required",
-            ],
-            [
-                "db_type" => "string",
-                "display_name" => "Alamat",
-                "name" => "alamat",
-                "input_type" => "text",
-                "max" => null,
-                "max_filesize" => null,
-                "min" => null,
-                "required" => null,
-            ]
-        );
+        if (!file_exists($path))
+            mkdir($path);
 
-        $this->generateTrait($name, $data_relation);
-        $this->generateModel($name);
+        $path = $path . '/' . $singular_name . '.graphql';
+
+        $field_text = '';
+        foreach ($fields as $field) {
+            $field_text .= "\t" . $field["name"] . ":" . Str::studly($field["db_type"]);
+            foreach ($field["validation"] as $validation) {
+                $validation["required"] != null ? $field_text .= $validation : '';
+            };
+            $field_text .= "\r\n";
+        };
+
+        // jika many to many, 
+        // misal book dan order
+        // didalam schema book
+        // orders:[Order!]!
+        // didalam schema order
+        // books: [Book!]!
+
+        if ($relation_data != null) {
+            foreach ($relation_data as $rel) {
+                $rel_type = $rel["type"]["name"];
+                $rel_modifier = $rel["type"]["modifier"];
+                $target_model = $rel["target_model"]["name"];
+                $target_model_lower = strtolower($target_model);
+                $target_model_singular = Str::singular($target_model);
+
+                if ($rel_type == "many-many" || ($rel_type == "one-many" && $rel_modifier == "hasMany")) {
+                    $field_text .= "\t" . Str::plural($target_model_lower)  . ": [" . Str::studly($target_model_singular) . "]";
+                } else {
+                    $field_text .= "\t" . Str::singular($target_model_lower)  . ": " . Str::studly($target_model_singular);
+                }
+                $field_text .= "\r\n";
+            }
+        }
+
+        copy(resource_path('stubs/graphqlschema.stub.graphql'), $path);
+        $data = file_get_contents($path);
+        $data = str_replace('{Name_Plural_Camel}', $plural_camel_name, $data);
+        $data = str_replace('{Name_Singular_Studly}', $singular_studly_name, $data);
+        $data = str_replace('{Name_Singular_Camel}', $singular_camel_name, $data);
+        $data = str_replace('{Fields}', $field_text, $data);
+        file_put_contents($path, $data);
     }
 
     public function createPivotTableMigration($model1, $model2)
@@ -198,6 +212,8 @@ class ContentModelController extends Controller
         $properties = json_decode($properties, true);
         $fields = $this->changeInputType($fields);
         $name = $properties["name"];
+
+        $this->generateGraphQLSchema($name, $fields, $relation_data);
         $json_fields = $this->generateModelJson($fields, $properties);
 
         $this->insertCMInfo($properties, $json_fields);
@@ -220,16 +236,19 @@ class ContentModelController extends Controller
 
         flash('Content Model created successfully')->success();
 
-        // return redirect(route('content_model.index'));
+        return redirect(route('content_model.index'));
     }
 
     public function loadRelatedModel()
     {
         $target_model = request()->target_model;
 
-        $result = DB::table($target_model)->select('*')->get();
-
-        return response()->json($result);
+        if (Schema::hasTable($target_model)) {
+            $result = DB::table($target_model)->select('*')->get();
+            return response()->json($result);
+        } else {
+            return '';
+        }
     }
 
     protected function generateView($name, $fields, $relation_data = null)
@@ -296,14 +315,18 @@ class ContentModelController extends Controller
                         </label>
         
                         <div class=\"col-sm-12 col-md-7\">            
-                            <button class=\"btn btn-primary\" type=\"button\" data-id=\"" . $data_relation["target_model"]["name"] . "\" id=\"selectRelation\" onclick=\"selectRelatedRelation('" . $data_relation["target_model"]["name"] . "','" . $data_relation["type"]["name"] . "','" . $data_relation["type"]["modifier"] . "')\")>Select " . $data_relation["target_model"]["name"] . "</button>
+                            <button class=\"btn btn-primary\" type=\"button\" data-id=\"" . $data_relation["target_model"]["name"] . "\" id=\"selectRelation" . $data_relation["target_model"]["name"] . "\" onclick=\"selectRelatedRelation('" . $data_relation["target_model"]["name"] . "','" . $data_relation["type"]["name"] . "','" . $data_relation["type"]["modifier"] . "')\")>Select " . $data_relation["target_model"]["name"] . "</button>
                             <div id=\"view_selected_" . $data_relation["target_model"]["name"] . "\" class=\"mt-1\">No" . $data_relation["target_model"]["name"] . " selected</div>
                         </div>
                         <input type=\"hidden\" value=\"\" name=\"temp_data_selected[]\" id=\"temp_data_selected\">
                         <input type=\"hidden\" value=\"" . $data_relation["target_model"]["name"] . "," . $data_relation["type"]["name"] . "," . $data_relation["type"]["modifier"] . "\" name=\"data_target\" id=\"data_target\">
                     </div>\n";
 
-                $field_index .= "<td>{{ $" . $vars['var'] . "->" . $data_relation["target_model"]["name"] . " }}</td>\n";
+                // if (file_exists(app_path(Str::studly(Str::singular($data_relation["target_model"]["name"]))))) {
+                //     $field_index .= "<td>{{ $" . $vars['var'] . "->" . $data_relation["target_model"]["name"] . " }}</td>\n";
+                // } else {
+                $field_index .= "<td><button type=\"button\" class=\"btn btn-info\" id=\"btn" . $data_relation["target_model"]["name"] . "\" data-relation =\"" . $data_relation["target_model"]["name"] . "\" onclick=\"showRelation({{ $" . $vars['var'] . "->id }}, '" . $vars['var'] . "','" . $data_relation["target_model"]["name"] . "')\">Show " . $data_relation["target_model"]["name"] . "</button></td>\n";
+                // }
 
                 $field_index_header .= "<th> " . $data_relation["target_model"]["name"] . "</th>\n";
             }
@@ -666,6 +689,9 @@ class ContentModelController extends Controller
         );
 
         $entity_store->users()->syncWithoutDetaching(Auth::user());
+
+        $project = Project::find(request()->project_id);
+        $entity_store->project()->associate($project)->save();
     }
 
     public function generateModelJson($fields, $properties)

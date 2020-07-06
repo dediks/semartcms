@@ -2,7 +2,7 @@
     <section class="section">
       <div class="section-header">
         <div class="section-header-back">
-            <a class="btn" href="{{ route('{route}.index') }}"><i class="fas fa-chevron-left"></i></a>
+            <a class="btn" href="{{ route('books.index') }}"><i class="fas fa-chevron-left"></i></a>
         </div>
         <h1>{{$title}}</h1>
       </div>
@@ -18,13 +18,48 @@
     	            </div>
     	            <div class="card-body">
                         @isset($edit)
-                        {{ Form::model(${var}, ['route' => [$action, $id], 'enctype' => 'multipart/form-data']) }}
+                        {{ Form::model($book, ['route' => [$action, $id], 'enctype' => 'multipart/form-data']) }}
                         @else
     	            	<form method="post" action="{{ $action }}" enctype="multipart/form-data">
                         @endisset
                             @csrf
                             {{ isset($method) ? method_field($method) : '' }}
-                            {form_fields}
+                            @field([
+                'label' => "Title",
+                'name' => "title",
+                'type' => "text",
+                'validation'=>[
+                    'required' => "",
+                    'unique' => "",
+                    'max' => "",
+                    'min' => "",
+                ]
+            ])
+
+                    <div class="form-group row mb-4">
+                        <label for="field-title" class="col-form-label text-md-right col-12 col-md-3 col-lg-3 ">categories
+                        </label>
+        
+                        <div class="col-sm-12 col-md-7">            
+                            <button class="btn btn-primary" type="button" data-id="categories" id="selectRelationcategories" onclick="selectRelatedRelation('categories','many-many','belongsToMany')")>Select categories</button>
+                            <div id="view_selected_categories" class="mt-1">Nocategories selected</div>
+                        </div>
+                        <input type="hidden" value="" name="temp_data_selected[]" id="temp_data_selected">
+                        <input type="hidden" value="categories,many-many,belongsToMany" name="data_target" id="data_target">
+                    </div>
+
+                    <div class="form-group row mb-4">
+                        <label for="field-title" class="col-form-label text-md-right col-12 col-md-3 col-lg-3 ">orders
+                        </label>
+        
+                        <div class="col-sm-12 col-md-7">            
+                            <button class="btn btn-primary" type="button" data-id="orders" id="selectRelationorders" onclick="selectRelatedRelation('orders','many-many','belongsToMany')")>Select orders</button>
+                            <div id="view_selected_orders" class="mt-1">Noorders selected</div>
+                        </div>
+                        <input type="hidden" value="" name="temp_data_selected[]" id="temp_data_selected">
+                        <input type="hidden" value="orders,many-many,belongsToMany" name="data_target" id="data_target">
+                    </div>
+
     		                <div class="form-group row mb-4">
     		                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3"></label>
     		                    <div class="col-sm-12 col-md-7">

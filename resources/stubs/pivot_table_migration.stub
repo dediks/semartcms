@@ -13,12 +13,14 @@ class Create{Model1}{Model2}Table extends Migration
      */
     public function up()
     {
-        Schema::create('{Model1Lowercase}_{Model2Lowercase}', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->unsignedBigInteger('{Model1Lowercase}_id');
-            $table->unsignedBigInteger('{Model2Lowercase}_id');
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('{Model1Lowercase}_{Model2Lowercase}')) {
+            Schema::create('{Model1Lowercase}_{Model2Lowercase}', function (Blueprint $table) {
+                $table->bigIncrements('id');
+                $table->unsignedBigInteger('{Model1Lowercase}_id');
+                $table->unsignedBigInteger('{Model2Lowercase}_id');
+                $table->timestamps();
+            });
+        }
     }
 
     /**

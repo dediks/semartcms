@@ -1,0 +1,16 @@
+#import */*.graphql
+
+extend type Query {
+    orders: [Order!]! @paginate(defaultCount: 10)
+    order(id: ID @eq): Order @find
+}
+
+type Order {
+    id: ID!
+    	status:String
+	total_price:Float
+	invoice_number:String
+
+    created_at: DateTime!
+    updated_at: DateTime!
+}

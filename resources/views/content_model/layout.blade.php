@@ -137,15 +137,15 @@
 					<div class="modal-body">
 							<div class="form-group">
 								<label for="name-relation">Name</label>
-								<input type="text" name="name-relation" class="form-control" id="name-relation" placeholder="Enter relation name" required>
+								<input type="text" name="name-relation" class="form-control" id="name-relation-edit" placeholder="Enter relation name" required>
 							</div>
 							<div class="form-group">
 								<label for="relation-description">Description</label>
-								<textarea name="relation-description" id="relation-description" cols="30" rows="10" class="form-control"></textarea>
+								<textarea name="relation-description" id="relation-description-edit" cols="30" rows="10" class="form-control"></textarea>
 							</div>
 							<div class="form-group">
 								<label for="relation-option">Relation type</label>
-								<select name="relation-type" id="relation-option" class="form-control" onclick="selectRelation()" required>
+								<select name="relation-type" id="relation-option-edit" class="form-control" onclick="selectRelation()" required>
 									<option value="">Select Relation Type</option>
 									<option value="one-one">One on One</option>
 									<option value="one-many">One to Many</option>
@@ -302,11 +302,26 @@
 							'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 						},
 						success: function(res) {
-							// console.log(res);
+							console.log(res.length);
+
+							if(res.length > 0 ){
 								res.forEach(function(cm){
 									// console.log(cm);
 									$("#relation-model").append(`<option value="${ cm.table_name }">${ cm.table_name }</option>`);
 								});
+							}else {
+
+								if($('#relation-model').val() == "hmmm")
+								{
+									sementara = `
+									<div id="custom-referenced-model-div" class="mt-2">
+										<input type="text" name="custom-relation-model" id="custom-relation-model" class="form-control" placeholder="type your reference content model that didnt exist" required>
+									</div>
+									`;
+	
+									$("#custom-referenced-model").html(sementara);									
+								};
+							}
 
 						},
 						error: function(x, e) {
@@ -314,6 +329,8 @@
 						}
 				});
 			}
+	
+			// referencedModelSelect(selectModel);
 	}
 
 	function selectRelation()
@@ -389,7 +406,7 @@
 				let referenced_model_element = `
 					<div id="relation-model-div">
 						<label for="relation-model">Referenced Model</label>
-						<select name="relation-model" id="relation-model" class="form-control" onclick="loadContentModel()" required onchange="referencedModelSelect(this)">
+						<select name="relation-model" id="relation-model" class="form-control" onclick="loadContentModel()" required onchange="referencedModelSelectOnChange(this)">
 						<option value="no-model">Select content model</option>
 						</select>
 					</div>
@@ -400,10 +417,11 @@
 				$("#relation-model-div").remove();
 			}
 		}
-	}
-
-	function referencedModelSelect(selectModel){
-		console.log(selectModel.value ==="hmmm");
+	};
+	
+	function referencedModelSelectOnChange(selectModel){
+		// alert("sini nfak");
+		// console.log(selectModel.value ==="hmmm");
 		if(selectModel.value === "hmmm"){
 			let temp = `
 			<div id="custom-referenced-model-div" class="mt-2">
@@ -1537,7 +1555,8 @@
 									field_collection_in_html : _saved_layout,
 									properties : _saved_setting,
 									fields_collection : _saved_fields,
-									relation_data :JSON.parse(localStorage.getItem("relation_data"))									
+									relation_data :JSON.parse(localStorage.getItem("relation_data")),
+									project_id : '{{ request()->session()->get('project')['id'] }}'									
 								};
 
 								console.log(_data_to_send);

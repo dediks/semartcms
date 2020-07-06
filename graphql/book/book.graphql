@@ -7,11 +7,10 @@ extend type Query {
 
 type Book {
     id: ID!
-    title: String!
-    slug: String!
-    description: String!
-    author: String!
-    publisher: String!
+    	title:String
+	categories: [Category]
+	orders: [Order]
+
     created_at: DateTime!
     updated_at: DateTime!
 }

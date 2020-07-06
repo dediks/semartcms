@@ -29,3 +29,16 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+Route::resource('books', 'BookController');

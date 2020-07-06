@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class Create{TABLE_NAME_TITLE}Table extends Migration
+class CreateBookCategoryTable extends Migration
 {
 
     /**
@@ -13,11 +13,11 @@ class Create{TABLE_NAME_TITLE}Table extends Migration
      */
     public function up()
     {
-        if (!Schema::hasTable('{TABLE_NAME}')) {
-            Schema::create('{TABLE_NAME}', function (Blueprint $table) {
+        if (!Schema::hasTable('book_category')) {
+            Schema::create('book_category', function (Blueprint $table) {
                 $table->bigIncrements('id');
-                {FIELDS}
-                {FOREIGNKEY}
+                $table->unsignedBigInteger('book_id');
+                $table->unsignedBigInteger('category_id');
                 $table->timestamps();
             });
         }
@@ -30,6 +30,6 @@ class Create{TABLE_NAME_TITLE}Table extends Migration
      */
     public function down()
     {
-        Schema::drop('{TABLE_NAME}');
+        Schema::drop('book_category');
     }
 }

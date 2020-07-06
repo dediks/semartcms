@@ -12,4 +12,9 @@ class Project extends Model
     {
         return $this->belongsToMany('App\User');
     }
+
+    public function entity()
+    {
+        return $this->hasMany('App\Project');
+    }
 }
