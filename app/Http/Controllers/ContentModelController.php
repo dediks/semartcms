@@ -300,7 +300,7 @@ class ContentModelController extends Controller
 
         $field_form = "";
         $field_index = "";
-        $field_index_header = "";
+        $field_index_header = "<th>No</th>";
 
         foreach ($fields as $field) {
             $field_form .= "@field([
@@ -321,7 +321,7 @@ class ContentModelController extends Controller
                     <img src=\"{{ asset($" . $vars['var'] . "->" . $field['name'] . " ) }}\" alt=\"\" width=\"50\" height=\"50\">
                 </td>\n";
             } else {
-                $field_index .= "<td>{{ $" . $vars['var'] . "->" . $field['name'] . " }}</td>\n";
+                $field_index .= "<td>{{ str_limit(\$" . $vars['var'] . "->" . $field['name'] . ", \$limit = 50, \$end =\"...\") }}</td>\n";
             }
 
             $field_index_header .= "<th> " . $field['display_name'] . "</th>\n";
@@ -344,11 +344,7 @@ class ContentModelController extends Controller
                         <input type=\"hidden\" value=\"" . $data_relation["target_model"]["name"] . "," . $data_relation["type"]["name"] . "," . $data_relation["type"]["modifier"] . "\" name=\"data_target\" id=\"data_target\">
                     </div>\n";
 
-                // if (file_exists(app_path(Str::studly(Str::singular($data_relation["target_model"]["name"]))))) {
-                //     $field_index .= "<td>{{ $" . $vars['var'] . "->" . $data_relation["target_model"]["name"] . " }}</td>\n";
-                // } else {
                 $field_index .= "<td><button type=\"button\" class=\"btn btn-info\" id=\"btn" . $data_relation["target_model"]["name"] . "\" data-relation =\"" . $data_relation["target_model"]["name"] . "\" onclick=\"showRelation({{ $" . $vars['var'] . "->id }}, '" . $vars['var'] . "','" . $data_relation["target_model"]["name"] . "')\">Show " . $data_relation["target_model"]["name"] . "</button></td>\n";
-                // }
 
                 $field_index_header .= "<th> " . $data_relation["target_model"]["name"] . "</th>\n";
             }

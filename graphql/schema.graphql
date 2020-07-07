@@ -9,6 +9,11 @@ scalar DateTime
 scalar DateTimeTz
     @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTimeTz")
 
+directive @whereConditions(
+    columns: [String!]
+    columnsEnum: String
+) on ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
+
 type Query
 
 type Mutation

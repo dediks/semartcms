@@ -2,6 +2,7 @@
 
 extend type Query {
     books: [Book!]! @paginate(defaultCount: 10)
+    topBooks: [Book!]! @paginate(defaultCount: 10)
     book(id: ID @eq): Book @find
 }
 
@@ -63,8 +64,8 @@ type Book {
     stock: Int
     status: String
     cover: String
-    categories: [Category] @belongsToMany
-    orders: [Order] @belongsToMany
+    categories: [Category] @belongsToMany(type: "paginator")
+    orders: [Order] @belongsToMany(type: "paginator")
 
     created_at: DateTime!
     updated_at: DateTime!

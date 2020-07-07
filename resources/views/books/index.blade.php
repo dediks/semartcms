@@ -23,6 +23,7 @@
                         <table class="table table-striped">
                             <tbody>
                                 <tr>
+                                    <th> No</th>
                                     <th> Title</th>
 <th> Slug</th>
 <th> Description</th>
@@ -37,19 +38,22 @@
 <th> orders</th>
 
                                 </tr>
+                                @php
+                                    $no = 1;
+                                @endphp
                                 @foreach($books as $book)
                                 <tr>
-                                    <td>{{ $book->title }}</td>
-<td>{{ $book->slug }}</td>
-<td>{{ $book->description }}</td>
-<td>{{ $book->author }}</td>
-<td>{{ $book->publisher }}</td>
-<td>{{ $book->price }}</td>
-<td>{{ $book->views }}</td>
-<td>{{ $book->stock }}</td>
-<td>{{ $book->status }}</td>
+                                    <td>{{ $no }}</td>
+<td>{{ str_limit($book->title, $limit = 50, $end = '...') }}</td>
+<td>{{ str_limit($book->slug, $limit = 50, $end = '...') }}</td>
+<td>{{ str_limit($book->description, $limit = 50, $end = '...') }}</td>
+<td>{{ str_limit($book->author, $limit = 50, $end = '...') }}</td>
+<td>{{ str_limit($book->publisher, $limit = 50, $end = '...') }}</td>
+<td>{{ str_limit($book->views, $limit = 50, $end = '...') }}</td>
+<td>{{ str_limit($book->stock, $limit = 50, $end = '...') }}</td>
+<td>{{ str_limit($book->status, $limit = 50, $end = '...') }}</td>
 
-                <td>
+                <td style="height: 20px; overflow:hidden">
                     <img src="{{ asset($book->cover ) }}" alt="" width="50" height="50">
                 </td>
 <td><button type="button" class="btn btn-info" id="btncategories" data-relation ="categories" onclick="showRelation({{ $book->id }}, 'book','categories')">Show categories</button></td>
@@ -67,6 +71,9 @@
                                         @enddeletebutton
                                     </td>
                                 </tr>
+                                @php
+                                    $no++;
+                                @endphp
                                 @endforeach
                             </tbody>
                         </table>

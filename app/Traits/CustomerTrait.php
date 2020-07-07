@@ -4,9 +4,9 @@ namespace App\Traits;
 
 trait CustomerTrait
 {
-
-    public function orders()
-    {
-        return $this->hasMany("App\Order");
-    }
+              
+        public function orders()
+        {
+            return $this->hasMany("App\Order");            
+        }
 }

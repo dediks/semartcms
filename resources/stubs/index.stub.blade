@@ -25,8 +25,12 @@
                                 <tr>
                                     {index_header_fields}
                                 </tr>
+                                @php
+                                    $no = 1;
+                                @endphp
                                 @foreach(${var_plural} as ${var})
                                 <tr>
+                                    <td>{{ $no }}</td>
                                     {index_fields}
                                     <td class="text-right">
                                         <a class="btn btn-primary" href="{{ route('{route}.edit', ${var}->id) }}">
@@ -40,6 +44,9 @@
                                         @enddeletebutton
                                     </td>
                                 </tr>
+                                @php
+                                    $no++;
+                                @endphp
                                 @endforeach
                             </tbody>
                         </table>

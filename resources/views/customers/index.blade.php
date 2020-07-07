@@ -23,7 +23,7 @@
                         <table class="table table-striped">
                             <tbody>
                                 <tr>
-                                    <th> Name</th>
+                                    <th>No</th><th> Name</th>
 <th> Username</th>
 <th> Remember Token</th>
 <th> Email</th>
@@ -35,20 +35,24 @@
 <th> orders</th>
 
                                 </tr>
+                                @php
+                                    $no = 1;
+                                @endphp
                                 @foreach($customers as $customer)
                                 <tr>
-                                    <td>{{ $customer->name }}</td>
-<td>{{ $customer->username }}</td>
-<td>{{ $customer->remember_token }}</td>
-<td>{{ $customer->email }}</td>
-<td>{{ $customer->roles }}</td>
-<td>{{ $customer->address }}</td>
-<td>{{ $customer->phone }}</td>
+                                    <td>{{ $no }}</td>
+                                    <td>{{ str_limit($customer->name, $limit = 50, $end ="...") }}</td>
+<td>{{ str_limit($customer->username, $limit = 50, $end ="...") }}</td>
+<td>{{ str_limit($customer->remember_token, $limit = 50, $end ="...") }}</td>
+<td>{{ str_limit($customer->email, $limit = 50, $end ="...") }}</td>
+<td>{{ str_limit($customer->roles, $limit = 50, $end ="...") }}</td>
+<td>{{ str_limit($customer->address, $limit = 50, $end ="...") }}</td>
+<td>{{ str_limit($customer->phone, $limit = 50, $end ="...") }}</td>
 
                 <td>
                     <img src="{{ asset($customer->avatar ) }}" alt="" width="50" height="50">
                 </td>
-<td>{{ $customer->status }}</td>
+<td>{{ str_limit($customer->status, $limit = 50, $end ="...") }}</td>
 <td><button type="button" class="btn btn-info" id="btnorders" data-relation ="orders" onclick="showRelation({{ $customer->id }}, 'customer','orders')">Show orders</button></td>
 
                                     <td class="text-right">
@@ -63,6 +67,9 @@
                                         @enddeletebutton
                                     </td>
                                 </tr>
+                                @php
+                                    $no++;
+                                @endphp
                                 @endforeach
                             </tbody>
                         </table>
