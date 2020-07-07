@@ -249,16 +249,19 @@ class ContentModelController extends Controller
         $this->generateRequest($name, $fields, "Update");
         $this->generateController($name);
         $this->generateMenu($name);
-        $this->generateView($name, $fields, $relation_data);
+        $status = $this->generateView($name, $fields, $relation_data);
 
         // Artisan::call('migrate:fresh', [
         //     '--force' => true,
         // ]);
         Artisan::call('migrate');
 
-        flash('Content Model created successfully')->success();
+        // flash('Content Model created successfully')->success();
 
-        return redirect(route('content_model.index'));
+        if ($status)
+            return "ok";
+        else
+            return "error";
     }
 
     public function loadRelatedModel()
@@ -350,6 +353,7 @@ class ContentModelController extends Controller
             }
         }
 
+        $status = false;
         foreach ($files as $view) {
             $file = str_replace('stub.blade', 'blade.php', $view);
             copy(resource_path('stubs/' . $view), $path . '/' . $file);
@@ -364,8 +368,16 @@ class ContentModelController extends Controller
             $data = str_replace('{index_fields}', $field_index, $data);
             $data = str_replace('{index_header_fields}', $field_index_header, $data);
             $data = str_replace('{view}', $vars['view'], $data);
-            file_put_contents($path . '/' . $file, $data);
+            $result = file_put_contents($path . '/' . $file, $data);
+
+            if ($result !== false) {
+                $status = true;
+            } else {
+                $status = false;
+            }
         }
+
+        return $status;
     }
 
     public function generateTrait($name, $relation_data = null)
@@ -697,7 +709,7 @@ class ContentModelController extends Controller
         $description = $properties["description"];
 
         //save entity
-        $entity_store = EntityStore::firstOrCreate(
+        $entity_store = EntityStore::updateOrCreate(
             [
                 "table_name" => $name_plural,
                 "table_display_name" => $display_name,

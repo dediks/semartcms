@@ -23,16 +23,20 @@
                         <table class="table table-striped">
                             <tbody>
                                 <tr>
-                                    <th> Name</th>
-<th> String</th>
+                                    <th>No</th><th> Name</th>
+<th> Slug</th>
 <th> Image</th>
 <th> books</th>
 
                                 </tr>
+                                @php
+                                    $no = 1;
+                                @endphp
                                 @foreach($categories as $category)
                                 <tr>
-                                    <td>{{ $category->name }}</td>
-<td>{{ $category->string }}</td>
+                                    <td>{{ $no }}</td>
+                                    <td>{{ str_limit($category->name, $limit = 50, $end ="...") }}</td>
+<td>{{ str_limit($category->slug, $limit = 50, $end ="...") }}</td>
 
                 <td>
                     <img src="{{ asset($category->image ) }}" alt="" width="50" height="50">
@@ -51,6 +55,9 @@
                                         @enddeletebutton
                                     </td>
                                 </tr>
+                                @php
+                                    $no++;
+                                @endphp
                                 @endforeach
                             </tbody>
                         </table>

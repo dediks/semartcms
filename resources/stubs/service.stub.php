@@ -29,13 +29,16 @@ class {Model}Service
 		return $this->model()->find($id);
 	}
 
-	public function checkIsAnyFileField($request)
+	public function checkIsAnyFileField($request, $input)
 	{
 		if (count($request->files) > 0) {
 			foreach ($request->file() as $key => $image) {
 				$input[$key] = $this->fileUpload($request, $key);
 			}
+
+			return $input;
 		}
+		return $input;
 	}
 
 	public function setRelation($input, $created)
@@ -123,7 +126,18 @@ class {Model}Service
 
 		$input = $request->all();
 
-		$update = ${var}->update($input);
+		$cek_relation_exists = array_key_exists("temp_data_selected", $input);
+
+		$input = $this->checkIsAnyFileField($request, $input);
+
+		if ($cek_relation_exists) {
+			$new_input = Arr::except($input, ['temp_data_selected', 'data_target']);
+			// $create = $this->model()->create($new_input);
+			$update = $category->update($new_input);
+			$this->setRelation($input, $update);
+		} else {
+			$update = $category->update($input);
+		}
 
 		return $update;
 	}

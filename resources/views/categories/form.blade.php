@@ -36,11 +36,11 @@
                 ]
             ])
 @field([
-                'label' => "String",
-                'name' => "string",
+                'label' => "Slug",
+                'name' => "slug",
                 'type' => "text",
                 'validation'=>[
-                    'required' => "",
+                    'required' => "required",
                     'unique' => "unique",
                     'max' => "",
                     'min' => "",

@@ -8,7 +8,7 @@ extend type Query {
 extend type Mutation {
     createCategory(
       	name:String
-	string:String
+	slug:String!
 	image:String
 
     ): Category! @create
@@ -16,7 +16,7 @@ extend type Mutation {
     updateCategory(
       id: ID!
       	name:String
-	string:String
+	slug:String!
 	image:String
 
       ): Category @update
@@ -24,7 +24,7 @@ extend type Mutation {
     upsertCategory(
       id: ID! 
       	name:String
-	string:String
+	slug:String!
 	image:String
 
       ): Category @upsert
@@ -36,7 +36,7 @@ extend type Mutation {
 type Category {
     id: ID!
     	name:String
-	string:String
+	slug:String!
 	image:String
 	books: [Book] @belongsToMany
 

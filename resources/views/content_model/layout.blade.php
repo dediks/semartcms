@@ -1570,25 +1570,42 @@
 							type: 'POST',
 							dataType: 'json',
 							error: function(xhr) {
-								console.log(xhr)
+								if(xhr.responseText == "ok"){
+									swal({
+										title: 'Success',
+										text: 'Content Model Generated Successfully',
+										icon: 'success'
+									}).then(function() {				
+										window.location = '{{ route('content_model.index') }}';
+									});
+								}else{
+									swal({
+										title: 'Error',
+										text: 'Any something wrong !',
+										icon: 'error'
+									}).then(function() {				
+										// window.location = '{{ route('content_model.index') }}';
+									});
+								}
 							},
 							beforeSend: function() {
 								button.html('Generating Conten Model ...');
 								button.addClass('disabled');								
 							},
 							complete: function(e) {
-								console.log(e);								
+								// console.log(e);								
 								
 								button.html(_button_text);
-								button.removeClass('disabled');		
-
-								swal({
-                	title: 'Success',
-                	text: 'Content Model Generated Successfully',
-                	icon: 'success'
-                }).then(function() {				
-									window.location = '{{ route('content_model.index') }}';
-                });
+								button.removeClass('disabled');									
+							}, success: function(e){
+								console.log("success" + e);
+									swal({
+										title: 'Success',
+										text: 'Content Model Generated Successfully',
+										icon: 'success'
+									}).then(function() {				
+										window.location = '{{ route('content_model.index') }}';
+									});
 							}
 						})
 					}
