@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateBooksTable extends Migration
+class CreateBookOrderTable extends Migration
 {
 
     /**
@@ -13,11 +13,11 @@ class CreateBooksTable extends Migration
      */
     public function up()
     {
-        if (!Schema::hasTable('books')) {
-            Schema::create('books', function (Blueprint $table) {
+        if (!Schema::hasTable('book_order')) {
+            Schema::create('book_order', function (Blueprint $table) {
                 $table->bigIncrements('id');
-                $table->string('title');
-                
+                $table->unsignedBigInteger('book_id');
+                $table->unsignedBigInteger('order_id');
                 $table->timestamps();
             });
         }
@@ -30,6 +30,6 @@ class CreateBooksTable extends Migration
      */
     public function down()
     {
-        Schema::drop('books');
+        Schema::drop('book_order');
     }
 }

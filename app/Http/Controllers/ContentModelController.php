@@ -41,13 +41,34 @@ class ContentModelController extends Controller
         $path = $path . '/' . $singular_name . '.graphql';
 
         $field_text = '';
+        $field_text_mutation = '';
         foreach ($fields as $field) {
-            $field_text .= "\t" . $field["name"] . ":" . Str::studly($field["db_type"]);
+            $type_studly = Str::studly($field["db_type"]);
+
+            $field_type = "";
+            switch ($type_studly) {
+                case "Integer":
+                    $field_type = "Int";
+                    break;
+                case "Text":
+                    $field_type = "String";
+                    break;
+                default:
+                    $field_type = $type_studly;
+            }
+
+            $field_text .= "\t" . $field["name"] . ":" . $field_type;
+            $field_text_mutation .= "\t" . $field["name"] . ":" . $field_type;
+
             foreach ($field["validation"] as $validation) {
-                $validation["required"] != null ? $field_text .= $validation : '';
+                $validation == "required" ? $field_text .= "!" : '';
+                $validation == "required" ? $field_text_mutation .= "!" : '';
             };
+
+            $field_text_mutation .= "\r\n";
             $field_text .= "\r\n";
         };
+
 
         // jika many to many, 
         // misal book dan order
@@ -65,9 +86,9 @@ class ContentModelController extends Controller
                 $target_model_singular = Str::singular($target_model);
 
                 if ($rel_type == "many-many" || ($rel_type == "one-many" && $rel_modifier == "hasMany")) {
-                    $field_text .= "\t" . Str::plural($target_model_lower)  . ": [" . Str::studly($target_model_singular) . "]";
+                    $field_text .= "\t" . Str::plural($target_model_lower)  . ": [" . Str::studly($target_model_singular) . "] @" . $rel_modifier;
                 } else {
-                    $field_text .= "\t" . Str::singular($target_model_lower)  . ": " . Str::studly($target_model_singular);
+                    $field_text .= "\t" . Str::singular($target_model_lower)  . ": " . Str::studly($target_model_singular) . "@" . $rel_modifier;
                 }
                 $field_text .= "\r\n";
             }
@@ -78,6 +99,7 @@ class ContentModelController extends Controller
         $data = str_replace('{Name_Plural_Camel}', $plural_camel_name, $data);
         $data = str_replace('{Name_Singular_Studly}', $singular_studly_name, $data);
         $data = str_replace('{Name_Singular_Camel}', $singular_camel_name, $data);
+        $data = str_replace('{FieldsMutation}', $field_text_mutation, $data);
         $data = str_replace('{Fields}', $field_text, $data);
         file_put_contents($path, $data);
     }
@@ -895,7 +917,7 @@ class ContentModelController extends Controller
             }
         }
 
-        $migration_text .= ')';
+        $migration_text .= ')->nullable()';
 
         if ($validation["unique"] != null) {
             $migration_text .= "->unique()";

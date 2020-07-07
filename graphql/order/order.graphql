@@ -5,11 +5,41 @@ extend type Query {
     order(id: ID @eq): Order @find
 }
 
+extend type Mutation {
+    createOrder(
+      	price:Float
+	invoice_number:String
+	status:String
+
+    ): Order! @create
+    
+    updateOrder(
+      id: ID!
+      	price:Float
+	invoice_number:String
+	status:String
+
+      ): Order @update
+
+    upsertOrder(
+      id: ID! 
+      	price:Float
+	invoice_number:String
+	status:String
+
+      ): Order @upsert
+
+    deleteOrder(id: ID!): Order @delete
+}
+# type 
+
 type Order {
     id: ID!
-    	status:String
-	total_price:Float
+    	price:Float
 	invoice_number:String
+	status:String
+	books: [Book] @belongsToMany
+	customer: Customer@belongsTo
 
     created_at: DateTime!
     updated_at: DateTime!

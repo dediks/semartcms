@@ -5,11 +5,66 @@ extend type Query {
     book(id: ID @eq): Book @find
 }
 
+extend type Mutation {
+    createBook(
+        title: String!
+        slug: String!
+        description: String
+        author: String
+        publisher: String
+        price: Float!
+        views: Int
+        stock: Int
+        status: String
+        cover: String
+    ): Book! @create
+
+    updateBook(
+        id: ID!
+        title: String!
+        slug: String!
+        description: String
+        author: String
+        publisher: String
+        price: Float!
+        views: Int
+        stock: Int
+        status: String
+        cover: String
+    ): Book @update
+
+    upsertBook(
+        id: ID!
+        title: String!
+        slug: String!
+        description: String
+        author: String
+        publisher: String
+        price: Float!
+        views: Int
+        stock: Int
+        status: String
+        cover: String
+    ): Book @upsert
+
+    deleteBook(id: ID!): Book @delete
+}
+# type
+
 type Book {
     id: ID!
-    	title:String
-	categories: [Category]
-	orders: [Order]
+    title: String!
+    slug: String!
+    description: String
+    author: String
+    publisher: String
+    price: Float!
+    views: Int
+    stock: Int
+    status: String
+    cover: String
+    categories: [Category] @belongsToMany
+    orders: [Order] @belongsToMany
 
     created_at: DateTime!
     updated_at: DateTime!

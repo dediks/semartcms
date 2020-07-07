@@ -15,7 +15,16 @@ class BookUpdateRequest extends FormRequest
     {
         return [
             
-                    'title' => '',
+                    'title' => 'required',
+                    'slug' => 'required| unique:books,slug'.$this->id,
+                    'description' => '',
+                    'author' => '',
+                    'publisher' => '',
+                    'price' => 'required',
+                    'views' => '',
+                    'stock' => '',
+                    'status' => '',
+                    'cover' => '',
         ];
     }
 }

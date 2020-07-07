@@ -5,6 +5,25 @@ extend type Query {
     {Name_Singular_Camel}(id: ID @eq): {Name_Singular_Studly} @find
 }
 
+extend type Mutation {
+    create{Name_Singular_Studly}(
+      {FieldsMutation}
+    ): {Name_Singular_Studly}! @create
+    
+    update{Name_Singular_Studly}(
+      id: ID!
+      {FieldsMutation}
+      ): {Name_Singular_Studly} @update
+
+    upsert{Name_Singular_Studly}(
+      id: ID! 
+      {FieldsMutation}
+      ): {Name_Singular_Studly} @upsert
+
+    delete{Name_Singular_Studly}(id: ID!): {Name_Singular_Studly} @delete
+}
+# type 
+
 type {Name_Singular_Studly} {
     id: ID!
     {Fields}

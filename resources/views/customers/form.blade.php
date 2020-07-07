@@ -2,7 +2,7 @@
     <section class="section">
       <div class="section-header">
         <div class="section-header-back">
-            <a class="btn" href="{{ route('books.index') }}"><i class="fas fa-chevron-left"></i></a>
+            <a class="btn" href="{{ route('customers.index') }}"><i class="fas fa-chevron-left"></i></a>
         </div>
         <h1>{{$title}}</h1>
       </div>
@@ -18,26 +18,26 @@
     	            </div>
     	            <div class="card-body">
                         @isset($edit)
-                        {{ Form::model($book, ['route' => [$action, $id], 'enctype' => 'multipart/form-data']) }}
+                        {{ Form::model($customer, ['route' => [$action, $id], 'enctype' => 'multipart/form-data']) }}
                         @else
     	            	<form method="post" action="{{ $action }}" enctype="multipart/form-data">
                         @endisset
                             @csrf
                             {{ isset($method) ? method_field($method) : '' }}
                             @field([
-                'label' => "Title",
-                'name' => "title",
+                'label' => "Name",
+                'name' => "name",
                 'type' => "text",
                 'validation'=>[
-                    'required' => "required",
+                    'required' => "",
                     'unique' => "",
                     'max' => "",
                     'min' => "",
                 ]
             ])
 @field([
-                'label' => "Slug",
-                'name' => "slug",
+                'label' => "Username",
+                'name' => "username",
                 'type' => "text",
                 'validation'=>[
                     'required' => "required",
@@ -47,19 +47,8 @@
                 ]
             ])
 @field([
-                'label' => "Description",
-                'name' => "description",
-                'type' => "richtext",
-                'validation'=>[
-                    'required' => "",
-                    'unique' => "",
-                    'max' => "",
-                    'min' => "",
-                ]
-            ])
-@field([
-                'label' => "Author",
-                'name' => "author",
+                'label' => "Remember Token",
+                'name' => "remember_token",
                 'type' => "text",
                 'validation'=>[
                     'required' => "",
@@ -69,31 +58,20 @@
                 ]
             ])
 @field([
-                'label' => "Publsiher",
-                'name' => "publisher",
-                'type' => "text",
-                'validation'=>[
-                    'required' => "",
-                    'unique' => "",
-                    'max' => "",
-                    'min' => "",
-                ]
-            ])
-@field([
-                'label' => "Price",
-                'name' => "price",
-                'type' => "number",
+                'label' => "Email",
+                'name' => "email",
+                'type' => "email",
                 'validation'=>[
                     'required' => "required",
-                    'unique' => "",
+                    'unique' => "unique",
                     'max' => "",
                     'min' => "",
                 ]
             ])
 @field([
-                'label' => "Views",
-                'name' => "views",
-                'type' => "number",
+                'label' => "Roles",
+                'name' => "roles",
+                'type' => "text",
                 'validation'=>[
                     'required' => "",
                     'unique' => "",
@@ -102,9 +80,31 @@
                 ]
             ])
 @field([
-                'label' => "Stock",
-                'name' => "stock",
-                'type' => "number",
+                'label' => "Address",
+                'name' => "address",
+                'type' => "text",
+                'validation'=>[
+                    'required' => "",
+                    'unique' => "",
+                    'max' => "",
+                    'min' => "",
+                ]
+            ])
+@field([
+                'label' => "Phone",
+                'name' => "phone",
+                'type' => "text",
+                'validation'=>[
+                    'required' => "",
+                    'unique' => "",
+                    'max' => "",
+                    'min' => "",
+                ]
+            ])
+@field([
+                'label' => "Avatar",
+                'name' => "avatar",
+                'type' => "file",
                 'validation'=>[
                     'required' => "",
                     'unique' => "",
@@ -123,40 +123,17 @@
                     'min' => "",
                 ]
             ])
-@field([
-                'label' => "Cover",
-                'name' => "cover",
-                'type' => "file",
-                'validation'=>[
-                    'required' => "",
-                    'unique' => "",
-                    'max' => "",
-                    'min' => "",
-                ]
-            ])
-
-                    <div class="form-group row mb-4">
-                        <label for="field-title" class="col-form-label text-md-right col-12 col-md-3 col-lg-3 ">categories
-                        </label>
-        
-                        <div class="col-sm-12 col-md-7">            
-                            <button class="btn btn-primary" type="button" data-id="categories" id="selectRelationcategories" onclick="selectRelatedRelation('categories','many-many','belongsToMany')")>Select categories</button>
-                            <div id="view_selected_categories" class="mt-1">Nocategories selected</div>
-                        </div>
-                        <input type="hidden" value="" name="temp_data_selected[]" id="temp_data_selected">
-                        <input type="hidden" value="categories,many-many,belongsToMany" name="data_target" id="data_target">
-                    </div>
 
                     <div class="form-group row mb-4">
                         <label for="field-title" class="col-form-label text-md-right col-12 col-md-3 col-lg-3 ">orders
                         </label>
         
                         <div class="col-sm-12 col-md-7">            
-                            <button class="btn btn-primary" type="button" data-id="orders" id="selectRelationorders" onclick="selectRelatedRelation('orders','many-many','belongsToMany')")>Select orders</button>
+                            <button class="btn btn-primary" type="button" data-id="orders" id="selectRelationorders" onclick="selectRelatedRelation('orders','one-many','hasMany')")>Select orders</button>
                             <div id="view_selected_orders" class="mt-1">Noorders selected</div>
                         </div>
                         <input type="hidden" value="" name="temp_data_selected[]" id="temp_data_selected">
-                        <input type="hidden" value="orders,many-many,belongsToMany" name="data_target" id="data_target">
+                        <input type="hidden" value="orders,one-many,hasMany" name="data_target" id="data_target">
                     </div>
 
     		                <div class="form-group row mb-4">

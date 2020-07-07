@@ -1,15 +1,15 @@
 <?php
 
 namespace App;
-use App\Traits\CategoryTrait;
+use App\Traits\CustomerTrait;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Category extends Model
+class Customer extends Model
 {
-	use CategoryTrait;
+	use CustomerTrait;
 
-	protected $table = 'categories';
+	protected $table = 'customers';
 	protected $guarded  = [];
 
 	public function project()

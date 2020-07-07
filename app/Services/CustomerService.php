@@ -2,16 +2,16 @@
 
 namespace Services;
 
-use App\Book;
+use App\Customer;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Auth;
 
-class BookService
+class CustomerService
 {
 	public function model()
 	{
-		return new Book;
+		return new Customer;
 	}
 
 	public function all()
@@ -119,11 +119,11 @@ class BookService
 
 	public function findAndUpdate($request, $id)
 	{
-		$book = $this->find($id);
+		$customer = $this->find($id);
 
 		$input = $request->all();
 
-		$update = $book->update($input);
+		$update = $customer->update($input);
 
 		return $update;
 	}

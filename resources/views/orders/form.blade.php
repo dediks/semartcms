@@ -2,7 +2,7 @@
     <section class="section">
       <div class="section-header">
         <div class="section-header-back">
-            <a class="btn" href="{{ route('books.index') }}"><i class="fas fa-chevron-left"></i></a>
+            <a class="btn" href="{{ route('orders.index') }}"><i class="fas fa-chevron-left"></i></a>
         </div>
         <h1>{{$title}}</h1>
       </div>
@@ -18,83 +18,17 @@
     	            </div>
     	            <div class="card-body">
                         @isset($edit)
-                        {{ Form::model($book, ['route' => [$action, $id], 'enctype' => 'multipart/form-data']) }}
+                        {{ Form::model($order, ['route' => [$action, $id], 'enctype' => 'multipart/form-data']) }}
                         @else
     	            	<form method="post" action="{{ $action }}" enctype="multipart/form-data">
                         @endisset
                             @csrf
                             {{ isset($method) ? method_field($method) : '' }}
                             @field([
-                'label' => "Title",
-                'name' => "title",
-                'type' => "text",
-                'validation'=>[
-                    'required' => "required",
-                    'unique' => "",
-                    'max' => "",
-                    'min' => "",
-                ]
-            ])
-@field([
-                'label' => "Slug",
-                'name' => "slug",
-                'type' => "text",
-                'validation'=>[
-                    'required' => "required",
-                    'unique' => "unique",
-                    'max' => "",
-                    'min' => "",
-                ]
-            ])
-@field([
-                'label' => "Description",
-                'name' => "description",
-                'type' => "richtext",
-                'validation'=>[
-                    'required' => "",
-                    'unique' => "",
-                    'max' => "",
-                    'min' => "",
-                ]
-            ])
-@field([
-                'label' => "Author",
-                'name' => "author",
-                'type' => "text",
-                'validation'=>[
-                    'required' => "",
-                    'unique' => "",
-                    'max' => "",
-                    'min' => "",
-                ]
-            ])
-@field([
-                'label' => "Publsiher",
-                'name' => "publisher",
-                'type' => "text",
-                'validation'=>[
-                    'required' => "",
-                    'unique' => "",
-                    'max' => "",
-                    'min' => "",
-                ]
-            ])
-@field([
                 'label' => "Price",
                 'name' => "price",
                 'type' => "number",
                 'validation'=>[
-                    'required' => "required",
-                    'unique' => "",
-                    'max' => "",
-                    'min' => "",
-                ]
-            ])
-@field([
-                'label' => "Views",
-                'name' => "views",
-                'type' => "number",
-                'validation'=>[
                     'required' => "",
                     'unique' => "",
                     'max' => "",
@@ -102,9 +36,9 @@
                 ]
             ])
 @field([
-                'label' => "Stock",
-                'name' => "stock",
-                'type' => "number",
+                'label' => "Invoice Number",
+                'name' => "invoice_number",
+                'type' => "text",
                 'validation'=>[
                     'required' => "",
                     'unique' => "",
@@ -123,40 +57,29 @@
                     'min' => "",
                 ]
             ])
-@field([
-                'label' => "Cover",
-                'name' => "cover",
-                'type' => "file",
-                'validation'=>[
-                    'required' => "",
-                    'unique' => "",
-                    'max' => "",
-                    'min' => "",
-                ]
-            ])
 
                     <div class="form-group row mb-4">
-                        <label for="field-title" class="col-form-label text-md-right col-12 col-md-3 col-lg-3 ">categories
+                        <label for="field-title" class="col-form-label text-md-right col-12 col-md-3 col-lg-3 ">books
                         </label>
         
                         <div class="col-sm-12 col-md-7">            
-                            <button class="btn btn-primary" type="button" data-id="categories" id="selectRelationcategories" onclick="selectRelatedRelation('categories','many-many','belongsToMany')")>Select categories</button>
-                            <div id="view_selected_categories" class="mt-1">Nocategories selected</div>
+                            <button class="btn btn-primary" type="button" data-id="books" id="selectRelationbooks" onclick="selectRelatedRelation('books','many-many','belongsToMany')")>Select books</button>
+                            <div id="view_selected_books" class="mt-1">Nobooks selected</div>
                         </div>
                         <input type="hidden" value="" name="temp_data_selected[]" id="temp_data_selected">
-                        <input type="hidden" value="categories,many-many,belongsToMany" name="data_target" id="data_target">
+                        <input type="hidden" value="books,many-many,belongsToMany" name="data_target" id="data_target">
                     </div>
 
                     <div class="form-group row mb-4">
-                        <label for="field-title" class="col-form-label text-md-right col-12 col-md-3 col-lg-3 ">orders
+                        <label for="field-title" class="col-form-label text-md-right col-12 col-md-3 col-lg-3 ">customers
                         </label>
         
                         <div class="col-sm-12 col-md-7">            
-                            <button class="btn btn-primary" type="button" data-id="orders" id="selectRelationorders" onclick="selectRelatedRelation('orders','many-many','belongsToMany')")>Select orders</button>
-                            <div id="view_selected_orders" class="mt-1">Noorders selected</div>
+                            <button class="btn btn-primary" type="button" data-id="customers" id="selectRelationcustomers" onclick="selectRelatedRelation('customers','one-many','belongsTo')")>Select customers</button>
+                            <div id="view_selected_customers" class="mt-1">Nocustomers selected</div>
                         </div>
                         <input type="hidden" value="" name="temp_data_selected[]" id="temp_data_selected">
-                        <input type="hidden" value="orders,many-many,belongsToMany" name="data_target" id="data_target">
+                        <input type="hidden" value="customers,one-many,belongsTo" name="data_target" id="data_target">
                     </div>
 
     		                <div class="form-group row mb-4">

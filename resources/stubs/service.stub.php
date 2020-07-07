@@ -56,7 +56,9 @@ class {Model}Service
 				foreach ($data_relation as $datum_relation) {
 					$datum_decoded = json_decode($datum_relation);
 
-					$created->{$target_model}()->attach($datum_decoded);
+					if ($datum_decoded != null) {
+						$created->{$target_model}()->attach($datum_decoded);
+					}
 				}
 			} else if ($relation_type == "one-many" && $modifier == "hasMany") {
 				$new_name_target_model = Str::singular($target_model);
