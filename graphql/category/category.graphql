@@ -3,42 +3,53 @@
 extend type Query {
     categories: [Category!]! @paginate(defaultCount: 10)
     category(id: ID @eq): Category @find
+    allCategories: [Category!]! @all
+
+    findCategoryBy(
+        identifier: String!
+        operator: String!
+        value: String!
+    ): Category! @field(resolver: "CategoryQuery@findBy")
+
+    randomCategory(total: Int!): [Category!]!
+        @field(resolver: "CategoryQuery@getRandom")
+
+    categoriesPage(page: Int!, size: Int!): CategoriesPage
+        @field(resolver: "CategoryQuery@getPage")
 }
 
 extend type Mutation {
-    createCategory(
-      	name:String
-	slug:String!
-	image:String
+    createCategory(name: String, slug: String!, image: String): Category!
+        @create
 
-    ): Category! @create
-    
     updateCategory(
-      id: ID!
-      	name:String
-	slug:String!
-	image:String
-
-      ): Category @update
+        id: ID!
+        name: String
+        slug: String!
+        image: String
+    ): Category @update
 
     upsertCategory(
-      id: ID! 
-      	name:String
-	slug:String!
-	image:String
-
-      ): Category @upsert
+        id: ID!
+        name: String
+        slug: String!
+        image: String
+    ): Category @upsert
 
     deleteCategory(id: ID!): Category @delete
 }
-# type 
+# type
+type CategoriesPage {
+    categories: [Category]
+    hasMore: Boolean
+}
 
 type Category {
     id: ID!
-    	name:String
-	slug:String!
-	image:String
-	books: [Book] @belongsToMany
+    name: String
+    slug: String!
+    image: String
+    books: [Book] @belongsToMany
 
     created_at: DateTime!
     updated_at: DateTime!

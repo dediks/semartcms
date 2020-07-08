@@ -1,0 +1,40 @@
+<?php
+
+namespace App\GraphQL\Queries;
+
+use App\Book;
+
+class BookQuery
+{
+    /**
+     * @param  null  $_
+     * @param  array<string, mixed>  $args
+     */
+    public function __invoke($_, array $args)
+    {
+    }
+
+    public function getRandom($root, array $args)
+    {
+        return Book::inRandomOrder()->limit($args["total"])->get();
+    }
+    public function findBy($root, array $args)
+    {
+        return Book::where($args["identifier"], $args["operator"], $args["value"])->first();
+    }
+
+    public function getPage($root, array $args)
+    {
+        $start = $args["page"] * $args["size"];
+        $end = $start + $args["size"];
+
+        $books = Book::all();
+
+        $result = [
+            "books" => $books->slice($start, $end),
+            "hasMore" => $end < $books->count()
+        ];
+
+        return $result;
+    }
+}

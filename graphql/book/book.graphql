@@ -2,8 +2,19 @@
 
 extend type Query {
     books: [Book!]! @paginate(defaultCount: 10)
+    allBooks: [Book!]! @all
+
     topBooks: [Book!]! @paginate(defaultCount: 10)
     book(id: ID @eq): Book @find
+
+    getRandomBook(total: Int!): [Book!]! @field(resolver: "BookQuery@getRandom")
+    findBookBy(identifier: String!, operator: String!, value: String!): Book!
+        @field(resolver: "BookQuery@findBy")
+
+    booksPage(page: Int!, size: Int!): BooksPage
+        @field(resolver: "BookQuery@getPage")
+
+    postsSearch(search: String @search(within: "my.index")): [Post!]! @paginate
 }
 
 extend type Mutation {
@@ -51,6 +62,11 @@ extend type Mutation {
     deleteBook(id: ID!): Book @delete
 }
 # type
+
+type BooksPage {
+    books: [Book]
+    hasMore: Boolean
+}
 
 type Book {
     id: ID!
