@@ -2,16 +2,16 @@
 
 namespace Services;
 
-use App\{Model};
+use App\Test;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Auth;
 
-class {Model}Service
+class TestService
 {
 	public function model()
 	{
-		return new {Model};
+		return new Test;
 	}
 
 	public function all()
@@ -122,7 +122,7 @@ class {Model}Service
 
 	public function findAndUpdate($request, $id)
 	{
-		${var} = $this->find($id);
+		$test = $this->find($id);
 
 		$input = $request->all();
 

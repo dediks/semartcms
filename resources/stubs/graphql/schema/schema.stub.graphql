@@ -30,6 +30,12 @@ extend type Query {
       @field(resolver: "{NAME_SINGULAR_STUDLY}Query@search")
 }
 
+
+type {NAME_PLURAL_STUDLY}Page {
+    {NAME_PLURAL_CAMEL}: [{NAME_SINGULAR_STUDLY}]
+    hasMore: Boolean
+}
+
 extend type Mutation {
     create{NAME_SINGULAR_STUDLY}(
       {FieldsMutation}

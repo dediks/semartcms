@@ -1,0 +1,71 @@
+#import */*.graphql
+
+extend type Query {    
+    #sihgle data
+    test(id: ID @eq): Test @find 
+
+    #all data
+    tests: [Test!]! @all
+
+    #all data paginate
+    testsPaginate: [Test!]! @paginate(defaultCount: 10) 
+
+    #get most selected top data
+    testsTop(total: Int!, order_by: String!, director: String!): [Test!]!
+      @paginate(defaultCount: 10)
+
+    #get somme randomized data
+    testGetRandom(total: Int!): [Test!]! @field(resolver: "TestQuery@getRandom")
+
+    #get some data by paramaters
+    testFindBy(identifier: String!, operator: String!, value: String!): Test!
+      @field(resolver: "TestQuery@findBy")
+
+    #get all data with pagination
+    testsPage(page: Int!, size: Int!): TestsPage
+      @field(resolver: "TestQuery@getPage")
+    
+    #search a data
+    testsSearch(col_name: String!, kw: String!): [Test!]!
+      @field(resolver: "TestQuery@search")
+}
+
+
+type TestsPage {
+    tests: [Test]
+    hasMore: Boolean
+}
+
+extend type Mutation {
+    createTest(
+      	title:String
+	price:String
+
+    ): Test! @create
+    
+    updateTest(
+      id: ID!
+      	title:String
+	price:String
+
+      ): Test @update
+
+    upsertTest(
+      id: ID! 
+      	title:String
+	price:String
+
+      ): Test @upsert
+
+    deleteTest(id: ID!): Test @delete
+}
+# type 
+
+type Test {
+    id: ID!
+    	title:String
+	price:String
+
+    created_at: DateTime!
+    updated_at: DateTime!
+}

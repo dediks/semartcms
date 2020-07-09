@@ -31,3 +31,9 @@
     <i class="fas fa-circle"></i><span>{{ucfirst(trans('order'))}}</span>
     </a>
 </li>
+
+<li class="{{ is_request_path('test*') ? ' active' : '' }}">
+    <a class="nav-link" href="{{ route('tests.index') }}">
+    <i class="fas fa-circle"></i><span>{{ucfirst(trans('test'))}}</span>
+    </a>
+</li>

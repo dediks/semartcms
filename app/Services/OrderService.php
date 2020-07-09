@@ -106,7 +106,7 @@ class OrderService
 		$input = $request->all();
 
 		$cek_relation_exists = array_key_exists("temp_data_selected", $input);
-		$this->checkIsAnyFileField($request);
+		$this->checkIsAnyFileField($request, $input);
 
 		if ($cek_relation_exists) {
 			$new_input = Arr::except($input, ['temp_data_selected', 'data_target']);
