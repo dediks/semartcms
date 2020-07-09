@@ -1,6 +1,7 @@
 <?php
 
 namespace App;
+
 use App\Traits\BookTrait;
 
 use Illuminate\Database\Eloquent\Model;

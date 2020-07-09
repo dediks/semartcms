@@ -38,8 +38,8 @@ type Order {
     	price:Float
 	invoice_number:String
 	status:String
-	books: [Book] @belongsToMany
 	customer: Customer@belongsTo
+	books: [Book] @belongsToMany
 
     created_at: DateTime!
     updated_at: DateTime!

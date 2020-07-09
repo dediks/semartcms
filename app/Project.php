@@ -13,8 +13,8 @@ class Project extends Model
         return $this->belongsToMany('App\User');
     }
 
-    public function entity()
+    public function entities()
     {
-        return $this->hasMany('App\Project');
+        return $this->hasMany('App\EntityStore', 'project_id', 'id');
     }
 }

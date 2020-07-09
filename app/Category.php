@@ -1,6 +1,7 @@
 <?php
 
 namespace App;
+
 use App\Traits\CategoryTrait;
 
 use Illuminate\Database\Eloquent\Model;

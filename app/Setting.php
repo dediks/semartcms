@@ -12,7 +12,8 @@ class Setting extends Model
 
 	protected static $logFillable = true;
 
-	public function items() {
+	public function items()
+	{
 		return $this->hasMany('App\SettingItem', 'settings_id');
 	}
 }

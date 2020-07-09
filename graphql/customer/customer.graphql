@@ -1,68 +1,74 @@
 #import */*.graphql
 
 extend type Query {
+    me: Customer @auth(guard: "api")
     customers: [Customer!]! @paginate(defaultCount: 10)
     customer(id: ID @eq): Customer @find
+
+    customersAll: [Customer!]! @all
+    customerLogin(email: String!, password: String!): Customer!
+        @field(resolver: "CustomerQuery@login")
 }
 
 extend type Mutation {
     createCustomer(
-      	name:String
-	username:String!
-	remember_token:String
-	email:String!
-	roles:String
-	address:String
-	phone:String
-	avatar:String
-	status:String
-
+        name: String!
+        username: String
+        remember_token: String
+        email: String!
+        roles: String
+        address: String
+        phone: String
+        avatar: String
+        status: String
+        password: String!
     ): Customer! @create
-    
-    updateCustomer(
-      id: ID!
-      	name:String
-	username:String!
-	remember_token:String
-	email:String!
-	roles:String
-	address:String
-	phone:String
-	avatar:String
-	status:String
 
-      ): Customer @update
+    updateCustomer(
+        id: ID!
+        name: String
+        username: String!
+        remember_token: String
+        email: String!
+        roles: String
+        address: String
+        phone: String
+        avatar: String
+        status: String
+        password: String
+    ): Customer @update
 
     upsertCustomer(
-      id: ID! 
-      	name:String
-	username:String!
-	remember_token:String
-	email:String!
-	roles:String
-	address:String
-	phone:String
-	avatar:String
-	status:String
-
-      ): Customer @upsert
+        id: ID!
+        name: String
+        username: String!
+        remember_token: String
+        email: String!
+        roles: String
+        address: String
+        phone: String
+        avatar: String
+        status: String
+        password: String
+    ): Customer @upsert
 
     deleteCustomer(id: ID!): Customer @delete
 }
-# type 
+# type
 
 type Customer {
     id: ID!
-    	name:String
-	username:String!
-	remember_token:String
-	email:String!
-	roles:String
-	address:String
-	phone:String
-	avatar:String
-	status:String
-	orders: [Order] @hasMany
+    name: String
+    username: String!
+    remember_token: String
+    email: String!
+    roles: String
+    address: String
+    phone: String
+    avatar: String
+    status: String
+    password: String
+    orders: [Order] @hasMany
 
     created_at: DateTime!
     updated_at: DateTime!

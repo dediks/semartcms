@@ -37,4 +37,14 @@ class BookQuery
 
         return $result;
     }
+
+    public function search($root, array $args)
+    {
+        $keyword = $args["kw"];
+        $column_name = $args["col_name"];
+
+        $criteria = Book::select('*')->where($column_name, 'LIKE', "%" . $keyword . "%")->get();
+
+        return $criteria;
+    }
 }

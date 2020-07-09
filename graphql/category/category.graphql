@@ -3,19 +3,23 @@
 extend type Query {
     categories: [Category!]! @paginate(defaultCount: 10)
     category(id: ID @eq): Category @find
-    allCategories: [Category!]! @all
-
-    findCategoryBy(
-        identifier: String!
-        operator: String!
-        value: String!
-    ): Category! @field(resolver: "CategoryQuery@findBy")
 
     randomCategory(total: Int!): [Category!]!
         @field(resolver: "CategoryQuery@getRandom")
 
     categoriesPage(page: Int!, size: Int!): CategoriesPage
         @field(resolver: "CategoryQuery@getPage")
+
+    findCategoryBy(
+        identifier: String!
+        operator: String!
+        value: String!
+    ): Category! @field(resolver: "CategoryQuery@findBy")
+}
+
+type CategoriesPage {
+    categories: [Category]
+    hasMore: Boolean
 }
 
 extend type Mutation {
@@ -39,17 +43,13 @@ extend type Mutation {
     deleteCategory(id: ID!): Category @delete
 }
 # type
-type CategoriesPage {
-    categories: [Category]
-    hasMore: Boolean
-}
 
 type Category {
     id: ID!
     name: String
     slug: String!
     image: String
-    books: [Book] @belongsToMany
+    books: [Book] @hasMany
 
     created_at: DateTime!
     updated_at: DateTime!

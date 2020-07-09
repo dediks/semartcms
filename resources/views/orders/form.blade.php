@@ -59,18 +59,6 @@
             ])
 
                     <div class="form-group row mb-4">
-                        <label for="field-title" class="col-form-label text-md-right col-12 col-md-3 col-lg-3 ">books
-                        </label>
-        
-                        <div class="col-sm-12 col-md-7">            
-                            <button class="btn btn-primary" type="button" data-id="books" id="selectRelationbooks" onclick="selectRelatedRelation('books','many-many','belongsToMany')")>Select books</button>
-                            <div id="view_selected_books" class="mt-1">Nobooks selected</div>
-                        </div>
-                        <input type="hidden" value="" name="temp_data_selected[]" id="temp_data_selected">
-                        <input type="hidden" value="books,many-many,belongsToMany" name="data_target" id="data_target">
-                    </div>
-
-                    <div class="form-group row mb-4">
                         <label for="field-title" class="col-form-label text-md-right col-12 col-md-3 col-lg-3 ">customers
                         </label>
         
@@ -80,6 +68,18 @@
                         </div>
                         <input type="hidden" value="" name="temp_data_selected[]" id="temp_data_selected">
                         <input type="hidden" value="customers,one-many,belongsTo" name="data_target" id="data_target">
+                    </div>
+
+                    <div class="form-group row mb-4">
+                        <label for="field-title" class="col-form-label text-md-right col-12 col-md-3 col-lg-3 ">books
+                        </label>
+        
+                        <div class="col-sm-12 col-md-7">            
+                            <button class="btn btn-primary" type="button" data-id="books" id="selectRelationbooks" onclick="selectRelatedRelation('books','many-many','belongsToMany')")>Select books</button>
+                            <div id="view_selected_books" class="mt-1">Nobooks selected</div>
+                        </div>
+                        <input type="hidden" value="" name="temp_data_selected[]" id="temp_data_selected">
+                        <input type="hidden" value="books,many-many,belongsToMany" name="data_target" id="data_target">
                     </div>
 
     		                <div class="form-group row mb-4">

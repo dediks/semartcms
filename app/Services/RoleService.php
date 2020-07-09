@@ -1,4 +1,5 @@
 <?php
+
 namespace Services;
 
 use Spatie\Permission\Models\Role;
@@ -25,10 +26,10 @@ class RoleService
         return new Role;
     }
 
-	public function all()
-	{
-		return $this->model()->all();
-	}
+    public function all()
+    {
+        return $this->model()->all();
+    }
 
     public function find($id)
     {
@@ -43,6 +44,8 @@ class RoleService
     public function create($request)
     {
         $input = $request->all();
+
+        // dd($input);
 
         $role = $this->model()->create([
             'name' => $input['name']

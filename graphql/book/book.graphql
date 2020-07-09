@@ -4,7 +4,9 @@ extend type Query {
     books: [Book!]! @paginate(defaultCount: 10)
     allBooks: [Book!]! @all
 
-    topBooks: [Book!]! @paginate(defaultCount: 10)
+    topBooks(total: Int!, order_by: String!, director: String!): [Book!]!
+        @paginate(defaultCount: 10)
+
     book(id: ID @eq): Book @find
 
     getRandomBook(total: Int!): [Book!]! @field(resolver: "BookQuery@getRandom")
@@ -14,7 +16,8 @@ extend type Query {
     booksPage(page: Int!, size: Int!): BooksPage
         @field(resolver: "BookQuery@getPage")
 
-    postsSearch(search: String @search(within: "my.index")): [Post!]! @paginate
+    booksSearch(col_name: String!, kw: String!): [Book!]!
+        @field(resolver: "BookQuery@search")
 }
 
 extend type Mutation {

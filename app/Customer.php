@@ -1,6 +1,8 @@
 <?php
 
 namespace App;
+
+use Laravel\Passport\HasApiTokens;
 use App\Traits\CustomerTrait;
 
 use Illuminate\Database\Eloquent\Model;

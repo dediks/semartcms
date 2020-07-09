@@ -1,0 +1,57 @@
+#import */*.graphql
+
+extend type Query {    
+    #sihgle data
+    {NAME_SINGULAR_CAMEL}(id: ID @eq): {NAME_SINGULAR_STUDLY} @find 
+
+    #all data
+    {NAME_PLURAL_CAMEL}: [{NAME_SINGULAR_STUDLY}!]! @all
+
+    #all data paginate
+    {NAME_PLURAL_CAMEL}Paginate: [{NAME_SINGULAR_STUDLY}!]! @paginate(defaultCount: 10) 
+
+    #get most selected top data
+    {NAME_PLURAL_CAMEL}Top(total: Int!, order_by: String!, director: String!): [{NAME_SINGULAR_STUDLY}!]!
+      @paginate(defaultCount: 10)
+
+    #get somme randomized data
+    {NAME_SINGULAR_CAMEL}GetRandom(total: Int!): [{NAME_SINGULAR_STUDLY}!]! @field(resolver: "{NAME_SINGULAR_STUDLY}Query@getRandom")
+
+    #get some data by paramaters
+    {NAME_SINGULAR_CAMEL}FindBy(identifier: String!, operator: String!, value: String!): {NAME_SINGULAR_STUDLY}!
+      @field(resolver: "{NAME_SINGULAR_STUDLY}Query@findBy")
+
+    #get all data with pagination
+    {NAME_PLURAL_CAMEL}Page(page: Int!, size: Int!): {NAME_PLURAL_STUDLY}Page
+      @field(resolver: "{NAME_SINGULAR_STUDLY}Query@getPage")
+    
+    #search a data
+    {NAME_PLURAL_CAMEL}Search(col_name: String!, kw: String!): [{NAME_SINGULAR_STUDLY}!]!
+      @field(resolver: "{NAME_SINGULAR_STUDLY}Query@search")
+}
+
+extend type Mutation {
+    create{NAME_SINGULAR_STUDLY}(
+      {FieldsMutation}
+    ): {NAME_SINGULAR_STUDLY}! @create
+    
+    update{NAME_SINGULAR_STUDLY}(
+      id: ID!
+      {FieldsMutation}
+      ): {NAME_SINGULAR_STUDLY} @update
+
+    upsert{NAME_SINGULAR_STUDLY}(
+      id: ID! 
+      {FieldsMutation}
+      ): {NAME_SINGULAR_STUDLY} @upsert
+
+    delete{NAME_SINGULAR_STUDLY}(id: ID!): {NAME_SINGULAR_STUDLY} @delete
+}
+# type 
+
+type {NAME_SINGULAR_STUDLY} {
+    id: ID!
+    {Fields}
+    created_at: DateTime!
+    updated_at: DateTime!
+}

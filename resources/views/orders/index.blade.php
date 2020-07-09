@@ -23,20 +23,24 @@
                         <table class="table table-striped">
                             <tbody>
                                 <tr>
-                                    <th> Price</th>
+                                    <th>No</th><th> Price</th>
 <th> Invoice Number</th>
 <th> Status</th>
-<th> books</th>
 <th> customers</th>
+<th> books</th>
 
                                 </tr>
+                                @php
+                                    $no = 1;
+                                @endphp
                                 @foreach($orders as $order)
                                 <tr>
-                                    <td>{{ $order->price }}</td>
-<td>{{ $order->invoice_number }}</td>
-<td>{{ $order->status }}</td>
-<td><button type="button" class="btn btn-info" id="btnbooks" data-relation ="books" onclick="showRelation({{ $order->id }}, 'order','books')">Show books</button></td>
+                                    <td>{{ $no }}</td>
+                                    <td>{{ str_limit($order->price, $limit = 50, $end ="...") }}</td>
+<td>{{ str_limit($order->invoice_number, $limit = 50, $end ="...") }}</td>
+<td>{{ str_limit($order->status, $limit = 50, $end ="...") }}</td>
 <td><button type="button" class="btn btn-info" id="btncustomers" data-relation ="customers" onclick="showRelation({{ $order->id }}, 'order','customers')">Show customers</button></td>
+<td><button type="button" class="btn btn-info" id="btnbooks" data-relation ="books" onclick="showRelation({{ $order->id }}, 'order','books')">Show books</button></td>
 
                                     <td class="text-right">
                                         <a class="btn btn-primary" href="{{ route('orders.edit', $order->id) }}">
@@ -50,6 +54,9 @@
                                         @enddeletebutton
                                     </td>
                                 </tr>
+                                @php
+                                    $no++;
+                                @endphp
                                 @endforeach
                             </tbody>
                         </table>

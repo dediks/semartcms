@@ -3,7 +3,7 @@
 
 @section('title', 'Edit Role')
 
-@include('admin.roles.form', [
+@include('roles.form', [
     'title' => 'Edit Role',
     'action' => route_admin_name('roles.update'),
     'method' => 'PUT',

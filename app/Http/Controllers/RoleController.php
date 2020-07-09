@@ -13,23 +13,23 @@ use Spatie\Permission\Models\Permission;
 
 class RoleController extends Controller
 {
-	public $roleService;
+    public $roleService;
 
-	public function __construct(RoleService $roleService)
-	{
-		$this->roleService = $roleService;
-	}
+    public function __construct(RoleService $roleService)
+    {
+        $this->roleService = $roleService;
+    }
 
-	public function index()
-	{
+    public function index()
+    {
         return $this->roleService->dataTable('roles.index');
-	}
+    }
 
-	public function create()
-	{
+    public function create()
+    {
         $perms = Permission::all();
-		return view('roles.create', compact('perms'));
-	}
+        return view('roles.create', compact('perms'));
+    }
 
     public function store(RoleCreateRequest $request)
     {
@@ -49,7 +49,7 @@ class RoleController extends Controller
          * Get all permissions inside the role
          */
         $has_perms = [];
-        foreach($role->getAllPermissions() as $perm) {
+        foreach ($role->getAllPermissions() as $perm) {
             $has_perms[] = $perm->id;
         }
 

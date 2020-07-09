@@ -1,6 +1,8 @@
 <?php
 
 namespace App;
+
+use Laravel\Scout\Searchable;
 use App\Traits\{Name}Trait;
 
 use Illuminate\Database\Eloquent\Model;

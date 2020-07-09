@@ -25,6 +25,19 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+        Gate::before(function ($user, $ability) {
+            return $user->hasRole('Super Admin') ? true : null;
+        });
+
+        Gate::define('show-this', function ($user) {
+            foreach ($user->projects as $project) {
+                // from session biasanya string, karenaya kita makai == bukan, ====
+                if ($project->id == request()->session()->get('project')["id"]) {
+                    return true;
+                }
+            };
+
+            return false;
+        });
     }
 }

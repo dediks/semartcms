@@ -69,6 +69,16 @@ Route::group(['middleware' => 'auth'], function () {
         Route::delete('{id}/delete', 'RoleController@destroy')->name('destroy');
     });
 
+    Route::prefix('permissions')->name('permission.')->group(function () {
+        Route::get('/', 'PermissionController@index')->name('index');
+        Route::get('create', 'PermissionController@create')->name('create');
+        Route::post('/', 'PermissionController@store')->name('store');
+        Route::get('{id}/edit', 'PermissionController@edit')->name('edit');
+        Route::patch('{id}', 'PermissionController@update')->name('update');
+        Route::put('{id}', 'PermissionController@update')->name('update');
+        Route::delete('{id}/delete', 'PermissionController@destroy')->name('destroy');
+    });
+
     Route::prefix('settings')->name('settings.')->group(function () {
         Route::get('list', 'SettingController@list')->name('list');
         Route::get('create', 'SettingController@create')->name('create');

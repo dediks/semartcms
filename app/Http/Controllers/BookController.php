@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Services\BookService;
 use Requests\{
 	BookCreateRequest,
@@ -15,6 +16,12 @@ class BookController extends Controller
 
 	public function __construct(BookService $book)
 	{
+		$this->middleware(function ($request, $next) {
+			if (Gate::allows('show-this')) return $next($request);
+
+			abort(403, 'Anda tidak memiliki cukup hak akses');
+		});
+
 		$this->bookService = $book;
 	}
 
