@@ -38,6 +38,7 @@ class Field
 			'timepicker' => TimepickerField::class,
 			'currency' => CurrencyField::class,
 			'email' => EmailField::class,
+			'date' => DatePickerField::class,
 		];
 	}
 

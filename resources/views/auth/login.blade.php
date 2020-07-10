@@ -57,4 +57,7 @@
     </form>
   </div>
 </div>
+<div class="card-footer text-center bg-white">
+  <a href="{{ route('register') }}" >Register</a>
+</div>
 @endsection

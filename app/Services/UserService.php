@@ -55,19 +55,16 @@ class UserService
 
         // dd($role);
 
-        if($request->hasFile('avatar'))
-        {
+        if ($request->hasFile('avatar')) {
             $input['avatar'] = $this->avatar($request);
         }
 
-        if($role)
-        {
+        if ($role) {
             $user->assignRole($role);
         }
 
-        if($request->verify)
-        {
-            $user->sendEmailVerificationNotification();
+        if ($request->verify) {
+            // $user->sendEmailVerificationNotification();
         }
 
         event(new UserCreated($user));
@@ -94,29 +91,25 @@ class UserService
     {
         $user = $this->find($id);
 
-        if($request->password)
-        {
+        if ($request->password) {
             $user->update([
                 'password' => bcrypt($request->password),
                 'last_password_update' => date('Y-m-d H:i:s')
             ]);
         }
 
-        if($request->role && $request->user()->can('user-edit'))
-        {
+        if ($request->role && $request->user()->can('user-edit')) {
 
             $role = Role::find($request->role);
 
-            if($role)
-            {
+            if ($role) {
                 $user->syncRoles([$role]);
             }
         }
 
         $input = $request->except(['password']);
 
-        if($request->hasFile('avatar'))
-        {
+        if ($request->hasFile('avatar')) {
             $input['avatar'] = $this->avatar($request);
         }
 

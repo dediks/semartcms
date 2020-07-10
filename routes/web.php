@@ -129,4 +129,4 @@ Route::middleware('auth')->get('logout', function () {
 })->name('logout');
 
 Route::get('resendverification', 'UserController@resendVerification')->name('resendverification');
-Auth::routes(['verify' => true, 'register' => 'false']);
+Auth::routes(['verify' => true, 'register' => true]);

@@ -1,7 +1,5 @@
-{{-- @php
-    dd($menus);
-@endphp --}}
-@isset($menus)
+@if(count($menus))
+<li class="menu-header">Your Entity</li>
     @foreach ($menus as $menu)
         <li class="{{ is_request_path($menu["table_name"].'*') ? ' active' : '' }}">
             <a class="nav-link" href="{{ route($menu["table_name"].'.index') }}">
@@ -9,7 +7,7 @@
             </a>
         </li>    
     @endforeach
-@endisset
+@endif
 
 
 
@@ -48,3 +46,4 @@
     <i class="fas fa-circle"></i><span>{{ucfirst(trans('test'))}}</span>
     </a>
 </li> --}}
+

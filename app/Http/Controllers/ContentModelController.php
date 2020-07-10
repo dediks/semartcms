@@ -448,9 +448,13 @@ class ContentModelController extends Controller
 
     public function index($cm_url = 'index')
     {
+        $project_id = session('project')['id'];
+        if (isset($project_id)) {
+            $cm_list = \App\Project::find($project_id)->entities()->get(['table_name', 'table_display_name']);
+        }
+
 
         $cm = EntityStore::where('table_name', $cm_url)->first();
-        $cm_list = EntityStore::all();
 
         if (!$cm && $cm_url == 'index') {
             $cm = [
