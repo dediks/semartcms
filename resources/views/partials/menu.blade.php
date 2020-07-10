@@ -13,7 +13,7 @@
 
 <li class="menu-header">Menu</li>
 
-@include('partials.cm-menu')
+@include('partials.cm-menu');
 
 <li class="menu-header">API's</li>
 <li class="{{ is_request_path('graphql-playground*') ? ' active' : '' }}"><a class="nav-link" href="{{ route('graphql-playground') }}"><i class="fas fa-user"></i> <span>Playground</span></a></li>

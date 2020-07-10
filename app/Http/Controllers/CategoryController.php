@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Services\CategoryService;
 use Requests\{
@@ -16,6 +17,12 @@ class CategoryController extends Controller
 	public function __construct(CategoryService $category)
 	{
 		$this->categoryService = $category;
+
+		$this->middleware(function ($request, $next) {
+			if (Gate::allows('show-this',  $this->categoryService->getTableName())) return $next($request);
+
+			abort(403, 'Anda tidak memiliki cukup hak akses');
+		});
 	}
 
 	public function index()

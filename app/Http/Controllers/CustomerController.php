@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Services\CustomerService;
 use Requests\{
 	CustomerCreateRequest,
@@ -16,6 +17,12 @@ class CustomerController extends Controller
 	public function __construct(CustomerService $customer)
 	{
 		$this->customerService = $customer;
+
+		$this->middleware(function ($request, $next) {
+			if (Gate::allows('show-this',  $this->customerService->getTableName())) return $next($request);
+
+			abort(403, 'Anda tidak memiliki cukup hak akses');
+		});
 	}
 
 	public function index()

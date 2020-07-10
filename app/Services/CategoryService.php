@@ -14,6 +14,11 @@ class CategoryService
 		return new Category;
 	}
 
+	public function getTableName()
+	{
+		return $this->model()->getTable();
+	}
+
 	public function all()
 	{
 		return $this->model()->all();

@@ -13,7 +13,10 @@ class OrderService
 	{
 		return new Order;
 	}
-
+	public function getTableName()
+	{
+		return $this->model()->getTable();
+	}
 	public function all()
 	{
 		return $this->model()->all();

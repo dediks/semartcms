@@ -16,13 +16,13 @@ class BookController extends Controller
 
 	public function __construct(BookService $book)
 	{
+		$this->bookService = $book;
+
 		$this->middleware(function ($request, $next) {
-			if (Gate::allows('show-this')) return $next($request);
+			if (Gate::allows('show-this',  $this->bookService->getTableName())) return $next($request);
 
 			abort(403, 'Anda tidak memiliki cukup hak akses');
 		});
-
-		$this->bookService = $book;
 	}
 
 	public function index()

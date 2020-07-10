@@ -14,6 +14,11 @@ class BookService
 		return new Book;
 	}
 
+	public function getTableName()
+	{
+		return $this->model()->getTable();
+	}
+
 	public function all()
 	{
 		return $this->model()->all();
@@ -31,6 +36,7 @@ class BookService
 
 	public function checkIsAnyFileField($request, $input)
 	{
+		$this->checkGate();
 		if (count($request->files) > 0) {
 			foreach ($request->file() as $key => $image) {
 				$input[$key] = $this->fileUpload($request, $key);
@@ -43,6 +49,7 @@ class BookService
 
 	public function setRelation($input, $created)
 	{
+		$this->checkGate();
 		$data_relation = $input["temp_data_selected"]; // list id
 		$data_target = $input["data_target"]; //string (ex: categories, many-many, belongsToMany)
 		$data_target_exploded = explode(',', $data_target); //0 : target_model, 1 : name, 2 : modifier

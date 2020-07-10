@@ -13,7 +13,10 @@ class CustomerService
 	{
 		return new Customer;
 	}
-
+	public function getTableName()
+	{
+		return $this->model()->getTable();
+	}
 	public function all()
 	{
 		return $this->model()->all();

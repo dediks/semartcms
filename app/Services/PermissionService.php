@@ -21,6 +21,11 @@ class PermissionService
         $this->permissionDataTable = $permissionDataTable;
     }
 
+    public function getTableName()
+    {
+        return $this->model()->getTable();
+    }
+
     public function model()
     {
         return new Permission;

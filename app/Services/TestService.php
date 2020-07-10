@@ -18,7 +18,10 @@ class TestService
 	{
 		return $this->model()->all();
 	}
-
+	public function getTableName()
+	{
+		return $this->model()->getTable();
+	}
 	public function paginate($num)
 	{
 		return $this->model()->paginate($num);

@@ -1,9 +1,20 @@
+{{-- @php
+    dd($menus);
+@endphp --}}
+@isset($menus)
+    @foreach ($menus as $menu)
+        <li class="{{ is_request_path($menu["table_name"].'*') ? ' active' : '' }}">
+            <a class="nav-link" href="{{ route($menu["table_name"].'.index') }}">
+            <i class="fas fa-circle"></i><span>{{ucfirst(trans($menu["table_name"]))}}</span>
+            </a>
+        </li>    
+    @endforeach
+@endisset
 
 
 
 
-
-
+{{-- 
 <li class="{{ is_request_path('book*') ? ' active' : '' }}">
     <a class="nav-link" href="{{ route('books.index') }}">
     <i class="fas fa-circle"></i><span>{{ucfirst(trans('book'))}}</span>
@@ -36,4 +47,4 @@
     <a class="nav-link" href="{{ route('tests.index') }}">
     <i class="fas fa-circle"></i><span>{{ucfirst(trans('test'))}}</span>
     </a>
-</li>
+</li> --}}

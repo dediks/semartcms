@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Services\OrderService;
 use Requests\{
 	OrderCreateRequest,
@@ -16,6 +17,12 @@ class OrderController extends Controller
 	public function __construct(OrderService $order)
 	{
 		$this->orderService = $order;
+
+		$this->middleware(function ($request, $next) {
+			if (Gate::allows('show-this',  $this->orderService->getTableName())) return $next($request);
+
+			abort(403, 'Anda tidak memiliki cukup hak akses');
+		});
 	}
 
 	public function index()
