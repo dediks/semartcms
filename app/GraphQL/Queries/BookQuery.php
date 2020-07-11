@@ -3,15 +3,26 @@
 namespace App\GraphQL\Queries;
 
 use App\Book;
+use Services\BookService;
 
 class BookQuery
 {
-    /**
-     * @param  null  $_
-     * @param  array<string, mixed>  $args
-     */
+
+    private $bookService;
+
     public function __invoke($_, array $args)
     {
+    }
+
+    public function __construct(BookService $book)
+    {
+        // $this->bookService = $book;
+
+        // $this->middleware(function ($request, $next) {
+        //     if (Gate::allows('show-this',  $this->bookService->getTableName())) return $next($request);
+
+        //     abort(403, 'Anda tidak memiliki cukup hak akses');
+        // });
     }
 
     public function getRandom($root, array $args)

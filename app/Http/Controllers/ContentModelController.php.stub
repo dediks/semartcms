@@ -17,66 +17,16 @@ use Services\ContentModelService;
 class ContentModelController extends Controller
 {
     protected $contentModelService;
-    protected $project;
 
     public function __construct(ContentModelService $cm)
     {
-        $this->contentModelService = $cm;
-    }
+        $project_id = request()->session()->get('project')['id'];
 
-
-    public function cekName(Request $request)
-    {
-        $name = strtolower($request->name);
-        $name = Str::plural($name);
-
-        $entity = EntityStore::where("table_name", "=", $name)->first();
-
-        if ($entity) {
-            return "ada";
-        } else {
-            return "tidak";
+        if ($project_id) {
+            $this->project = Auth::projects()->find($project_id);
         }
-    }
 
-    public function generate(Request $request)
-    {
-
-        $properties = $request->properties;
-        $fields = $request->fields_collection;
-        $fields_in_html = $request->field_collection_in_html;
-        $relation_data = $request->relation_data;
-        $properties = json_decode($properties, true);
-        $fields = $this->changeInputType($fields);
-        $name = $properties["name"];
-
-        $this->generateGraphQLSchema($name, $fields, $relation_data);
-        $json_fields = $this->generateModelJson($fields, $properties);
-
-        $this->insertCMInfo($properties, $json_fields);
-        $this->isManytoMany($name, $relation_data);
-        $this->generateMigration($name, $fields, $relation_data);
-        $this->generateTrait($name, $relation_data);
-        $this->pushRoute($name);
-        $this->generateModel($name);
-        $this->generateService($name);
-        $this->generateRequest($name, $fields, "Create");
-        $this->generateRequest($name, $fields, "Update");
-        $this->generateController($name);
-        $this->generateMenu($name);
-        $status = $this->generateView($name, $fields, $relation_data);
-
-        // Artisan::call('migrate:fresh', [
-        //     '--force' => true,
-        // ]);
-        Artisan::call('migrate');
-
-        // flash('Content Model created successfully')->success();
-
-        if ($status)
-            return "ok";
-        else
-            return "error";
+        $this->contentModelService = $cm;
     }
 
     public function generateGraphQLSchema($name, $fields, $relation_data)
@@ -297,7 +247,45 @@ class ContentModelController extends Controller
         return $fields;
     }
 
+    public function generate(Request $request)
+    {
+        // return 'ok';
+        $properties = $request->properties;
+        $fields = $request->fields_collection;
+        $fields_in_html = $request->field_collection_in_html;
+        $relation_data = $request->relation_data;
+        $properties = json_decode($properties, true);
+        $fields = $this->changeInputType($fields);
+        $name = $properties["name"];
 
+        $this->generateGraphQLSchema($name, $fields, $relation_data);
+        $json_fields = $this->generateModelJson($fields, $properties);
+
+        $this->insertCMInfo($properties, $json_fields);
+        $this->isManytoMany($name, $relation_data);
+        $this->generateMigration($name, $fields, $relation_data);
+        $this->generateTrait($name, $relation_data);
+        $this->pushRoute($name);
+        $this->generateModel($name);
+        $this->generateService($name);
+        $this->generateRequest($name, $fields, "Create");
+        $this->generateRequest($name, $fields, "Update");
+        $this->generateController($name);
+        $this->generateMenu($name);
+        $status = $this->generateView($name, $fields, $relation_data);
+
+        // Artisan::call('migrate:fresh', [
+        //     '--force' => true,
+        // ]);
+        Artisan::call('migrate');
+
+        // flash('Content Model created successfully')->success();
+
+        if ($status)
+            return "ok";
+        else
+            return "error";
+    }
 
     public function loadRelatedModel()
     {

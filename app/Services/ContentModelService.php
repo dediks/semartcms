@@ -61,7 +61,7 @@ class ContentModelService
         $content_model = $this->find($id);
 
         $content_model->delete();
-        
+
         // event(new content_modelGroupDeleted($content_model));
 
         return $content_model;

@@ -12,7 +12,7 @@
 
 <li class="menu-header">API's</li>
 <li class="{{ is_request_path('graphql-playground*') ? ' active' : '' }}"><a class="nav-link" href="{{ route('graphql-playground') }}"><i class="fas fa-user"></i> <span>Playground</span></a></li>
-<li class="{{ is_request_path('roles*') ? ' active' : '' }}"><a class="nav-link" href="{{ route('roles.index') }}"><i class="fas fa-gear"></i> <span>Settings</span></a></li>
+<li class="{{ is_request_path('settings*') ? ' active' : '' }}"><a class="nav-link" href="{{ route('setting_items.list') }}"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
 
 @can("Manage User")
 <li class="menu-header">Master</li>

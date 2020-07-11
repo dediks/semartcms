@@ -32,7 +32,7 @@
       </div>     
     @empty
     <div class="col-12 mt-5 text-center"> 
-        Anda belum memiliki project sama sekali   
+      You don't have a project yet
     </div>
     @endforelse
   </div>

@@ -34,7 +34,7 @@
 				<div class="text-bold">
 					<b>Name : </b> 
 				</div> 
-				<div class="ml-2" id="content-model-name"></div>
+				<div class="ml-2" id="display-content-model-name"></div>
 			</div>
 			<div class="col d-flex">
 				<div class="font-bold">
@@ -457,7 +457,7 @@
 				display_name = (get_setting.display_name ? get_setting.display_name : ""),
 				description = (get_setting.description ? get_setting.description : "");
 
-		$('#content-model-name').html(`
+		$('#display-content-model-name').html(`
 			${name}
 		`);
 		
@@ -505,7 +505,7 @@
 														<div class="form-group">
 															<label>Content Model Name</label>
 															<input type="text" class="form-control" id="content-model-name" placeholder="e.g: blog_post">
-															<div class="help-text">An unique name, use _ instead of space</div>
+															<div class="help-text" id="help-text-welcome">An unique name, use _ instead of space</div>
 														</div>
 													</div>
 													<div class="col-md-6">
@@ -544,6 +544,7 @@
 				{
 					text: 'Start',
 					class: 'btn btn-lg btn-primary',
+					id: 'btn-start',
 					handler: function(b) {
 						let name = b.find(".modal-body #content-model-name").val(),
 								display_name = b.find(".modal-body #content-model-display-name").val(),
@@ -557,14 +558,38 @@
 							return;
 						}
 
-						let setting = {
-							name: name,
-							display_name: display_name,
-							description: description,
-						}
-						localStorage.setItem("_content_model_generator_setting", JSON.stringify(setting));
-						bsModal.hide();
-						is_ws = false;
+						$.ajax({
+								url: '{{ route('content_model.cek_name') }}',
+								dataType: 'json',
+								data: {name:name},
+								type: 'POST',
+								headers: {
+									'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+								},
+								complete: function(data) {
+									console.log(data.responseText);
+									// console.log(data.responseText == "ada");
+									if(data.responseText == "ada")
+									{
+										b.find(".modal-body #content-model-name").focus();
+										$("#help-text-welcome").html("<span class='text-danger:red'><b>Please use an another name</b></span>");				
+										// return;
+									}else{
+											let setting = {
+												name: name,
+												display_name: display_name,
+												description: description,
+											}
+											localStorage.setItem("_content_model_generator_setting", JSON.stringify(setting));
+											bsModal.hide();
+											is_ws = false;
+									}
+								},
+								error: function(xhr) {
+									// console.log(xhr);
+								}
+							});
+
 					}
 				}
 			]
@@ -1450,7 +1475,7 @@
 			body: `
 			<div class="form-group">
 				<label>Content Model Name</label>
-				<input type="text" class="form-control" name="content_model_name" value="${name}" placeholder="e.g: my_module">
+				<input type="text" class="form-control" id="input-content-model-name" name="content_model_name" value="${name}" placeholder="e.g: my_module">
 				<div class="help-text">An unique name, use _ instead of space</div>
 			</div>
 			<div class="form-group">
@@ -1613,6 +1638,46 @@
 			]
 		})
 	});
+
+var typingTimer;               
+var doneTypingInterval = 200; 
+var $input = $(".modal-body #content-model-name");
+
+$input.on('keyup', function () {
+  clearTimeout(typingTimer);
+  typingTimer = setTimeout(doneTyping, doneTypingInterval);
+});
+
+$input.on('keydown', function () {
+  clearTimeout(typingTimer);
+});
+
+function doneTyping (name) {
+	$.ajax({
+		url: '{{ route('content_model.cek_name') }}',
+		dataType: 'json',
+		data: {name:name},
+		type: 'POST',
+		headers: {
+			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+		},
+		complete: function(data) {
+			console.log(data.responseText);
+			// console.log(data.responseText == "ada");
+			if(data.responseText == "ada")
+			{
+				$(".modal-body #content-model-name").focus()
+				$("#help-text-welcome").html("<span class='text-danger:red'><b>Please use an another name</b></span>");				
+				return;
+			}else{
+				$('#btn-start').prop('disabled', false);
+			}
+		},
+		error: function(xhr) {
+			// console.log(xhr);
+		}
+	});
+}
 
 </script>
 @endpush

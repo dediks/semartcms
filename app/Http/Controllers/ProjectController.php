@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Project;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -22,6 +23,8 @@ class ProjectController extends Controller
             'name' => 'required',
             'description' => 'required',
         ]);
+
+        $data["identifier"] = Str::random(10);
 
         $project = Auth::user()->projects()->create($data);
 

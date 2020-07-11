@@ -1,4 +1,5 @@
 {
     "ContentModelGenerator": true,
-    "AssetManager": true
+    "AssetManager": true,
+    "8Post": true
 }
