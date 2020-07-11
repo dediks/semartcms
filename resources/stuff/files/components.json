@@ -494,66 +494,6 @@
                         ]
                     }
                 ]
-            },
-            {
-                "name": "enum",
-                "display_name": "Enum",
-                "icon": "<i class=\"fas fa-circle-notch\"></i>",
-                "droppable": false,
-                "input_type": "select",
-                "html": "<div class='form-group'><label class='field_name'>Field Name</label><input type='text' data-type='enum' name='field_name' class='form-control' disabled><div class='help-text'></div></div>",
-                "db_type": "enum",
-                "editable": [
-                    {
-                        "selector": "attr",
-                        "store_to": "name",
-                        "find": ":input",
-                        "name": "input-name",
-                        "display_name": "Name",
-                        "type": "input"
-                    },
-                    {
-                        "selector": "html",
-                        "store_to": "this",
-                        "find": "label",
-                        "name": "input-display-name",
-                        "display_name": "Display Name",
-                        "type": "input"
-                    },
-                    {
-                        "selector": "html",
-                        "store_to": "this",
-                        "find": ".help-text",
-                        "name": "input-description",
-                        "display_name": "Description",
-                        "type": "input"
-                    },
-                    {
-                        "selector": "attr",
-                        "store_to": "required",
-                        "find": ":input",
-                        "name": "input-required",
-                        "display_name": "Required",
-                        "type": "select",
-                        "options": [
-                            {
-                                "name": "input-required",
-                                "display_name": "Required",
-                                "primary": true,
-                                "list": [
-                                    {
-                                        "name": "no",
-                                        "display_name": "No"
-                                    },
-                                    {
-                                        "name": "required",
-                                        "display_name": "Yes"
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ]
             }
         ]
     }

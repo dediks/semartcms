@@ -59,3 +59,18 @@ Route::resource('orders', 'OrderController');
 
 Route::resource('tests', 'TestController');
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

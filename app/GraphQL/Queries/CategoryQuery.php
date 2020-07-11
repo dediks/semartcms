@@ -18,12 +18,10 @@ class CategoryQuery
     {
         return Category::inRandomOrder()->limit($args["total"])->get();
     }
-
     public function findBy($root, array $args)
     {
         return Category::where($args["identifier"], $args["operator"], $args["value"])->first();
     }
-
 
     public function getPage($root, array $args)
     {
@@ -38,5 +36,25 @@ class CategoryQuery
         ];
 
         return $result;
+    }
+
+    public function search($root, array $args)
+    {
+        $keyword = $args["kw"];
+        $column_name = $args["col_name"];
+
+        $criteria = Category::select('*')->where($column_name, 'LIKE', "%" . $keyword . "%")->get();
+
+        return $criteria;
+    }
+
+    public function login($root, array $args)
+    {
+        $customer = Category::where('email', '=', $args["email"])->first();
+        if ($args["password"] == $args["password"]) {
+            return $customer;
+        }
+
+        return "fail";
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use CM;
 use App\EntityStore;
 use App\Project;
+use App\Traits\CMTrait;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
@@ -16,6 +17,8 @@ use Services\ContentModelService;
 
 class ContentModelController extends Controller
 {
+    use CMTrait;
+
     protected $contentModelService;
     protected $project;
 
@@ -24,24 +27,8 @@ class ContentModelController extends Controller
         $this->contentModelService = $cm;
     }
 
-
-    public function cekName(Request $request)
-    {
-        $name = strtolower($request->name);
-        $name = Str::plural($name);
-
-        $entity = EntityStore::where("table_name", "=", $name)->first();
-
-        if ($entity) {
-            return "ada";
-        } else {
-            return "tidak";
-        }
-    }
-
     public function generate(Request $request)
     {
-
         $properties = $request->properties;
         $fields = $request->fields_collection;
         $fields_in_html = $request->field_collection_in_html;
@@ -49,21 +36,53 @@ class ContentModelController extends Controller
         $properties = json_decode($properties, true);
         $fields = $this->changeInputType($fields);
         $name = $properties["name"];
+        $name_plural = Str::plural($name);
 
-        $this->generateGraphQLSchema($name, $fields, $relation_data);
+        if (!$name) {
+            return 'fail';
+        }
+
+        $generateSchema = $this->generateGraphQLSchema($name, $fields, $relation_data);
+
+        if (!$generateSchema)
+            return 'fail';
+
         $json_fields = $this->generateModelJson($fields, $properties);
+        $status = $this->insertCMInfo($properties, $json_fields);
 
-        $this->insertCMInfo($properties, $json_fields);
+        if (!$status)
+            return 'fail';
+
         $this->isManytoMany($name, $relation_data);
-        $this->generateMigration($name, $fields, $relation_data);
-        $this->generateTrait($name, $relation_data);
+        $status = $this->generateMigration($name, $fields, $relation_data);
+
+        if (!$status)
+            return 'fail';
+
+        $status = $this->generateTrait($name, $relation_data);
+
+        if (!$status)
+            return 'fail';
+
         $this->pushRoute($name);
+        if (!$status) {
+            $this->removeTrait($name_plural);
+            return 'fail';
+        }
+
+
         $this->generateModel($name);
+        if (!$status) {
+            $this->removeTrait($name_plural);
+            $this->removeRoute($name_plural);
+            return 'fail';
+        }
+
         $this->generateService($name);
         $this->generateRequest($name, $fields, "Create");
         $this->generateRequest($name, $fields, "Update");
         $this->generateController($name);
-        $this->generateMenu($name);
+        // $this->generateMenu($name);
         $status = $this->generateView($name, $fields, $relation_data);
 
         // Artisan::call('migrate:fresh', [
@@ -77,6 +96,72 @@ class ContentModelController extends Controller
             return "ok";
         else
             return "error";
+    }
+
+    public function destroy($table_name)
+    {
+        //delete entity record
+
+        $removeTable = EntityStore::where('table_name', $table_name)->first();
+
+        if ($removeTable)
+            $removeTable->delete();
+
+        // dd($removedTable);
+
+        // drop table
+        $exitCode = Artisan::call('cm:delete', [
+            'table_name' => $table_name
+        ]);
+
+        // delete json file
+        $exitCode = Storage::disk('cm')->delete(Str::singular($table_name) . '.json');
+
+        // remove route
+        $this->removeRoute($table_name);
+
+        // remove menu
+        // $this->removeMenu($table_name);
+
+        // remove view
+        $this->removeView($table_name);
+
+        // remove controller
+        $this->removeController($table_name);
+
+        //delete trait
+        $this->removeTrait($table_name);
+
+        //delete Model
+        $this->removeModel($table_name);
+
+        // remove request
+        $this->removeRequest($table_name);
+
+        //remove services
+        $this->removeService($table_name);
+
+        $this->deleteSchema($table_name);
+
+        $this->deleteQuery($table_name);
+
+        flash('Content Model deleted successfully')->success();
+
+        return redirect(route('content_model.index'));
+    }
+
+    public function cekName(Request $request)
+    {
+        $name = strtolower($request->name);
+        $name = Str::plural($name);
+
+        $entity = EntityStore::where("table_name", "=", $name)->first();
+
+        if ($entity) {
+            return "ada";
+        } else {
+            return "tidak";
+        }
     }
 
     public function generateGraphQLSchema($name, $fields, $relation_data)
@@ -94,12 +179,17 @@ class ContentModelController extends Controller
         $mutations_path = app_path("GraphQL/Mutations");
         $directives_path = app_path("GraphQL/Directives");
 
-        if (!file_exists($path) || !file_exists($queries_path) || !file_exists($mutations_path) || !file_exists($directives_path)) {
+        if (!file_exists($path))
             mkdir($path);
+
+        if (!file_exists($queries_path))
             mkdir($queries_path);
+
+        if (!file_exists($mutations_path))
             mkdir($mutations_path);
+
+        if (!file_exists($directives_path))
             mkdir($directives_path);
-        }
 
         $path = $path . '/' . $singular_name . '.graphql';
         $queries_path = $queries_path . '/' . $singular_studly_name . "Query.php";
@@ -135,14 +225,6 @@ class ContentModelController extends Controller
             $field_text .= "\r\n";
         };
 
-
-        // jika many to many, 
-        // misal book dan order
-        // didalam schema book
-        // orders:[Order!]!
-        // didalam schema order
-        // books: [Book!]!
-
         if ($relation_data != null) {
             foreach ($relation_data as $rel) {
                 $rel_type = $rel["type"]["name"];
@@ -174,7 +256,12 @@ class ContentModelController extends Controller
         $query_data = file_get_contents($queries_path);
         $query_data = str_replace('{MODEL_NAME}', $singular_studly_name, $query_data);
         $query_data = str_replace('{MODEL_NAME_PLURAL_LOWER}', $plural_name_lower, $query_data);
-        file_put_contents($queries_path, $query_data);
+
+        if (file_put_contents($queries_path, $query_data) !== false) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public function createPivotTableMigration($model1, $model2)
@@ -454,7 +541,13 @@ class ContentModelController extends Controller
             $data = str_replace('{Relation}', '', $data);
         }
 
-        file_put_contents($path, $data);
+        $taruh = file_put_contents($path, $data);
+
+        if ($taruh != false) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public function load()
@@ -542,50 +635,6 @@ class ContentModelController extends Controller
 
     public function save()
     {
-    }
-
-    public function destroy($table_name)
-    {
-        //delete entity record
-        $removedTable = EntityStore::where('table_name', $table_name)->first()->delete();
-
-        // dd($removedTable);
-
-        // drop table
-        $exitCode = Artisan::call('cm:delete', [
-            'table_name' => $table_name
-        ]);
-
-        // delete json file
-        $exitCode = Storage::disk('cm')->delete(Str::singular($table_name) . '.json');
-
-        // remove route
-        $this->removeRoute($table_name);
-
-        // remove menu
-        $this->removeMenu($table_name);
-
-        // remove view
-        $this->removeView($table_name);
-
-        // remove controller
-        $this->removeController($table_name);
-
-        //delete trait
-        $this->removeTrait($table_name);
-
-        //delete Model
-        $this->removeModel($table_name);
-
-        // remove request
-        $this->removeRequest($table_name);
-
-        //remove services
-        $this->removeService($table_name);
-
-        flash('Content Model deleted successfully')->success();
-
-        return redirect(route('content_model.index'));
     }
 
     public function removeModel($table_name)
@@ -761,6 +810,8 @@ class ContentModelController extends Controller
 
         $project = Project::find(request()->project_id);
         $entity_store->project()->associate($project)->save();
+
+        return $entity_store;
     }
 
     public function generateModelJson($fields, $properties)
@@ -798,8 +849,14 @@ class ContentModelController extends Controller
         $data = str_replace('{Model}', $name_plural_studly, $data);
         $route_contents .= "\n\n" . $data;
 
-        if (!Str::contains($existing_route_contents, $data))
-            file_put_contents($route_path, $route_contents);
+        $stastus = false;
+        if (!Str::contains($existing_route_contents, $data)) {
+            $status = file_put_contents($route_path, $route_contents);
+        }
+
+        if ($status != false) {
+            return true;
+        }
     }
 
 
@@ -864,7 +921,13 @@ class ContentModelController extends Controller
         $data = file_get_contents($path);
         $data = str_replace('{Name}', $name_studly, $data);
         $data = str_replace('{plural}', $name_plural, $data);
-        file_put_contents($path, $data);
+        $taruh = file_put_contents($path, $data);
+
+        if ($taruh != false) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
@@ -928,7 +991,11 @@ class ContentModelController extends Controller
             $templateData = str_replace('{FOREIGNKEY}', "", $templateData);
         }
 
-        file_put_contents($path, $templateData);
+        $taruh = file_put_contents($path, $templateData);
+
+        if ($taruh != false) {
+            return true;
+        }
     }
 
     protected function generateFields($fields)

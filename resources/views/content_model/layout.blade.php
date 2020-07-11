@@ -761,7 +761,7 @@
 				// }
 			},
 			drop: function(ev, ui) {
-				console.log("Disini kah");
+				// console.log("Disini kah");
 				var toolbox_item = $(ui.draggable).find("a"),
 						toolbox_item_name = toolbox_item.data('item-name'),
 						_html;
@@ -1584,7 +1584,7 @@
 									project_id : '{{ request()->session()->get('project')['id'] }}'									
 								};
 
-								console.log(_data_to_send);
+								// console.log(_data_to_send);
 
 						$.ajax({
 							url: request_url.generate,
@@ -1618,7 +1618,7 @@
 								button.addClass('disabled');								
 							},
 							complete: function(e) {
-								// console.log(e);								
+								console.log(e);								
 								
 								button.html(_button_text);
 								button.removeClass('disabled');									
