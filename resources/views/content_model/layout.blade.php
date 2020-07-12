@@ -302,6 +302,7 @@
 							'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 						},
 						success: function(res) {
+							console.log(res);
 							console.log(res.length);
 
 							if(res.length > 0 ){

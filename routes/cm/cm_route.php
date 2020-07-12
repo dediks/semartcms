@@ -57,20 +57,5 @@ Route::resource('categories', 'CategoryController');
 
 Route::resource('orders', 'OrderController');
 
-Route::resource('tests', 'TestController');
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Route::resource('posts', 'PostController');

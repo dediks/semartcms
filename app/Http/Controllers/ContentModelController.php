@@ -44,35 +44,69 @@ class ContentModelController extends Controller
 
         $generateSchema = $this->generateGraphQLSchema($name, $fields, $relation_data);
 
-        if (!$generateSchema)
+        if (!$generateSchema) {
             return 'fail';
+        }
 
         $json_fields = $this->generateModelJson($fields, $properties);
+
+        if (!$json_fields) {
+            $this->deleteQuery($name_plural);
+            $this->deleteSchema($name_plural);
+
+            return 'fail';
+        }
+
         $status = $this->insertCMInfo($properties, $json_fields);
 
-        if (!$status)
+        if (!$status) {
+            $this->deleteQuery($name_plural);
+            $this->deleteSchema($name_plural);
+            $this->removeModelJson($name_plural);
+
             return 'fail';
+        }
 
         $this->isManytoMany($name, $relation_data);
         $status = $this->generateMigration($name, $fields, $relation_data);
 
-        if (!$status)
+        if (!$status) {
+            $this->deleteQuery($name_plural);
+            $this->deleteSchema($name_plural);
+            $this->removeModelJson($name_plural);
+
             return 'fail';
+        }
 
         $status = $this->generateTrait($name, $relation_data);
 
-        if (!$status)
+        if (!$status) {
+            $this->deleteQuery($name_plural);
+            $this->deleteSchema($name_plural);
+            $this->removeModelJson($name_plural);
+            $this->removeMigration($name_plural);
+
             return 'fail';
+        }
 
         $this->pushRoute($name);
         if (!$status) {
+            $this->deleteQuery($name_plural);
+            $this->deleteSchema($name_plural);
+            $this->removeModelJson($name_plural);
+            $this->removeMigration($name_plural);
             $this->removeTrait($name_plural);
+
             return 'fail';
         }
 
 
         $this->generateModel($name);
         if (!$status) {
+            $this->deleteQuery($name_plural);
+            $this->deleteSchema($name_plural);
+            $this->removeModelJson($name_plural);
+            $this->removeMigration($name_plural);
             $this->removeTrait($name_plural);
             $this->removeRoute($name_plural);
             return 'fail';
@@ -85,37 +119,41 @@ class ContentModelController extends Controller
         // $this->generateMenu($name);
         $status = $this->generateView($name, $fields, $relation_data);
 
-        // Artisan::call('migrate:fresh', [
-        //     '--force' => true,
-        // ]);
         Artisan::call('migrate');
-
-        // flash('Content Model created successfully')->success();
 
         if ($status)
             return "ok";
-        else
+        else {
+            $this->destroy($name_plural);
+
             return "error";
+        }
     }
 
-    public function destroy($table_name)
+    public function removeModelJson($table_name)
     {
-        //delete entity record
+        $exitCode = Storage::disk('cm')->delete(Str::singular($table_name) . '.json');
+    }
 
+    public function removeTableOnDB($table_name)
+    {
         $removeTable = EntityStore::where('table_name', $table_name)->first();
-
         if ($removeTable)
             $removeTable->delete();
-
-        // dd($removedTable);
 
         // drop table
         $exitCode = Artisan::call('cm:delete', [
             'table_name' => $table_name
         ]);
+    }
+
+    public function destroy($table_name)
+    {
+        //delete entity record
+        $this->removeTable($table_name);
 
         // delete json file
-        $exitCode = Storage::disk('cm')->delete(Str::singular($table_name) . '.json');
+        $this->removeModelJson($table_name);
 
         // remove route
         $this->removeRoute($table_name);
@@ -440,6 +478,8 @@ class ContentModelController extends Controller
                 ]
             ])\n";
 
+            // $field_index .= '<td class=\"text-center align-middle\"><input type=\"checkbox\" class=\"form-check-input\" id=\"checkbox_${var_plural}\" name=\"cb_${var_plural}[]\"></td>';
+
             if ($field["input_type"] === "file") {
                 $field_index .= "
                 <td>
@@ -552,7 +592,8 @@ class ContentModelController extends Controller
 
     public function load()
     {
-        $entity = EntityStore::select(['id', 'table_name'])->get();
+        $project_id = request()->session()->get("project")['id'];
+        $entity = Project::find($project_id)->entities()->select(['id', 'table_name'])->get();
 
         return response()->json($entity);
     }
@@ -849,13 +890,9 @@ class ContentModelController extends Controller
         $data = str_replace('{Model}', $name_plural_studly, $data);
         $route_contents .= "\n\n" . $data;
 
-        $stastus = false;
+        // $stastus = false;
         if (!Str::contains($existing_route_contents, $data)) {
             $status = file_put_contents($route_path, $route_contents);
-        }
-
-        if ($status != false) {
-            return true;
         }
     }
 

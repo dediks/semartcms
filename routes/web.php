@@ -82,16 +82,16 @@ Route::group(['middleware' => 'auth'], function () {
     });
 
     Route::prefix('settings')->name('settings.')->group(function () {
-        Route::get('list', 'SettingController@list')->name('list');
-        Route::get('create', 'SettingController@create')->name('create');
-        Route::post('create', 'SettingController@store')->name('store');
-        Route::get('{id}/edit', 'SettingController@edit')->name('edit');
-        Route::put('{id}', 'SettingController@update')->name('update');
-        Route::patch('{id}', 'SettingController@update')->name('update');
-        Route::delete('{id}/delete', 'SettingController@destroy')->name('destroy');
-        Route::put('{setting?}/save', 'SettingController@save')->name('save');
-        Route::patch('{setting?}/save', 'SettingController@save')->name('save');
-        Route::get('{setting?}', 'SettingController@index')->name('index');
+        Route::get('', 'SettingController@index')->name('index');
+        // Route::get('create', 'SettingController@create')->name('create');
+        // Route::post('create', 'SettingController@store')->name('store');
+        // Route::get('{id}/edit', 'SettingController@edit')->name('edit');
+        // Route::put('{id}', 'SettingController@update')->name('update');
+        // Route::patch('{id}', 'SettingController@update')->name('update');
+        // Route::delete('{id}/delete', 'SettingController@destroy')->name('destroy');
+        // Route::put('{setting?}/save', 'SettingController@save')->name('save');
+        // Route::patch('{setting?}/save', 'SettingController@save')->name('save');
+        // Route::get('{setting?}', 'SettingController@index')->name('index');
     });
 
     // Setting Items

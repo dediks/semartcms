@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateCobasTable extends Migration
+class CreatePostsTable extends Migration
 {
 
     /**
@@ -13,10 +13,11 @@ class CreateCobasTable extends Migration
      */
     public function up()
     {
-        if (!Schema::hasTable('cobas')) {
-            Schema::create('cobas', function (Blueprint $table) {
+        if (!Schema::hasTable('posts')) {
+            Schema::create('posts', function (Blueprint $table) {
                 $table->bigIncrements('id');
                 $table->string('title')->nullable();
+            $table->text('body')->nullable();
                 
                 $table->timestamps();
             });
@@ -30,6 +31,6 @@ class CreateCobasTable extends Migration
      */
     public function down()
     {
-        Schema::drop('cobas');
+        Schema::drop('posts');
     }
 }
