@@ -39,21 +39,18 @@ type PostsPage {
 extend type Mutation {
     createPost(
       	title:String
-	body:String
 
     ): Post! @create
     
     updatePost(
       id: ID!
       	title:String
-	body:String
 
       ): Post @update
 
     upsertPost(
       id: ID! 
       	title:String
-	body:String
 
       ): Post @upsert
 
@@ -64,8 +61,6 @@ extend type Mutation {
 type Post {
     id: ID!
     	title:String
-	body:String
-	comments: [Comment] @hasMany
 	author: Author@belongsTo
 
     created_at: DateTime!

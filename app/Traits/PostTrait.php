@@ -5,11 +5,7 @@ namespace App\Traits;
 trait PostTrait
 {
               
-        public function comments()
-        {
-            return $this->hasMany("App\Comment");            
-        }            
-        public function Author()
+        public function author()
         {
             return $this->belongsTo("App\Author");            
         }

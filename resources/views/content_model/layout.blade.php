@@ -29,7 +29,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="row bg-white p-3" style="margin : -10px 35px -20px 0px">
+		{{-- <div class="row bg-white p-3" style="margin : -10px 35px -20px 0px">
 			<div class="col d-flex">
 				<div class="text-bold">
 					<b>Name : </b> 
@@ -42,7 +42,7 @@
 				</div> 
 				<div class="ml-2" id="content-model-display-name"></div>
 			</div>
-		</div>
+		</div> --}}
 		<div class="section-body">
 				<div class="row mt-5">
 					<div class="col-9">

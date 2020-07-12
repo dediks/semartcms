@@ -1,0 +1,68 @@
+#import */*.graphql
+
+extend type Query {    
+    #sihgle data
+    author(id: ID @eq): Author @find 
+
+    #all data
+    authors: [Author!]! @all
+
+    #all data paginate
+    authorsPaginate: [Author!]! @paginate(defaultCount: 10) 
+
+    #get most selected top data
+    authorsTop(total: Int!, order_by: String!, director: String!): [Author!]!
+      @paginate(defaultCount: 10)
+
+    #get somme randomized data
+    authorGetRandom(total: Int!): [Author!]! @field(resolver: "AuthorQuery@getRandom")
+
+    #get some data by paramaters
+    authorFindBy(identifier: String!, operator: String!, value: String!): Author!
+      @field(resolver: "AuthorQuery@findBy")
+
+    #get all data with pagination
+    authorsPage(page: Int!, size: Int!): AuthorsPage
+      @field(resolver: "AuthorQuery@getPage")
+    
+    #search a data
+    authorsSearch(col_name: String!, kw: String!): [Author!]!
+      @field(resolver: "AuthorQuery@search")
+}
+
+
+type AuthorsPage {
+    authors: [Author]
+    hasMore: Boolean
+}
+
+extend type Mutation {
+    createAuthor(
+      	name:String
+
+    ): Author! @create
+    
+    updateAuthor(
+      id: ID!
+      	name:String
+
+      ): Author @update
+
+    upsertAuthor(
+      id: ID! 
+      	name:String
+
+      ): Author @upsert
+
+    deleteAuthor(id: ID!): Author @delete
+}
+# type 
+
+type Author {
+    id: ID!
+    	name:String
+	posts: [Post] @hasMany
+
+    created_at: DateTime!
+    updated_at: DateTime!
+}

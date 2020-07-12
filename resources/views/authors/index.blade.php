@@ -5,9 +5,9 @@
 @section('content')
 <section class="section">
   <div class="section-header">
-    <h1>Manage {Plural}</h1>
+    <h1>Manage Authors</h1>
     <div class="section-header-button">
-        <a href="{{ route('{route}.create')}}" class="btn btn-primary btn-icon icon-right">Create New <i class="fas fa-plus"></i></a>
+        <a href="{{ route('authors.create')}}" class="btn btn-primary btn-icon icon-right">Create New <i class="fas fa-plus"></i></a>
     </div>
   </div>
   <div class="section-body">
@@ -16,7 +16,7 @@
         <div class="col-md-12">
             <div class="card card-primary">
                 <div class="card-header">
-                    <h4>All {Plural}</h4>
+                    <h4>All Authors</h4>
                 </div>
                 <div class="card-body p-0">
                     <div class="d-flex justify-content-between p-3">
@@ -42,22 +42,26 @@
                         <table class="table table-striped">
                             <tbody>
                                 <tr>
-                                    {index_header_fields}
+                                    <th>No</th><th> Namae</th>
+<th> posts</th>
+
                                 </tr>
                                 @php
                                     $no = 1;
                                 @endphp
-                                @foreach(${var_plural} as ${var})
+                                @foreach($authors as $author)
                                 <tr>
-                                    <td class="text-center align-middle"><input type="checkbox" class="form-check-input" id="checkbox_${var_plural}" name="cb_${var_plural}[]"></td>
-                                    {index_fields}
+                                    <td class="text-center align-middle"><input type="checkbox" class="form-check-input" id="checkbox_$authors" name="cb_$authors[]"></td>
+                                    <td>{{ str_limit($author->name, $limit = 50, $end ="...") }}</td>
+<td><button type="button" class="btn btn-info" id="btnposts" data-relation ="posts" onclick="showRelation({{ $author->id }}, 'author','posts')">Show posts</button></td>
+
                                     <td class="text-right">
-                                        <a class="btn btn-primary" href="{{ route('{route}.edit', ${var}->id) }}">
+                                        <a class="btn btn-primary" href="{{ route('authors.edit', $author->id) }}">
                                             <i class="fa fa-edit"></i>
                                         </a>
                                         @deletebutton([
-                                            'id' => ${var}->id,
-                                            'route' => route('{route}.destroy', ${var}->id)
+                                            'id' => $author->id,
+                                            'route' => route('authors.destroy', $author->id)
                                         ])
                                             <i class="fa fa-trash"></i>
                                         @enddeletebutton
@@ -70,7 +74,7 @@
                             </tbody>
                         </table>
                     </div>
-                    {{ ${var_plural}->links() }}
+                    {{ $authors->links() }}
                 </div>
             </div>
         </div>

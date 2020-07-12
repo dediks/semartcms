@@ -42,21 +42,18 @@
                         <table class="table table-striped">
                             <tbody>
                                 <tr>
-                                    <th>#</th><th> Title</th>
-                                    <th> Body</th>
-                                    <th> comments</th>
-                                    <th> Author</th>
+                                    <th>No</th><th> Title</th>
+<th> authors</th>
+
                                 </tr>
                                 @php
                                     $no = 1;
                                 @endphp
                                 @foreach($posts as $post)
                                 <tr>
-                                <td class="text-center align-middle"><input type="checkbox" class="form-check-input" id="checkbox_${var_plural}" name="cb_${var_plural}[]"></td>
+                                    <td class="text-center align-middle"><input type="checkbox" class="form-check-input" id="checkbox_$posts" name="cb_$posts[]"></td>
                                     <td>{{ str_limit($post->title, $limit = 50, $end ="...") }}</td>
-                                    <td>{{ str_limit($post->body, $limit = 50, $end ="...") }}</td>
-<td><button type="button" class="btn btn-info" id="btncomments" data-relation ="comments" onclick="showRelation({{ $post->id }}, 'post','comments')">Show comments</button></td>
-<td><button type="button" class="btn btn-info" id="btnAuthor" data-relation ="Author" onclick="showRelation({{ $post->id }}, 'post','Author')">Show Author</button></td>
+<td><button type="button" class="btn btn-info" id="btnauthors" data-relation ="authors" onclick="showRelation({{ $post->id }}, 'post','authors')">Show authors</button></td>
 
                                     <td class="text-right">
                                         <a class="btn btn-primary" href="{{ route('posts.edit', $post->id) }}">
@@ -110,6 +107,33 @@
 <script>
     function showRelation(record_id, cm_name, target_name){
         $('#relationModal').modal({"backdrop" : false});
+        
+        $.ajax({
+            url: '{{ route('content_model.load-related-model-data') }}',
+            dataType: 'json',
+            type: 'POST',
+            data: {
+                "target_name" : target_name,
+                "cm_name" : cm_name,
+                "record_id" : record_id,
+            },
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(res) {    
+                console.log(res);
+                // if(res != ""){
+                //     // appendModal(res, target_model, name, modifier);
+                // }else{
+                //     $('#list-of-data').html("No data ");
+                // }
+            },
+            error: function(x, e) {
+                $('#list-of-data').html("No data ");
+                console.log(x);
+            }
+       });
+
     }
 </script>
 @endpush

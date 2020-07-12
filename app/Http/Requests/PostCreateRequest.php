@@ -16,7 +16,6 @@ class PostCreateRequest extends FormRequest
         return [
             
                     'title' => '',
-                    'body' => '',
         ];
     }
 }

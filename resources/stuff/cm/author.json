@@ -1,0 +1,1 @@
+{"info":{"name":"author","display_name":"Author","description":""},"attributes":{"name":{"name":"name","display_name":"Namae","input_type":"text","db_type":"string","validation":{"required":null,"unique":null,"max":null,"min":null,"max_filesize":null}}}}

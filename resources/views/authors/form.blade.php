@@ -2,7 +2,7 @@
     <section class="section">
       <div class="section-header">
         <div class="section-header-back">
-            <a class="btn" href="{{ route('posts.index') }}"><i class="fas fa-chevron-left"></i></a>
+            <a class="btn" href="{{ route('authors.index') }}"><i class="fas fa-chevron-left"></i></a>
         </div>
         <h1>{{$title}}</h1>
       </div>
@@ -18,15 +18,15 @@
     	            </div>
     	            <div class="card-body">
                         @isset($edit)
-                        {{ Form::model($post, ['route' => [$action, $id], 'enctype' => 'multipart/form-data']) }}
+                        {{ Form::model($author, ['route' => [$action, $id], 'enctype' => 'multipart/form-data']) }}
                         @else
     	            	<form method="post" action="{{ $action }}" enctype="multipart/form-data">
                         @endisset
                             @csrf
                             {{ isset($method) ? method_field($method) : '' }}
                             @field([
-                'label' => "Title",
-                'name' => "title",
+                'label' => "Namae",
+                'name' => "name",
                 'type' => "text",
                 'validation'=>[
                     'required' => "",
@@ -37,15 +37,15 @@
             ])
 
                     <div class="form-group row mb-4">
-                        <label for="field-title" class="col-form-label text-md-right col-12 col-md-3 col-lg-3 ">authors
+                        <label for="field-title" class="col-form-label text-md-right col-12 col-md-3 col-lg-3 ">posts
                         </label>
         
                         <div class="col-sm-12 col-md-7">            
-                            <button class="btn btn-primary" type="button" data-id="authors" id="selectRelationauthors" onclick="selectRelatedRelation('authors','one-many','belongsTo')")>Select authors</button>
-                            <div id="view_selected_authors" class="mt-1">Noauthors selected</div>
+                            <button class="btn btn-primary" type="button" data-id="posts" id="selectRelationposts" onclick="selectRelatedRelation('posts','one-many','hasMany')")>Select posts</button>
+                            <div id="view_selected_posts" class="mt-1">Noposts selected</div>
                         </div>
                         <input type="hidden" value="" name="temp_data_selected[]" id="temp_data_selected">
-                        <input type="hidden" value="authors,one-many,belongsTo" name="data_target" id="data_target">
+                        <input type="hidden" value="posts,one-many,hasMany" name="data_target" id="data_target">
                     </div>
 
     		                <div class="form-group row mb-4">
@@ -104,8 +104,7 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             success: function(res) {    
-                console.log(res);
-                // console.log(res.responseText);
+                console.log(res.responseText);
                 if(res != ""){
                     appendModal(res, target_model, name, modifier);
                 }else{
@@ -236,64 +235,7 @@
 
                 $('#list-of-data').html(htmlnya);
             }else{
-                htmlnya += `<div class="form-group">
-                    <table class="table">
-                <thead>
-                    <td>#</td>
-                    `;
                 
-                countCol = 0;
-                Object.keys(res[0])
-                    .forEach(function eachKey(key) { 
-                        if(countCol === 4){
-                            return;
-                        }
-
-                        htmlnya += `
-                            <td class="text-bold">
-                                <b>${key}</b>  
-                            </td>
-                        `;
-
-                        countCol++; 
-                    });
-
-                htmlnya += `</thead><tbody>`;
-                res.forEach(function(record){
-                    htmlnya += `                        
-                    <tr>
-                        <td> 
-                            <input class="form-control" type="radio" id="radio_relation" value="${record.id}" name="selectedRadio[]">
-                        </td>
-                    `;
-                    
-                    count = 0;
-                    Object.values(record).forEach(function(col){
-                        if(count === 4){
-                            return;
-                        }
-                        
-                        htmlnya += `
-                            <td>
-                                ${col}
-                            </td>
-                        `;
-
-                        count++;
-                    });
-
-                    htmlnya += `                        
-                    </tr>
-                    `;
-                });
-
-                htmlnya += `
-                </tbody>
-                        </table>
-                        </div>
-                `;
-
-                $('#list-of-data').html(htmlnya);
             }
 
         }else{

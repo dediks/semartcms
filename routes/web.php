@@ -45,6 +45,7 @@ Route::group(['middleware' => 'auth'], function () {
 
             Route::post('/load', 'ContentModelController@load')->name('load');
             Route::post('/load-data', 'ContentModelController@loadRelatedModel')->name('load-related-model');
+            Route::post('/load-related-data', 'ContentModelController@loadRelatedModelData')->name('load-related-model-data');
             Route::post('/submit', 'ContentModelController@submitRelatedModel')->name('submit-related-model');
             Route::post('/cek-name', 'ContentModelController@cekName')->name('cek_name');
         });

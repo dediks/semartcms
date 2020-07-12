@@ -125,7 +125,6 @@ class ContentModelController extends Controller
             return "ok";
         else {
             $this->destroy($name_plural);
-
             return "error";
         }
     }
@@ -150,7 +149,7 @@ class ContentModelController extends Controller
     public function destroy($table_name)
     {
         //delete entity record
-        $this->removeTable($table_name);
+        $this->removeTableOnDB($table_name);
 
         // delete json file
         $this->removeModelJson($table_name);
@@ -379,7 +378,8 @@ class ContentModelController extends Controller
                 $unique = "| unique:" . Str::plural($name)  . "," . $field['name'] . "'.\$this->id,";
             } else if ($isUniqueExist) {
                 $unique = "| unique:" . Str::plural($name)  . "," . $field['name'] . "',";
-            } else {
+            }
+            else {
                 $unique = "',";
             }
 
@@ -433,6 +433,24 @@ class ContentModelController extends Controller
             return response()->json($result);
         } else {
             return '';
+        }
+    }
+
+    public function loadRelatedModelData()
+    {
+        $target_name = request()->target_name;
+        $record_id = request()->record_id;
+        $cm_name_plural = Str::plural(request()->cm_name);
+        $cm_name_studly = Str::Studly(request()->cm_name);
+
+        if (Schema::hasTable($cm_name_plural)) {
+            $className = '\App\\' . $cm_name_studly;
+            // if (file_exists($className)) {
+            $result = $className::find($record_id);
+            return response()->json($result);
+            // }
+        } else {
+            return 'no data';
         }
     }
 
@@ -552,6 +570,7 @@ class ContentModelController extends Controller
         if ($relation_data != null) {
             foreach ($relation_data as $data) {
                 $model_target = $data["target_model"]["name"];
+                $model_target = strtolower($model_target);
                 $model_target = Str::singular($model_target);
                 $name_studly_target = Str::studly($model_target);
 

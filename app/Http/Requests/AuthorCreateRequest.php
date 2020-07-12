@@ -4,7 +4,7 @@ namespace Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class PostUpdateRequest extends FormRequest
+class AuthorCreateRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -15,7 +15,7 @@ class PostUpdateRequest extends FormRequest
     {
         return [
             
-                    'title' => '',
+                    'name' => '',
         ];
     }
 }

@@ -77,12 +77,14 @@ class {Model}Service
 					// dd($datum_decoded);
 
 					$className = '\App\\' . $new_name_target_model;
-					foreach ($datum_decoded as $a) {
-						$result = $className::find($a);
-						$created->{$target_model}()->save($result);
-					}
+					if (file_exists($className)) {
+						foreach ($datum_decoded as $a) {
+							$result = $className::find($a);
+							$created->{$target_model}()->save($result);
+						}
 
-					$created->refresh();
+						$created->refresh();
+					}
 				}
 			} else if ($modifier == "belongsTo" ||  $modifier == "hasOne") { //modifier belongsTo
 
@@ -95,10 +97,12 @@ class {Model}Service
 				$id = $datum_decoded[0];
 
 				$classTarget = 'App\\' . $new_name_target_model_in_studly;
-				$data_target = $classTarget::find($id);
+				if (file_exists($classTarget)) {
+					$data_target = $classTarget::find($id);
 
-				$created->{$new_name_target_model}()->associate($data_target);
-				$created->save();
+					$created->{$new_name_target_model}()->associate($data_target);
+					$created->save();
+				}
 			}
 		} else { //jika tidak ada relasi
 			dd("tidak ada relasi");

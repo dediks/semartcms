@@ -2,16 +2,16 @@
 
 namespace Services;
 
-use App\Post;
+use App\Author;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Auth;
 
-class PostService
+class AuthorService
 {
 	public function model()
 	{
-		return new Post;
+		return new Author;
 	}
 
 	public function all()
@@ -131,7 +131,7 @@ class PostService
 
 	public function findAndUpdate($request, $id)
 	{
-		$post = $this->find($id);
+		$author = $this->find($id);
 
 		$input = $request->all();
 
