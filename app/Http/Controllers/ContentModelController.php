@@ -511,8 +511,8 @@ class ContentModelController extends Controller
         };
 
         if ($relation_data != null) {
-            foreach ($relation_data as $data_relation) {
-
+            foreach ($relation_data as $index => $data_relation) {
+                $index = $index + 1;
                 $field_form .= "
                     <div class=\"form-group row mb-4\">
                         <label for=\"field-title\" class=\"col-form-label text-md-right col-12 col-md-3 col-lg-3 \">"
@@ -520,12 +520,13 @@ class ContentModelController extends Controller
                         </label>
         
                         <div class=\"col-sm-12 col-md-7\">            
-                            <button class=\"btn btn-primary\" type=\"button\" data-id=\"" . $data_relation["target_model"]["name"] . "\" id=\"selectRelation" . $data_relation["target_model"]["name"] . "\" onclick=\"selectRelatedRelation('" . $data_relation["target_model"]["name"] . "','" . $data_relation["type"]["name"] . "','" . $data_relation["type"]["modifier"] . "')\")>Select " . $data_relation["target_model"]["name"] . "</button>
+                            <button class=\"btn btn-primary\" type=\"button\" data-id=\"" . $data_relation["target_model"]["name"] . "\" id=\"selectRelation" . $data_relation["target_model"]["name"] . "\" onclick=\"selectRelatedRelation('" . $data_relation["target_model"]["name"] . "','" . $data_relation["type"]["name"] . "','" . $data_relation["type"]["modifier"] . "', " . $index . ")\")>Select " . $data_relation["target_model"]["name"] . "</button>
                             <div id=\"view_selected_" . $data_relation["target_model"]["name"] . "\" class=\"mt-1\">No" . $data_relation["target_model"]["name"] . " selected</div>
                         </div>
-                        <input type=\"hidden\" value=\"\" name=\"temp_data_selected[]\" id=\"temp_data_selected\">
-                        <input type=\"hidden\" value=\"" . $data_relation["target_model"]["name"] . "," . $data_relation["type"]["name"] . "," . $data_relation["type"]["modifier"] . "\" name=\"data_target\" id=\"data_target\">
+                        <input type=\"hidden\" value=\"\" name=\"temp_data_selected[]\" id=\"temp_data_selected" . $index . "\">
+                        <input type=\"hidden\" value=\"" . $data_relation["target_model"]["name"] . "," . $data_relation["type"]["name"] . "," . $data_relation["type"]["modifier"] . "\" name=\"data_target[]\" id=\"data_target\">
                     </div>\n";
+
 
                 $field_index .= "<td><button type=\"button\" class=\"btn btn-info\" id=\"btn" . $data_relation["target_model"]["name"] . "\" data-relation =\"" . $data_relation["target_model"]["name"] . "\" onclick=\"showRelation({{ $" . $vars['var'] . "->id }}, '" . $vars['var'] . "','" . $data_relation["target_model"]["name"] . "')\">Show " . $data_relation["target_model"]["name"] . "</button></td>\n";
 
@@ -1035,12 +1036,12 @@ class ContentModelController extends Controller
                 $target = Str::singular($target);
                 $modifier = $data["type"]["modifier"];
 
-                if (($relation_type != "many-many") && ($relation_type == "one-many" && $modifier != 'hasMany')) {
-                    $target .= "_id";
-                    $structure = "\$table->unsignedBigInteger('$target');";
-                    $templateData = str_replace('{FOREIGNKEY}', $structure, $templateData);
-                } else {
+                if (($relation_type == "many-many") || ($relation_type == "one-many" && $modifier == 'hasMany')) {
                     $templateData = str_replace('{FOREIGNKEY}', "", $templateData);
+                } else {
+                    $target .= "_id";
+                    $structure = "\$table->unsignedBigInteger('$target')->nullable();";
+                    $templateData = str_replace('{FOREIGNKEY}', $structure, $templateData);
                 }
             }
         } else {

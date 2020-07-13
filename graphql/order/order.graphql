@@ -1,31 +1,56 @@
 #import */*.graphql
 
-extend type Query {
-    orders: [Order!]! @paginate(defaultCount: 10)
-    order(id: ID @eq): Order @find
+extend type Query {    
+    #sihgle data
+    order(id: ID @eq): Order @find 
+
+    #all data
+    orders: [Order!]! @all
+
+    #all data paginate
+    ordersPaginate: [Order!]! @paginate(defaultCount: 10) 
+
+    #get most selected top data
+    ordersTop(total: Int!, order_by: String!, director: String!): [Order!]!
+      @paginate(defaultCount: 10)
+
+    #get somme randomized data
+    orderGetRandom(total: Int!): [Order!]! @field(resolver: "OrderQuery@getRandom")
+
+    #get some data by paramaters
+    orderFindBy(identifier: String!, operator: String!, value: String!): Order!
+      @field(resolver: "OrderQuery@findBy")
+
+    #get all data with pagination
+    ordersPage(page: Int!, size: Int!): OrdersPage
+      @field(resolver: "OrderQuery@getPage")
+    
+    #search a data
+    ordersSearch(col_name: String!, kw: String!): [Order!]!
+      @field(resolver: "OrderQuery@search")
+}
+
+
+type OrdersPage {
+    orders: [Order]
+    hasMore: Boolean
 }
 
 extend type Mutation {
     createOrder(
-      	price:Float
-	invoice_number:String
-	status:String
+      	invoice_number:String
 
     ): Order! @create
     
     updateOrder(
       id: ID!
-      	price:Float
-	invoice_number:String
-	status:String
+      	invoice_number:String
 
       ): Order @update
 
     upsertOrder(
       id: ID! 
-      	price:Float
-	invoice_number:String
-	status:String
+      	invoice_number:String
 
       ): Order @upsert
 
@@ -35,9 +60,7 @@ extend type Mutation {
 
 type Order {
     id: ID!
-    	price:Float
-	invoice_number:String
-	status:String
+    	invoice_number:String
 	customer: Customer@belongsTo
 	books: [Book] @belongsToMany
 

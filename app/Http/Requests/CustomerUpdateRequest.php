@@ -16,14 +16,6 @@ class CustomerUpdateRequest extends FormRequest
         return [
             
                     'name' => '',
-                    'username' => 'required| unique:customers,username'.$this->id,
-                    'remember_token' => '',
-                    'email' => 'required| unique:customers,email'.$this->id,
-                    'roles' => '',
-                    'address' => '',
-                    'phone' => '',
-                    'avatar' => '',
-                    'status' => '',
         ];
     }
 }

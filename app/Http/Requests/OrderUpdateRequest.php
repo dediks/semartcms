@@ -15,9 +15,7 @@ class OrderUpdateRequest extends FormRequest
     {
         return [
             
-                    'price' => '',
                     'invoice_number' => '',
-                    'status' => '',
         ];
     }
 }

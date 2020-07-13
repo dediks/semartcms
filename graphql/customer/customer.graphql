@@ -1,74 +1,67 @@
 #import */*.graphql
 
-extend type Query {
-    me: Customer @auth(guard: "api")
-    customers: [Customer!]! @paginate(defaultCount: 10)
-    customer(id: ID @eq): Customer @find
+extend type Query {    
+    #sihgle data
+    customer(id: ID @eq): Customer @find 
 
-    customersAll: [Customer!]! @all
-    customerLogin(email: String!, password: String!): Customer!
-        @field(resolver: "CustomerQuery@login")
+    #all data
+    customers: [Customer!]! @all
+
+    #all data paginate
+    customersPaginate: [Customer!]! @paginate(defaultCount: 10) 
+
+    #get most selected top data
+    customersTop(total: Int!, order_by: String!, director: String!): [Customer!]!
+      @paginate(defaultCount: 10)
+
+    #get somme randomized data
+    customerGetRandom(total: Int!): [Customer!]! @field(resolver: "CustomerQuery@getRandom")
+
+    #get some data by paramaters
+    customerFindBy(identifier: String!, operator: String!, value: String!): Customer!
+      @field(resolver: "CustomerQuery@findBy")
+
+    #get all data with pagination
+    customersPage(page: Int!, size: Int!): CustomersPage
+      @field(resolver: "CustomerQuery@getPage")
+    
+    #search a data
+    customersSearch(col_name: String!, kw: String!): [Customer!]!
+      @field(resolver: "CustomerQuery@search")
+}
+
+
+type CustomersPage {
+    customers: [Customer]
+    hasMore: Boolean
 }
 
 extend type Mutation {
     createCustomer(
-        name: String!
-        username: String
-        remember_token: String
-        email: String!
-        roles: String
-        address: String
-        phone: String
-        avatar: String
-        status: String
-        password: String!
-    ): Customer! @create
+      	name:String
 
+    ): Customer! @create
+    
     updateCustomer(
-        id: ID!
-        name: String
-        username: String!
-        remember_token: String
-        email: String!
-        roles: String
-        address: String
-        phone: String
-        avatar: String
-        status: String
-        password: String
-    ): Customer @update
+      id: ID!
+      	name:String
+
+      ): Customer @update
 
     upsertCustomer(
-        id: ID!
-        name: String
-        username: String!
-        remember_token: String
-        email: String!
-        roles: String
-        address: String
-        phone: String
-        avatar: String
-        status: String
-        password: String
-    ): Customer @upsert
+      id: ID! 
+      	name:String
+
+      ): Customer @upsert
 
     deleteCustomer(id: ID!): Customer @delete
 }
-# type
+# type 
 
 type Customer {
     id: ID!
-    name: String
-    username: String!
-    remember_token: String
-    email: String!
-    roles: String
-    address: String
-    phone: String
-    avatar: String
-    status: String
-    password: String
-    orders: [Order] @hasMany
+    	name:String
+	orders: [Order] @hasMany
 
     created_at: DateTime!
     updated_at: DateTime!

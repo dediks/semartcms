@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 use Services\OrderService;
+use Illuminate\Support\Facades\Gate;
 use Requests\{
 	OrderCreateRequest,
 	OrderUpdateRequest

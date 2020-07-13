@@ -19,13 +19,30 @@
                     <h4>All Categories</h4>
                 </div>
                 <div class="card-body p-0">
+                    <div class="d-flex justify-content-between p-3">
+                        <div>
+                            <button class="btn btn-secondary">Delete Selected</button>
+                        </div>
+                            <div class="md-form ml-3 flex-grow-1 mr-3 mb-3">
+                                <input class="form-control" type="text" placeholder="Search" aria-label="Search">
+                            </div>
+                        <div>
+                            <div class="dropdown">
+                                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  Sort by
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                  <a class="dropdown-item" href="#">Asc</a>
+                                  <a class="dropdown-item" href="#">Desc</a>
+                                </div>
+                              </div>
+                        </div>
+                    </div>
                     <div class="table-responsive table-invoice">
                         <table class="table table-striped">
                             <tbody>
                                 <tr>
                                     <th>No</th><th> Name</th>
-<th> Slug</th>
-<th> Image</th>
 <th> books</th>
 
                                 </tr>
@@ -34,13 +51,8 @@
                                 @endphp
                                 @foreach($categories as $category)
                                 <tr>
-                                    <td>{{ $no }}</td>
+                                    <td class="text-center align-middle"><input type="checkbox" class="form-check-input" id="checkbox_$categories" name="cb_$categories[]"></td>
                                     <td>{{ str_limit($category->name, $limit = 50, $end ="...") }}</td>
-<td>{{ str_limit($category->slug, $limit = 50, $end ="...") }}</td>
-
-                <td>
-                    <img src="{{ asset($category->image ) }}" alt="" width="50" height="50">
-                </td>
 <td><button type="button" class="btn btn-info" id="btnbooks" data-relation ="books" onclick="showRelation({{ $category->id }}, 'category','books')">Show books</button></td>
 
                                     <td class="text-right">
@@ -95,6 +107,33 @@
 <script>
     function showRelation(record_id, cm_name, target_name){
         $('#relationModal').modal({"backdrop" : false});
+        
+        $.ajax({
+            url: '{{ route('content_model.load-related-model-data') }}',
+            dataType: 'json',
+            type: 'POST',
+            data: {
+                "target_name" : target_name,
+                "cm_name" : cm_name,
+                "record_id" : record_id,
+            },
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(res) {    
+                console.log(res);
+                // if(res != ""){
+                //     // appendModal(res, target_model, name, modifier);
+                // }else{
+                //     $('#list-of-data').html("No data ");
+                // }
+            },
+            error: function(x, e) {
+                $('#list-of-data').html("No data ");
+                console.log(x);
+            }
+       });
+
     }
 </script>
 @endpush

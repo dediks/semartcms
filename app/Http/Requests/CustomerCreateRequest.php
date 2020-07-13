@@ -16,14 +16,6 @@ class CustomerCreateRequest extends FormRequest
         return [
             
                     'name' => '',
-                    'username' => 'required| unique:customers,username',
-                    'remember_token' => '',
-                    'email' => 'required| unique:customers,email',
-                    'roles' => '',
-                    'address' => '',
-                    'phone' => '',
-                    'avatar' => '',
-                    'status' => '',
         ];
     }
 }

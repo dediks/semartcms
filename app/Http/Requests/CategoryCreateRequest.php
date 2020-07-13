@@ -16,8 +16,6 @@ class CategoryCreateRequest extends FormRequest
         return [
             
                     'name' => '',
-                    'slug' => 'required| unique:categories,slug',
-                    'image' => '',
         ];
     }
 }

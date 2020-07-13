@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Services\CategoryService;
+use Illuminate\Support\Facades\Gate;
 use Requests\{
 	CategoryCreateRequest,
 	CategoryUpdateRequest

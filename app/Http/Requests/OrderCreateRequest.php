@@ -15,9 +15,7 @@ class OrderCreateRequest extends FormRequest
     {
         return [
             
-                    'price' => '',
                     'invoice_number' => '',
-                    'status' => '',
         ];
     }
 }

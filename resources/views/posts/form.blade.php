@@ -25,7 +25,7 @@
                             @csrf
                             {{ isset($method) ? method_field($method) : '' }}
                             @field([
-                'label' => "Title",
+                'label' => "title",
                 'name' => "title",
                 'type' => "text",
                 'validation'=>[
@@ -52,7 +52,7 @@
     		                    <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3"></label>
     		                    <div class="col-sm-12 col-md-7">
     		                        <button class="btn btn-primary">{{ $button }}</button>
-    		                    </div>
+    		                    </div> 
     		                </div>
     		            </form>
     	            </div>
@@ -104,9 +104,8 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             success: function(res) {    
-                console.log(res);
-                // console.log(res.responseText);
-                if(res != ""){
+                // console.log(res);
+                if(res){
                     appendModal(res, target_model, name, modifier);
                 }else{
                     $('#list-of-data').html("No data ");
@@ -123,7 +122,6 @@
         $('#relationModal').modal({"backdrop" : false});
 
         $('#btn-submit').click(function(){
-
             let data = [];
             data = $('input[name="selectedCheckbox[]"]:checked');
 
@@ -143,28 +141,28 @@
 
             // console.log(JSON.stringify(data_to_send));
 
-            // $.ajax({
-            //     url: '{{ route('content_model.submit-related-model') }}',
-            //     dataType: 'json',
-            //     type: 'POST',
-            //     data:{
-            //         data : data_to_send,
-            //         data_relation : {
-            //             target_model : target_model,
-            //             name : name,
-            //             modifier : modifier
-            //         }
-            //     },
-            //     headers: {
-            //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            //     },
-            //     success: function(res) {
-            //         console.log(res);
-            //     },
-            //     error: function(x, e) {
-            //         console.log(x);
-            //     }
-			// });
+            $.ajax({
+                url: '{{ route('content_model.submit-related-model') }}',
+                dataType: 'json',
+                type: 'POST',
+                data:{
+                    data : data_to_send,
+                    data_relation : {
+                        target_model : target_model,
+                        name : name,
+                        modifier : modifier
+                    }
+                },
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(res) {
+                    console.log(res);
+                },
+                error: function(x, e) {
+                    console.log(x);
+                }
+			});
         });
 
     }
@@ -172,7 +170,6 @@
     function appendModal(res, target_model, name, modifier){
         if(res != null && res != undefined && res.length > 0)
         {
-
             htmlnya = '';
             
             if(name == 'many-many' || (name == 'one-many' && modifier == 'hasMany') )
@@ -263,7 +260,7 @@
                     htmlnya += `                        
                     <tr>
                         <td> 
-                            <input class="form-control" type="radio" id="radio_relation" value="${record.id}" name="selectedRadio[]">
+                            <input class="form-control" type="radio" id="radio_relation" value="${record.id}" name="selectedRadio">
                         </td>
                     `;
                     

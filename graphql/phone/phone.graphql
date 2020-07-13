@@ -1,0 +1,68 @@
+#import */*.graphql
+
+extend type Query {    
+    #sihgle data
+    phone(id: ID @eq): Phone @find 
+
+    #all data
+    phones: [Phone!]! @all
+
+    #all data paginate
+    phonesPaginate: [Phone!]! @paginate(defaultCount: 10) 
+
+    #get most selected top data
+    phonesTop(total: Int!, order_by: String!, director: String!): [Phone!]!
+      @paginate(defaultCount: 10)
+
+    #get somme randomized data
+    phoneGetRandom(total: Int!): [Phone!]! @field(resolver: "PhoneQuery@getRandom")
+
+    #get some data by paramaters
+    phoneFindBy(identifier: String!, operator: String!, value: String!): Phone!
+      @field(resolver: "PhoneQuery@findBy")
+
+    #get all data with pagination
+    phonesPage(page: Int!, size: Int!): PhonesPage
+      @field(resolver: "PhoneQuery@getPage")
+    
+    #search a data
+    phonesSearch(col_name: String!, kw: String!): [Phone!]!
+      @field(resolver: "PhoneQuery@search")
+}
+
+
+type PhonesPage {
+    phones: [Phone]
+    hasMore: Boolean
+}
+
+extend type Mutation {
+    createPhone(
+      	nomor:String
+
+    ): Phone! @create
+    
+    updatePhone(
+      id: ID!
+      	nomor:String
+
+      ): Phone @update
+
+    upsertPhone(
+      id: ID! 
+      	nomor:String
+
+      ): Phone @upsert
+
+    deletePhone(id: ID!): Phone @delete
+}
+# type 
+
+type Phone {
+    id: ID!
+    	nomor:String
+	orang: Orang@belongsTo
+
+    created_at: DateTime!
+    updated_at: DateTime!
+}

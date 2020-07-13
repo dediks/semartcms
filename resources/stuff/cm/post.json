@@ -1,1 +1,1 @@
-{"info":{"name":"post","display_name":"Post","description":""},"attributes":{"title":{"name":"title","display_name":"Title","input_type":"text","db_type":"string","validation":{"required":null,"unique":null,"max":null,"min":null,"max_filesize":null}}}}
+{"info":{"name":"post","display_name":"Post","description":""},"attributes":{"title":{"name":"title","display_name":"title","input_type":"text","db_type":"string","validation":{"required":null,"unique":null,"max":null,"min":null,"max_filesize":null}}}}

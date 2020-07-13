@@ -19,13 +19,30 @@
                     <h4>All Orders</h4>
                 </div>
                 <div class="card-body p-0">
+                    <div class="d-flex justify-content-between p-3">
+                        <div>
+                            <button class="btn btn-secondary">Delete Selected</button>
+                        </div>
+                            <div class="md-form ml-3 flex-grow-1 mr-3 mb-3">
+                                <input class="form-control" type="text" placeholder="Search" aria-label="Search">
+                            </div>
+                        <div>
+                            <div class="dropdown">
+                                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  Sort by
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                  <a class="dropdown-item" href="#">Asc</a>
+                                  <a class="dropdown-item" href="#">Desc</a>
+                                </div>
+                              </div>
+                        </div>
+                    </div>
                     <div class="table-responsive table-invoice">
                         <table class="table table-striped">
                             <tbody>
                                 <tr>
-                                    <th>No</th><th> Price</th>
-<th> Invoice Number</th>
-<th> Status</th>
+                                    <th>No</th><th> Invoice Number</th>
 <th> customers</th>
 <th> books</th>
 
@@ -35,10 +52,8 @@
                                 @endphp
                                 @foreach($orders as $order)
                                 <tr>
-                                    <td>{{ $no }}</td>
-                                    <td>{{ str_limit($order->price, $limit = 50, $end ="...") }}</td>
-<td>{{ str_limit($order->invoice_number, $limit = 50, $end ="...") }}</td>
-<td>{{ str_limit($order->status, $limit = 50, $end ="...") }}</td>
+                                    <td class="text-center align-middle"><input type="checkbox" class="form-check-input" id="checkbox_$orders" name="cb_$orders[]"></td>
+                                    <td>{{ str_limit($order->invoice_number, $limit = 50, $end ="...") }}</td>
 <td><button type="button" class="btn btn-info" id="btncustomers" data-relation ="customers" onclick="showRelation({{ $order->id }}, 'order','customers')">Show customers</button></td>
 <td><button type="button" class="btn btn-info" id="btnbooks" data-relation ="books" onclick="showRelation({{ $order->id }}, 'order','books')">Show books</button></td>
 
@@ -94,6 +109,33 @@
 <script>
     function showRelation(record_id, cm_name, target_name){
         $('#relationModal').modal({"backdrop" : false});
+        
+        $.ajax({
+            url: '{{ route('content_model.load-related-model-data') }}',
+            dataType: 'json',
+            type: 'POST',
+            data: {
+                "target_name" : target_name,
+                "cm_name" : cm_name,
+                "record_id" : record_id,
+            },
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(res) {    
+                console.log(res);
+                // if(res != ""){
+                //     // appendModal(res, target_model, name, modifier);
+                // }else{
+                //     $('#list-of-data').html("No data ");
+                // }
+            },
+            error: function(x, e) {
+                $('#list-of-data').html("No data ");
+                console.log(x);
+            }
+       });
+
     }
 </script>
 @endpush

@@ -15,16 +15,7 @@ class BookCreateRequest extends FormRequest
     {
         return [
             
-                    'title' => 'required',
-                    'slug' => 'required| unique:books,slug',
-                    'description' => '',
-                    'author' => '',
-                    'publisher' => '',
-                    'price' => 'required',
-                    'views' => '',
-                    'stock' => '',
-                    'status' => '',
-                    'cover' => '',
+                    'title' => '',
         ];
     }
 }

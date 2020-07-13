@@ -35,28 +35,6 @@
                     'min' => "",
                 ]
             ])
-@field([
-                'label' => "Slug",
-                'name' => "slug",
-                'type' => "text",
-                'validation'=>[
-                    'required' => "required",
-                    'unique' => "unique",
-                    'max' => "",
-                    'min' => "",
-                ]
-            ])
-@field([
-                'label' => "Image",
-                'name' => "image",
-                'type' => "file",
-                'validation'=>[
-                    'required' => "",
-                    'unique' => "",
-                    'max' => "",
-                    'min' => "",
-                ]
-            ])
 
                     <div class="form-group row mb-4">
                         <label for="field-title" class="col-form-label text-md-right col-12 col-md-3 col-lg-3 ">books
@@ -66,8 +44,8 @@
                             <button class="btn btn-primary" type="button" data-id="books" id="selectRelationbooks" onclick="selectRelatedRelation('books','many-many','belongsToMany')")>Select books</button>
                             <div id="view_selected_books" class="mt-1">Nobooks selected</div>
                         </div>
-                        <input type="hidden" value="" name="temp_data_selected[]" id="temp_data_selected">
-                        <input type="hidden" value="books,many-many,belongsToMany" name="data_target" id="data_target">
+                        <input type="hidden" value="" name="temp_data_selected[]" id="temp_data_selected0">
+                        <input type="hidden" value="books,many-many,belongsToMany" name="data_target[]" id="data_target">
                     </div>
 
     		                <div class="form-group row mb-4">
@@ -103,11 +81,8 @@
       </div>
     </div>
   </div>
-    </section>
-
-		
+    </section>		
 @endsection
-
 
 @push('scripts')
 <script>

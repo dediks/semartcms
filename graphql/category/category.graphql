@@ -1,21 +1,35 @@
 #import */*.graphql
 
-extend type Query {
-    categories: [Category!]! @paginate(defaultCount: 10)
-    category(id: ID @eq): Category @find
+extend type Query {    
+    #sihgle data
+    category(id: ID @eq): Category @find 
 
-    randomCategory(total: Int!): [Category!]!
-        @field(resolver: "CategoryQuery@getRandom")
+    #all data
+    categories: [Category!]! @all
 
+    #all data paginate
+    categoriesPaginate: [Category!]! @paginate(defaultCount: 10) 
+
+    #get most selected top data
+    categoriesTop(total: Int!, order_by: String!, director: String!): [Category!]!
+      @paginate(defaultCount: 10)
+
+    #get somme randomized data
+    categoryGetRandom(total: Int!): [Category!]! @field(resolver: "CategoryQuery@getRandom")
+
+    #get some data by paramaters
+    categoryFindBy(identifier: String!, operator: String!, value: String!): Category!
+      @field(resolver: "CategoryQuery@findBy")
+
+    #get all data with pagination
     categoriesPage(page: Int!, size: Int!): CategoriesPage
-        @field(resolver: "CategoryQuery@getPage")
-
-    findCategoryBy(
-        identifier: String!
-        operator: String!
-        value: String!
-    ): Category! @field(resolver: "CategoryQuery@findBy")
+      @field(resolver: "CategoryQuery@getPage")
+    
+    #search a data
+    categoriesSearch(col_name: String!, kw: String!): [Category!]!
+      @field(resolver: "CategoryQuery@search")
 }
+
 
 type CategoriesPage {
     categories: [Category]
@@ -23,33 +37,31 @@ type CategoriesPage {
 }
 
 extend type Mutation {
-    createCategory(name: String, slug: String!, image: String): Category!
-        @create
+    createCategory(
+      	name:String
 
+    ): Category! @create
+    
     updateCategory(
-        id: ID!
-        name: String
-        slug: String!
-        image: String
-    ): Category @update
+      id: ID!
+      	name:String
+
+      ): Category @update
 
     upsertCategory(
-        id: ID!
-        name: String
-        slug: String!
-        image: String
-    ): Category @upsert
+      id: ID! 
+      	name:String
+
+      ): Category @upsert
 
     deleteCategory(id: ID!): Category @delete
 }
-# type
+# type 
 
 type Category {
     id: ID!
-    name: String
-    slug: String!
-    image: String
-    books: [Book] @hasMany
+    	name:String
+	books: [Book] @belongsToMany
 
     created_at: DateTime!
     updated_at: DateTime!

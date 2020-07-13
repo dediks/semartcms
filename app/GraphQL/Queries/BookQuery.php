@@ -3,26 +3,15 @@
 namespace App\GraphQL\Queries;
 
 use App\Book;
-use Services\BookService;
 
 class BookQuery
 {
-
-    private $bookService;
-
+    /**
+     * @param  null  $_
+     * @param  array<string, mixed>  $args
+     */
     public function __invoke($_, array $args)
     {
-    }
-
-    public function __construct(BookService $book)
-    {
-        // $this->bookService = $book;
-
-        // $this->middleware(function ($request, $next) {
-        //     if (Gate::allows('show-this',  $this->bookService->getTableName())) return $next($request);
-
-        //     abort(403, 'Anda tidak memiliki cukup hak akses');
-        // });
     }
 
     public function getRandom($root, array $args)
@@ -57,5 +46,15 @@ class BookQuery
         $criteria = Book::select('*')->where($column_name, 'LIKE', "%" . $keyword . "%")->get();
 
         return $criteria;
+    }
+
+    public function login($root, array $args)
+    {
+        $customer = Book::where('email', '=', $args["email"])->first();
+        if ($args["password"] == $args["password"]) {
+            return $customer;
+        }
+
+        return "fail";
     }
 }

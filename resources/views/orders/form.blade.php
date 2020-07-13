@@ -25,30 +25,8 @@
                             @csrf
                             {{ isset($method) ? method_field($method) : '' }}
                             @field([
-                'label' => "Price",
-                'name' => "price",
-                'type' => "number",
-                'validation'=>[
-                    'required' => "",
-                    'unique' => "",
-                    'max' => "",
-                    'min' => "",
-                ]
-            ])
-@field([
                 'label' => "Invoice Number",
                 'name' => "invoice_number",
-                'type' => "text",
-                'validation'=>[
-                    'required' => "",
-                    'unique' => "",
-                    'max' => "",
-                    'min' => "",
-                ]
-            ])
-@field([
-                'label' => "Status",
-                'name' => "status",
                 'type' => "text",
                 'validation'=>[
                     'required' => "",
@@ -63,11 +41,11 @@
                         </label>
         
                         <div class="col-sm-12 col-md-7">            
-                            <button class="btn btn-primary" type="button" data-id="customers" id="selectRelationcustomers" onclick="selectRelatedRelation('customers','one-many','belongsTo')")>Select customers</button>
+                            <button class="btn btn-primary" type="button" data-id="customers" id="selectRelationcustomers" onclick="selectRelatedRelation('customers','one-many','belongsTo', 1)")>Select customers</button>
                             <div id="view_selected_customers" class="mt-1">Nocustomers selected</div>
                         </div>
-                        <input type="hidden" value="" name="temp_data_selected[]" id="temp_data_selected">
-                        <input type="hidden" value="customers,one-many,belongsTo" name="data_target" id="data_target">
+                        <input type="hidden" value="" name="temp_data_selected[]" id="temp_data_selected1">
+                        <input type="hidden" value="customers,one-many,belongsTo" name="data_target[]" id="data_target">
                     </div>
 
                     <div class="form-group row mb-4">
@@ -75,11 +53,11 @@
                         </label>
         
                         <div class="col-sm-12 col-md-7">            
-                            <button class="btn btn-primary" type="button" data-id="books" id="selectRelationbooks" onclick="selectRelatedRelation('books','many-many','belongsToMany')")>Select books</button>
+                            <button class="btn btn-primary" type="button" data-id="books" id="selectRelationbooks" onclick="selectRelatedRelation('books','many-many','belongsToMany', 2)")>Select books</button>
                             <div id="view_selected_books" class="mt-1">Nobooks selected</div>
                         </div>
-                        <input type="hidden" value="" name="temp_data_selected[]" id="temp_data_selected">
-                        <input type="hidden" value="books,many-many,belongsToMany" name="data_target" id="data_target">
+                        <input type="hidden" value="" name="temp_data_selected[]" id="temp_data_selected2">
+                        <input type="hidden" value="books,many-many,belongsToMany" name="data_target[]" id="data_target">
                     </div>
 
     		                <div class="form-group row mb-4">
@@ -116,8 +94,6 @@
     </div>
   </div>
     </section>
-
-		
 @endsection
 
 
@@ -125,7 +101,7 @@
 <script>
     data_to_send = [];
 
-    function selectRelatedRelation(target_model, name, modifier)
+    function selectRelatedRelation(target_model, name, modifier, index)
     {
         $.ajax({
             url: '{{ route('content_model.load-related-model') }}',
@@ -137,8 +113,7 @@
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-            success: function(res) {    
-                console.log(res.responseText);
+            success: function(res) {
                 if(res != ""){
                     appendModal(res, target_model, name, modifier);
                 }else{
@@ -151,65 +126,37 @@
             }
        });
 
-    //    console.log(target_model);
         $('#relationModalLabel').html("Select " +target_model);                
         $('#relationModal').modal({"backdrop" : false});
 
         $('#btn-submit').click(function(){
+            if(name == 'many-many' || (name == 'one-many' && modifier == 'hasMany')){
+                let data = [];
+                data = $('input[name="selectedCheckbox[]"]:checked');
 
-            let data = [];
-            data = $('input[name="selectedCheckbox[]"]:checked');
+                if(data.length > 0){
+                    for (let i = 0; i < data.length; i++) {
+                        data_to_send.push(data[i].value);
+                    }
 
-            if(data.length > 0){
-                for (let i = 0; i < data.length; i++) {
-                    data_to_send.push(data[i].value);
+                    $('#temp_data_selected'+ index).val(JSON.stringify(data_to_send));
+                    $("#view_selected_"+target_model+"").html("There are any "+ data.length + " " + target_model + " that you have selected !");
                 }
-
-                // console.log(data_to_send);
-                // console.log("safhafhaf");
-
-                $('#temp_data_selected').val(JSON.stringify(data_to_send));
-
-                $("#view_selected_"+target_model+"").html("There are any "+ data.length + " " + target_model + " that you have selected !");
-            }
-
-
-            // console.log(JSON.stringify(data_to_send));
-
-            // $.ajax({
-            //     url: '{{ route('content_model.submit-related-model') }}',
-            //     dataType: 'json',
-            //     type: 'POST',
-            //     data:{
-            //         data : data_to_send,
-            //         data_relation : {
-            //             target_model : target_model,
-            //             name : name,
-            //             modifier : modifier
-            //         }
-            //     },
-            //     headers: {
-            //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            //     },
-            //     success: function(res) {
-            //         console.log(res);
-            //     },
-            //     error: function(x, e) {
-            //         console.log(x);
-            //     }
-			// });
+            }else{
+                let data = $('input[name="selectedRadio"]:checked');                
+                if(data.length > 0){
+                    $('#temp_data_selected'+ index).val(JSON.stringify(data[0].value));
+                    $("#view_selected_"+target_model+"").html("There are any "+ data.length + " " + target_model + " that you have selected !");
+                }                
+            }            
         });
 
     }
 
     function appendModal(res, target_model, name, modifier){
-        if(res != null && res != undefined && res.length > 0)
-        {
-
-            htmlnya = '';
-            
-            if(name == 'many-many' || (name == 'one-many' && modifier == 'hasMany') )
-            {
+        if(res != null && res != undefined && res.length > 0){
+            htmlnya = '';          
+            if(name == 'many-many' || (name == 'one-many' && modifier == 'hasMany')){
                 htmlnya += `<div class="form-group">
                     <table class="table">
                 <thead>
@@ -269,7 +216,64 @@
 
                 $('#list-of-data').html(htmlnya);
             }else{
+                htmlnya += `<div class="form-group">
+                    <table class="table">
+                <thead>
+                    <td>#</td>
+                    `;
                 
+                countCol = 0;
+                Object.keys(res[0])
+                    .forEach(function eachKey(key) { 
+                        if(countCol === 4){
+                            return;
+                        }
+
+                        htmlnya += `
+                            <td class="text-bold">
+                                <b>${key}</b>  
+                            </td>
+                        `;
+
+                        countCol++; 
+                    });
+
+                htmlnya += `</thead><tbody>`;
+                res.forEach(function(record){
+                    htmlnya += `                        
+                    <tr>
+                        <td> 
+                            <input class="form-control" type="radio" id="radio_relation" value="${record.id}" name="selectedRadio">
+                        </td>
+                    `;
+                    
+                    count = 0;
+                    Object.values(record).forEach(function(col){
+                        if(count === 4){
+                            return;
+                        }
+                        
+                        htmlnya += `
+                            <td>
+                                ${col}
+                            </td>
+                        `;
+
+                        count++;
+                    });
+
+                    htmlnya += `                        
+                    </tr>
+                    `;
+                });
+
+                htmlnya += `
+                </tbody>
+                        </table>
+                        </div>
+                `;
+
+                $('#list-of-data').html(htmlnya);
             }
 
         }else{
@@ -278,5 +282,4 @@
         }
     }
 </script>
-
 @endpush

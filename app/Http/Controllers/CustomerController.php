@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 use Services\CustomerService;
+use Illuminate\Support\Facades\Gate;
 use Requests\{
 	CustomerCreateRequest,
 	CustomerUpdateRequest

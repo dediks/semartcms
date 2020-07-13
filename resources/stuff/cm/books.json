@@ -1,0 +1,1 @@
+{"info":{"name":"books","display_name":"Book","description":""},"attributes":{"title":{"name":"title","display_name":"Title","input_type":"text","db_type":"string","validation":{"required":null,"unique":null,"max":null,"min":null,"max_filesize":null}}}}

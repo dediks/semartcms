@@ -1,0 +1,1 @@
+{"info":{"name":"book_dua","display_name":"Book Dua","description":""},"attributes":{"title":{"name":"title","display_name":"Titile","input_type":"text","db_type":"string","validation":{"required":null,"unique":null,"max":null,"min":null,"max_filesize":null}}}}

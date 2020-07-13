@@ -1,0 +1,69 @@
+#import */*.graphql
+
+extend type Query {    
+    #sihgle data
+    bookDua(id: ID @eq): BookDua @find 
+
+    #all data
+    bookDuas: [BookDua!]! @all
+
+    #all data paginate
+    bookDuasPaginate: [BookDua!]! @paginate(defaultCount: 10) 
+
+    #get most selected top data
+    bookDuasTop(total: Int!, order_by: String!, director: String!): [BookDua!]!
+      @paginate(defaultCount: 10)
+
+    #get somme randomized data
+    bookDuaGetRandom(total: Int!): [BookDua!]! @field(resolver: "BookDuaQuery@getRandom")
+
+    #get some data by paramaters
+    bookDuaFindBy(identifier: String!, operator: String!, value: String!): BookDua!
+      @field(resolver: "BookDuaQuery@findBy")
+
+    #get all data with pagination
+    bookDuasPage(page: Int!, size: Int!): BookDuasPage
+      @field(resolver: "BookDuaQuery@getPage")
+    
+    #search a data
+    bookDuasSearch(col_name: String!, kw: String!): [BookDua!]!
+      @field(resolver: "BookDuaQuery@search")
+}
+
+
+type BookDuasPage {
+    bookDuas: [BookDua]
+    hasMore: Boolean
+}
+
+extend type Mutation {
+    createBookDua(
+      	title:String
+
+    ): BookDua! @create
+    
+    updateBookDua(
+      id: ID!
+      	title:String
+
+      ): BookDua @update
+
+    upsertBookDua(
+      id: ID! 
+      	title:String
+
+      ): BookDua @upsert
+
+    deleteBookDua(id: ID!): BookDua @delete
+}
+# type 
+
+type BookDua {
+    id: ID!
+    	title:String
+	categories: [Category] @belongsToMany
+	orders: [Order] @belongsToMany
+
+    created_at: DateTime!
+    updated_at: DateTime!
+}

@@ -13,15 +13,17 @@ class CustomerService
 	{
 		return new Customer;
 	}
-	public function getTableName()
-	{
-		return $this->model()->getTable();
-	}
+
 	public function all()
 	{
 		return $this->model()->all();
 	}
 
+	public function getTableName()
+	{
+		return $this->model()->getTable();
+	}
+	
 	public function paginate($num)
 	{
 		return $this->model()->paginate($num);
@@ -32,13 +34,16 @@ class CustomerService
 		return $this->model()->find($id);
 	}
 
-	public function checkIsAnyFileField($request)
+	public function checkIsAnyFileField($request, $input)
 	{
 		if (count($request->files) > 0) {
 			foreach ($request->file() as $key => $image) {
 				$input[$key] = $this->fileUpload($request, $key);
 			}
+
+			return $input;
 		}
+		return $input;
 	}
 
 	public function setRelation($input, $created)
@@ -72,12 +77,14 @@ class CustomerService
 					// dd($datum_decoded);
 
 					$className = '\App\\' . $new_name_target_model;
-					foreach ($datum_decoded as $a) {
-						$result = $className::find($a);
-						$created->{$target_model}()->save($result);
-					}
+					if (file_exists($className)) {
+						foreach ($datum_decoded as $a) {
+							$result = $className::find($a);
+							$created->{$target_model}()->save($result);
+						}
 
-					$created->refresh();
+						$created->refresh();
+					}
 				}
 			} else if ($modifier == "belongsTo" ||  $modifier == "hasOne") { //modifier belongsTo
 
@@ -90,10 +97,12 @@ class CustomerService
 				$id = $datum_decoded[0];
 
 				$classTarget = 'App\\' . $new_name_target_model_in_studly;
-				$data_target = $classTarget::find($id);
+				if (file_exists($classTarget)) {
+					$data_target = $classTarget::find($id);
 
-				$created->{$new_name_target_model}()->associate($data_target);
-				$created->save();
+					$created->{$new_name_target_model}()->associate($data_target);
+					$created->save();
+				}
 			}
 		} else { //jika tidak ada relasi
 			dd("tidak ada relasi");
@@ -106,7 +115,7 @@ class CustomerService
 		$input = $request->all();
 
 		$cek_relation_exists = array_key_exists("temp_data_selected", $input);
-		$this->checkIsAnyFileField($request);
+		$this->checkIsAnyFileField($request, $input);
 
 		if ($cek_relation_exists) {
 			$new_input = Arr::except($input, ['temp_data_selected', 'data_target']);
@@ -126,7 +135,18 @@ class CustomerService
 
 		$input = $request->all();
 
-		$update = $customer->update($input);
+		$cek_relation_exists = array_key_exists("temp_data_selected", $input);
+
+		$input = $this->checkIsAnyFileField($request, $input);
+
+		if ($cek_relation_exists) {
+			$new_input = Arr::except($input, ['temp_data_selected', 'data_target']);
+			// $create = $this->model()->create($new_input);
+			$update = $category->update($new_input);
+			$this->setRelation($input, $update);
+		} else {
+			$update = $category->update($input);
+		}
 
 		return $update;
 	}

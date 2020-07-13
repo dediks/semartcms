@@ -2,7 +2,7 @@
 
 namespace App;
 
-use Laravel\Passport\HasApiTokens;
+use Illuminate\Support\Facades\Gate;
 use App\Traits\CustomerTrait;
 
 use Illuminate\Database\Eloquent\Model;

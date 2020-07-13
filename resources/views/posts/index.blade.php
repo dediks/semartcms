@@ -42,7 +42,7 @@
                         <table class="table table-striped">
                             <tbody>
                                 <tr>
-                                    <th>No</th><th> Title</th>
+                                    <th>No</th><th> title</th>
 <th> authors</th>
 
                                 </tr>

@@ -104,7 +104,7 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             success: function(res) {    
-                console.log(res.responseText);
+                console.log(res);
                 if(res != ""){
                     appendModal(res, target_model, name, modifier);
                 }else{
@@ -132,7 +132,6 @@
                 }
 
                 // console.log(data_to_send);
-                // console.log("safhafhaf");
 
                 $('#temp_data_selected').val(JSON.stringify(data_to_send));
 
@@ -142,28 +141,28 @@
 
             // console.log(JSON.stringify(data_to_send));
 
-            // $.ajax({
-            //     url: '{{ route('content_model.submit-related-model') }}',
-            //     dataType: 'json',
-            //     type: 'POST',
-            //     data:{
-            //         data : data_to_send,
-            //         data_relation : {
-            //             target_model : target_model,
-            //             name : name,
-            //             modifier : modifier
-            //         }
-            //     },
-            //     headers: {
-            //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            //     },
-            //     success: function(res) {
-            //         console.log(res);
-            //     },
-            //     error: function(x, e) {
-            //         console.log(x);
-            //     }
-			// });
+            $.ajax({
+                url: '{{ route('content_model.submit-related-model') }}',
+                dataType: 'json',
+                type: 'POST',
+                data:{
+                    data : data_to_send,
+                    data_relation : {
+                        target_model : target_model,
+                        name : name,
+                        modifier : modifier
+                    }
+                },
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(res) {
+                    console.log(res);
+                },
+                error: function(x, e) {
+                    console.log(x);
+                }
+			});
         });
 
     }

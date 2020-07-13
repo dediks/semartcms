@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Support\Facades\Gate;
 use App\Traits\CategoryTrait;
 
 use Illuminate\Database\Eloquent\Model;
