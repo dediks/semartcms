@@ -116,8 +116,7 @@ Route::resource('book-duas', 'BookDuaController');
 
 Route::resource('customers', 'CustomerController');
 
-Route::resource('orders', 'OrderController');
 
-Route::resource('books', 'BookController');
 
-Route::resource('categories', 'CategoryController');
+
+

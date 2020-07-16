@@ -20,6 +20,7 @@
               <div class="card-body">                
                 <div class="card-title d-inline">
                   <h5 class="d-inline">{{$project->name}}</h5>
+                  @can('Manage Project')
                   <div class="btn-group float-right">
                     <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     </button>
@@ -27,6 +28,7 @@
                       <button class="btn btn-block btn-danger delete-project" data-id="{{ $project->id}}">Delete</button>  
                     </div>
                   </div>
+                  @endcan()
                 </div>
                 <p class="card-text">{{$project->description}}</p>
                 <form action="{{ route('project.go')}}" method="POST">
@@ -84,7 +86,7 @@
           data : data,
           success: function(e){
             console.log(e);
-            if (e === "success"){
+            if (e === true){
               window.location.reload()
             }
           }

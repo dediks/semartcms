@@ -1,1 +1,0 @@
-{"info":{"name":"order","display_name":"Order","description":""},"attributes":{"invoice_number":{"name":"invoice_number","display_name":"Invoice Number","input_type":"text","db_type":"string","validation":{"required":null,"unique":null,"max":null,"min":null,"max_filesize":null}}}}

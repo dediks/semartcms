@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\ContentModel;
 use App\Project;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -51,7 +52,13 @@ class ProjectController extends Controller
 
     public function destroy()
     {
-        return Project::find(request('id'))->entities()->get();
+        $relatedEntities = Project::find(request('id'))->entities()->get(['table_name']);
+
+        ContentModel::del($relatedEntities);
+
+        $result = Project::find(request('id'))->delete();
+
+        return response()->json($result);
     }
 
     public function go()
