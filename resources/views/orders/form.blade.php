@@ -88,21 +88,20 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary" id="btn-submit">Submit</button>
+          <button type="button" class="btn btn-primary" id="btn-submit" data-dismiss="modal">Submit</button>
         </div>
       </div>
     </div>
   </div>
-    </section>
+    </section>		
 @endsection
-
 
 @push('scripts')
 <script>
-    data_to_send = [];
-
-    function selectRelatedRelation(target_model, name, modifier, index)
+    function selectRelatedRelation(target_model=null, name=null, modifier=null, index=null)
     {
+        $('#relationModal').modal({"backdrop" : false});
+   
         $.ajax({
             url: '{{ route('content_model.load-related-model') }}',
             dataType: 'json',
@@ -115,45 +114,51 @@
             },
             success: function(res) {
                 if(res != ""){
-                    appendModal(res, target_model, name, modifier);
+                    $('#list-of-data').html("");
+                    appendModal(res, target_model, name, modifier, index);
+                    $('#relationModalLabel').html("Select " +target_model);                
+             
+                    $('#btn-submit').click(function(e){
+                        e.preventDefault();
+                        if(name == 'many-many' || (name == 'one-many' && modifier == 'hasMany')){
+                            let data = [];
+                            let new_data = [];
+                            data = $('input[name="selectedCheckbox[]"]:checked');
+
+                            if(data.length > 0){
+                                for (let i = 0; i < data.length; i++) {
+                                    new_data.push(data[i].value);
+                                }
+                            }
+                            console.log(target_model+index);
+                            $('#temp_data_selected'+ index).val(JSON.stringify(new_data));
+                            $("#view_selected_"+target_model+ "_"+index).html("There are any "+ data.length + " " + target_model + " that you have selected !");
+                        }else{
+                            let data = $('input[name="selectedRadio"]:checked');                
+                            if(data.length > 0){
+                                $('#temp_data_selected'+ index).val(JSON.stringify(data[0].value));
+                                $("#view_selected_"+target_model+"_"+index).html("There are any "+ data.length + " " + target_model + " that you have selected !");
+                            }                
+                        }           
+
+                        target_model=null
+                        index=null
+                        name=null
+                        modifier=null
+                    });
                 }else{
                     $('#list-of-data').html("No data ");
                 }
             },
             error: function(x, e) {
                 $('#list-of-data').html("No data ");
-                // console.log(x);
             }
        });
 
-        $('#relationModalLabel').html("Select " +target_model);                
-        $('#relationModal').modal({"backdrop" : false});
-
-        $('#btn-submit').click(function(){
-            if(name == 'many-many' || (name == 'one-many' && modifier == 'hasMany')){
-                let data = [];
-                data = $('input[name="selectedCheckbox[]"]:checked');
-
-                if(data.length > 0){
-                    for (let i = 0; i < data.length; i++) {
-                        data_to_send.push(data[i].value);
-                    }
-
-                    $('#temp_data_selected'+ index).val(JSON.stringify(data_to_send));
-                    $("#view_selected_"+target_model+"").html("There are any "+ data.length + " " + target_model + " that you have selected !");
-                }
-            }else{
-                let data = $('input[name="selectedRadio"]:checked');                
-                if(data.length > 0){
-                    $('#temp_data_selected'+ index).val(JSON.stringify(data[0].value));
-                    $("#view_selected_"+target_model+"").html("There are any "+ data.length + " " + target_model + " that you have selected !");
-                }                
-            }            
-        });
-
     }
 
-    function appendModal(res, target_model, name, modifier){
+    function appendModal(res, target_model, name, modifier, index){
+
         if(res != null && res != undefined && res.length > 0){
             htmlnya = '';          
             if(name == 'many-many' || (name == 'one-many' && modifier == 'hasMany')){
@@ -280,6 +285,7 @@
             $('#list-of-data').html("You dont have any " + target_model + " data");
             $('#relationModalLabel').html("Opps!");
         }
+
     }
 </script>
 @endpush

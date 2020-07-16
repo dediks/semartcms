@@ -53,7 +53,7 @@
                                 <tr>
                                     <td class="text-center align-middle"><input type="checkbox" class="form-check-input" id="checkbox_$customers" name="cb_$customers[]"></td>
                                     <td>{{ str_limit($customer->name, $limit = 50, $end ="...") }}</td>
-<td><button type="button" class="btn btn-info" id="btnorders" data-relation ="orders" onclick="showRelation({{ $customer->id }}, 'customer','orders')">Show orders</button></td>
+<td><button type="button" class="btn btn-info" id="btnorders" data-relation ="orders" onclick="showRelation({{ $customer->id }}, 'customer','orders', 'hasMany')">Show orders</button></td>
 
                                     <td class="text-right">
                                         <a class="btn btn-primary" href="{{ route('customers.edit', $customer->id) }}">
@@ -105,34 +105,66 @@
 
 @push('scripts')
 <script>
-    function showRelation(record_id, cm_name, target_name){
+    function showRelation(record_id, cm_name, target_name, modifier){
         $('#relationModal').modal({"backdrop" : false});
         
-        $.ajax({
-            url: '{{ route('content_model.load-related-model-data') }}',
-            dataType: 'json',
-            type: 'POST',
-            data: {
-                "target_name" : target_name,
-                "cm_name" : cm_name,
-                "record_id" : record_id,
-            },
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(res) {    
-                console.log(res);
-                // if(res != ""){
-                //     // appendModal(res, target_model, name, modifier);
-                // }else{
-                //     $('#list-of-data').html("No data ");
-                // }
-            },
-            error: function(x, e) {
-                $('#list-of-data').html("No data ");
-                console.log(x);
-            }
-       });
+        try {
+            $.ajax({
+                url: '{{ route('content_model.load_related_model_data') }}',
+                dataType: 'json',
+                type: 'POST',
+                data: {
+                    "targetName" : target_name,
+                    "cmName" : cm_name,
+                    "recordId" : record_id,
+                    "modifier" : modifier,
+                },
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(res) {    
+                    if(res){
+                        if(modifier == "belongsTo" || modifier == "hasOne"){
+                            singleData(res, target_name);
+                        }else{
+                            manyData(res, target_name);
+                        }
+                    }else{
+                        $('#list-of-data').html("No data ");
+                    }
+                },
+                error: function(x, e) {
+                    $('#relationModalLabel').html("<h5>Error</h5>");
+                    $('#list-of-data').html("No data<br>"+x.responseJSON.message);
+                }
+            });
+            
+        } catch (error) {
+            console.log(error);
+        }
+
+    }
+
+    function singleData(data, target_name){
+        html_element = '<table class="table">';
+
+        Object.keys(data)
+            .forEach(function eachKey(key) { 
+                html_element += `
+                    <tr>
+                        <td class="font-weight-bold">${ key }</td>
+                        <td>${ data[key] }</td>
+                    </tr>
+                `;
+            });
+
+        html_element += '</table>';
+
+        $('#relationModalLabel').html("<h5>"+target_name+"</h5>");
+        $('#list-of-data').html(html_element);
+
+    }
+    function manyData(data, target_name){
 
     }
 </script>

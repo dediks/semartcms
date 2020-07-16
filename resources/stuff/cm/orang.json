@@ -1,1 +1,0 @@
-{"info":{"name":"orang","display_name":"Orang","description":""},"attributes":{"name":{"name":"name","display_name":"Name","input_type":"text","db_type":"string","validation":{"required":null,"unique":null,"max":null,"min":null,"max_filesize":null}}}}

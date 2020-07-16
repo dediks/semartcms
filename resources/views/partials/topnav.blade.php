@@ -6,6 +6,9 @@
   </ul>
 </form>
 <ul class="navbar-nav navbar-right">
+  @if (Route::current()->uri != "projects")
+    <a href="{{ route('project.index') }}" class="btn btn-block btn-info mr-3">Back to Projects</a>      
+  @endif
   <li class="dropdown"><div href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user">
     <img alt="image" src="{{ Auth::user()->avatarlink ?? '' }}" class="rounded-circle mr-1">
     <div class="d-sm-none d-lg-inline-block">Hi, {{ Auth::user()->name ?? ''}}</div></div>

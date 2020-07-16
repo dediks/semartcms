@@ -378,8 +378,7 @@ class ContentModelController extends Controller
                 $unique = "| unique:" . Str::plural($name)  . "," . $field['name'] . "'.\$this->id,";
             } else if ($isUniqueExist) {
                 $unique = "| unique:" . Str::plural($name)  . "," . $field['name'] . "',";
-            }
-            else {
+            } else {
                 $unique = "',";
             }
 
@@ -422,14 +421,13 @@ class ContentModelController extends Controller
         return $fields;
     }
 
-
-
     public function loadRelatedModel()
     {
         $target_model = request()->target_model;
 
         if (Schema::hasTable($target_model)) {
             $result = DB::table($target_model)->select('*')->get();
+
             return response()->json($result);
         } else {
             return '';
@@ -438,26 +436,24 @@ class ContentModelController extends Controller
 
     public function loadRelatedModelData()
     {
-        $target_name = request()->target_name;
-        $record_id = request()->record_id;
-        $cm_name_plural = Str::plural(request()->cm_name);
-        $cm_name_studly = Str::Studly(request()->cm_name);
+        $targetName = request()->targetName;
+        $modifier = request()->modifier;
+        $cmName = request()->cmName;
+        $cmNameSingularStudly = Str::studly(Str::singular($cmName));
+        $recordId = request()->recordId;
 
-        if (Schema::hasTable($cm_name_plural)) {
-            $className = '\App\\' . $cm_name_studly;
-            // if (file_exists($className)) {
-            $result = $className::find($record_id);
-            return response()->json($result);
-            // }
-        } else {
-            return 'no data';
+        $className = 'App\\' . $cmNameSingularStudly;
+
+        if ($modifier == "belongsTo" || $modifier == "hasOne") {
+            $targetName = Str::singular($targetName);
+            return response()->json($className::find($recordId)->{$targetName});
         }
+
+        return response()->json($className::find($recordId)->{$targetName});
     }
 
     protected function generateView($name, $fields, $relation_data = null)
     {
-        // return $fields;
-
         $name = Str::snake($name);
         $path = resource_path('views/' . Str::plural($name));
         if (!file_exists($path))
@@ -528,7 +524,7 @@ class ContentModelController extends Controller
                     </div>\n";
 
 
-                $field_index .= "<td><button type=\"button\" class=\"btn btn-info\" id=\"btn" . $data_relation["target_model"]["name"] . "\" data-relation =\"" . $data_relation["target_model"]["name"] . "\" onclick=\"showRelation({{ $" . $vars['var'] . "->id }}, '" . $vars['var'] . "','" . $data_relation["target_model"]["name"] . "')\">Show " . $data_relation["target_model"]["name"] . "</button></td>\n";
+                $field_index .= "<td><button type=\"button\" class=\"btn btn-info\" id=\"btn" . $data_relation["target_model"]["name"] . "\" data-relation =\"" . $data_relation["target_model"]["name"] . "\" onclick=\"showRelation({{ $" . $vars['var'] . "->id }}, '" . $vars['var'] . "','" . $data_relation["target_model"]["name"] . "','" .  $data_relation["type"]["modifier"] . "')\">Show " . $data_relation["target_model"]["name"] . "</button></td>\n";
 
                 $field_index_header .= "<th> " . $data_relation["target_model"]["name"] . "</th>\n";
             }
@@ -620,9 +616,14 @@ class ContentModelController extends Controller
 
     public function index($cm_url = 'index')
     {
-        $project_id = session('project')['id'];
-        if (isset($project_id)) {
-            $cm_list = \App\Project::find($project_id)->entities()->get(['table_name', 'table_display_name']);
+        if (!Auth::user()->hasRole("Super Admin")) {
+            $project_id = session('project')['id'];
+            if (isset($project_id)) {
+                $cm_list = \App\Project::find($project_id)->entities()->get(['table_name', 'table_display_name']);
+            }
+        } else {
+            $entities = EntityStore::all();
+            $cm_list = $entities;
         }
 
 
@@ -637,8 +638,6 @@ class ContentModelController extends Controller
 
             $cm = (object) $cm;
         }
-
-        // dd($cm);
 
         return view('content_model.index', compact('cm_list', 'cm'));
     }

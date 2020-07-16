@@ -1,14 +1,14 @@
 <aside id="sidebar-wrapper">
   <div class="sidebar-brand">
-    <a href="{{ route('dashboard.index') }}">
-      {{-- {{ request()->session()->get('project')["name"] }} --}}
+    <a href="{{ route('dashboard.index') }}" class="d-inline">
+      @isset(session('project')["name"])
+        <div>
+          {{ session('project')["name"] }}        
+        </div>
+      @endisset
     </a>
-  </div>
-  <div class="sidebar-brand sidebar-brand-sm">
-    <a href="index.html">St</a>
   </div>
   <ul class="sidebar-menu">
     @include('partials.menu')
-      {{-- <li class="{{ is_request_path('customer*') ? ' active' : '' }}"><a class="nav-link" href="{{ route('customers.index') }}"><i class="fas fa-user"></i> <span>Customer</span></a></li> --}}
-    </ul>
+  </ul>
 </aside>

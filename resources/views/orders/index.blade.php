@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Manage {display_name}')
+@section('title', 'Manage Orders')
 
 @section('content')
 <section class="section">
@@ -54,8 +54,8 @@
                                 <tr>
                                     <td class="text-center align-middle"><input type="checkbox" class="form-check-input" id="checkbox_$orders" name="cb_$orders[]"></td>
                                     <td>{{ str_limit($order->invoice_number, $limit = 50, $end ="...") }}</td>
-<td><button type="button" class="btn btn-info" id="btncustomers" data-relation ="customers" onclick="showRelation({{ $order->id }}, 'order','customers')">Show customers</button></td>
-<td><button type="button" class="btn btn-info" id="btnbooks" data-relation ="books" onclick="showRelation({{ $order->id }}, 'order','books')">Show books</button></td>
+                                    <td><button type="button" class="btn btn-info" id="btncustomers" data-relation ="customers" onclick="showRelation({{ $order->id }}, 'order','customers', 'belongsTo')">Show customers</button></td>
+                                    <td><button type="button" class="btn btn-info" id="btnbooks" data-relation ="books" onclick="showRelation({{ $order->id }}, 'order','books', 'belongsToMany')">Show books</button></td>
 
                                     <td class="text-right">
                                         <a class="btn btn-primary" href="{{ route('orders.edit', $order->id) }}">
@@ -87,55 +87,128 @@
     <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="relationModalLabel">Modal title</h5>
+          <h5 class="modal-title" id="relationModalLabel"></h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
-            <div id="list-of-data"></div>
+            <div id="list-of-data">
+            </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary" id="btn-submit">Submit</button>
+          {{-- <button type="button" class="btn btn-info" data-dismiss="modal">Close</button> --}}
         </div>
       </div>
     </div>
   </div>
-    </section>
 @endsection
 
 @push('scripts')
 <script>
-    function showRelation(record_id, cm_name, target_name){
+    function showRelation(record_id, cm_name, target_name, modifier){
         $('#relationModal').modal({"backdrop" : false});
         
-        $.ajax({
-            url: '{{ route('content_model.load-related-model-data') }}',
-            dataType: 'json',
-            type: 'POST',
-            data: {
-                "target_name" : target_name,
-                "cm_name" : cm_name,
-                "record_id" : record_id,
-            },
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(res) {    
-                console.log(res);
-                // if(res != ""){
-                //     // appendModal(res, target_model, name, modifier);
-                // }else{
-                //     $('#list-of-data').html("No data ");
-                // }
-            },
-            error: function(x, e) {
-                $('#list-of-data').html("No data ");
-                console.log(x);
-            }
-       });
+        try {
+            $.ajax({
+                url: '{{ route('content_model.load_related_model_data') }}',
+                dataType: 'json',
+                type: 'POST',
+                data: {
+                    "targetName" : target_name,
+                    "cmName" : cm_name,
+                    "recordId" : record_id,
+                    "modifier" : modifier,
+                },
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(res) {    
+                    if(res){
+                        if(modifier == "belongsTo" || modifier == "hasOne"){
+                            singleData(res, target_name);
+                        }else{
+                            manyData(res, target_name);
+                        }
+                    }else{
+                        $('#list-of-data').html("No data ");
+                    }
+                },
+                error: function(x, e) {
+                    $('#relationModalLabel').html("<h5>Error</h5>");
+                    $('#list-of-data').html("No data<br>"+x.responseJSON.message);
+                }
+            });
+            
+        } catch (error) {
+            console.log(error);
+        }
 
+    }
+
+    function singleData(data, target_name){
+        html_element = '<table class="table">';
+
+        Object.keys(data)
+            .forEach(function eachKey(key) { 
+                html_element += `
+                    <tr>
+                        <td class="font-weight-bold">${ key }</td>
+                        <td>${ data[key] }</td>
+                    </tr>
+                `;
+            });
+
+        html_element += '</table>';
+
+        $('#relationModalLabel').html("<h5>"+target_name+"</h5>");
+        $('#list-of-data').html(html_element);
+    }
+
+    function manyData(data, target_name){
+        html_element = `
+            <table class="table">
+            <thead>
+            `;
+        
+        // header table
+        count = 1;
+        Object.keys(data[0]).forEach(
+            function eachKey(key){
+                if(count == 6){
+                    return;
+                };
+
+                html_element += `<th>${ key }</th>`;
+                
+                count++;
+            }
+        );
+
+        html_element += `</thead>`;
+
+        data.forEach(el => {
+            html_element += `<tr>`;
+
+            count = 1;
+             Object.keys(el).forEach(function eachKey(key) { 
+                if(count == 6){
+                    return;
+                };
+
+                html_element += `
+                    <td>${ el[key] }</td>
+                `;                
+
+                count++;
+            });
+            
+            html_element += `</tr>`;
+        });
+        html_element += `</table>`;
+
+        $('#relationModalLabel').html("<h5>"+target_name+"</h5>");
+        $('#list-of-data').html(html_element);
     }
 </script>
 @endpush

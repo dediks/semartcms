@@ -1,4 +1,4 @@
-@if(count($menus))
+@if(isset($menus))
 <li class="menu-header">Your Entity</li>
     @foreach ($menus as $menu)
         <li class="{{ is_request_path($menu["table_name"].'*') ? ' active' : '' }}">

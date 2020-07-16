@@ -8,6 +8,11 @@ class Project extends Model
 {
     protected $guarded  = [];
 
+    public function hasUser($user)
+    {
+        return $this->users->contains($user);
+    }
+
     public function users()
     {
         return $this->belongsToMany('App\User');

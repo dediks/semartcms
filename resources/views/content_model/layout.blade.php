@@ -232,8 +232,6 @@
 				}
 		}
 
-		console.log(relation_data);
-
 		let info_cm = JSON.parse(localStorage.getItem('_content_model_generator_setting'));		
 
 		relation_element = `
@@ -1624,7 +1622,8 @@
 								button.html(_button_text);
 								button.removeClass('disabled');									
 							}, success: function(e){
-								console.log("success" + e);
+								console.log("success");
+								console.log(e);
 									swal({
 										title: 'Success',
 										text: 'Content Model Generated Successfully',

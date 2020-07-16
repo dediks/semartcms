@@ -31,15 +31,12 @@ class AuthServiceProvider extends ServiceProvider
 
         Gate::define('show-this', function ($user, $table_name) {
             foreach ($user->projects as $project) {
-                // from session biasanya string, karenaya kita makai == bukan, ====
                 if ($project->id == request()->session()->get('project')["id"]) {
-                    // dd($project->entities);
                     foreach ($project->entities as $entity) {
                         if ($entity->table_name == $table_name) {
                             return true;
                         }
                     };
-
                     return false;
                 }
             };

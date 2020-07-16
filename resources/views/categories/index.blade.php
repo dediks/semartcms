@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('layouts.app-index')
 
-@section('title', 'Manage {display_name}')
+@section('title', 'Manage Categories')
 
 @section('content')
 <section class="section">
@@ -53,7 +53,7 @@
                                 <tr>
                                     <td class="text-center align-middle"><input type="checkbox" class="form-check-input" id="checkbox_$categories" name="cb_$categories[]"></td>
                                     <td>{{ str_limit($category->name, $limit = 50, $end ="...") }}</td>
-<td><button type="button" class="btn btn-info" id="btnbooks" data-relation ="books" onclick="showRelation({{ $category->id }}, 'category','books')">Show books</button></td>
+<td><button type="button" class="btn btn-info" id="btnbooks" data-relation ="books" onclick="showRelation({{ $category->id }}, 'category','books','belongsToMany')">Show books</button></td>
 
                                     <td class="text-right">
                                         <a class="btn btn-primary" href="{{ route('categories.edit', $category->id) }}">
@@ -81,59 +81,5 @@
     </div>
   </div>
 </section>
-<div class="modal fade mt-5" id="relationModal" tabindex="-1" role="dialog" aria-labelledby="relationModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="relationModalLabel">Modal title</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-            <div id="list-of-data"></div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary" id="btn-submit">Submit</button>
-        </div>
-      </div>
-    </div>
-  </div>
-    </section>
 @endsection
 
-@push('scripts')
-<script>
-    function showRelation(record_id, cm_name, target_name){
-        $('#relationModal').modal({"backdrop" : false});
-        
-        $.ajax({
-            url: '{{ route('content_model.load-related-model-data') }}',
-            dataType: 'json',
-            type: 'POST',
-            data: {
-                "target_name" : target_name,
-                "cm_name" : cm_name,
-                "record_id" : record_id,
-            },
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(res) {    
-                console.log(res);
-                // if(res != ""){
-                //     // appendModal(res, target_model, name, modifier);
-                // }else{
-                //     $('#list-of-data').html("No data ");
-                // }
-            },
-            error: function(x, e) {
-                $('#list-of-data').html("No data ");
-                console.log(x);
-            }
-       });
-
-    }
-</script>
-@endpush

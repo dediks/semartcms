@@ -25,7 +25,7 @@
                             @csrf
                             {{ isset($method) ? method_field($method) : '' }}
                             @field([
-                'label' => "Titile",
+                'label' => "Title",
                 'name' => "title",
                 'type' => "text",
                 'validation'=>[
@@ -37,26 +37,14 @@
             ])
 
                     <div class="form-group row mb-4">
-                        <label for="field-title" class="col-form-label text-md-right col-12 col-md-3 col-lg-3 ">categories
-                        </label>
-        
-                        <div class="col-sm-12 col-md-7">            
-                            <button class="btn btn-primary" type="button" data-id="categories" id="selectRelationcategories" onclick="selectRelatedRelation('categories','many-many','belongsToMany', 1);return false;")>Select categories</button>
-                            <div id="view_selected_categories_1" class="mt-1">Nocategories selected</div>
-                        </div>
-                        <input type="hidden" value="" name="temp_data_selected[]" id="temp_data_selected1">
-                        <input type="hidden" value="categories,many-many,belongsToMany" name="data_target[]" id="data_target">
-                    </div>
-
-                    <div class="form-group row mb-4">
                         <label for="field-title" class="col-form-label text-md-right col-12 col-md-3 col-lg-3 ">orders
                         </label>
         
                         <div class="col-sm-12 col-md-7">            
-                            <button class="btn btn-primary" type="button" data-id="orders" id="selectRelationorders" onclick="selectRelatedRelation('orders','many-many','belongsToMany', 2)")>Select orders</button>
-                            <div id="view_selected_orders_2" class="mt-1">Noorders selected</div>
+                            <button class="btn btn-primary" type="button" data-id="orders" id="selectRelationorders" onclick="selectRelatedRelation('orders','many-many','belongsToMany', 1)")>Select orders</button>
+                            <div id="view_selected_orders" class="mt-1">Noorders selected</div>
                         </div>
-                        <input type="hidden" value="" name="temp_data_selected[]" id="temp_data_selected2">
+                        <input type="hidden" value="" name="temp_data_selected[]" id="temp_data_selected1">
                         <input type="hidden" value="orders,many-many,belongsToMany" name="data_target[]" id="data_target">
                     </div>
 
@@ -119,7 +107,7 @@
                     $('#relationModalLabel').html("Select " +target_model);                
              
                     $('#btn-submit').click(function(e){
-                        console.log("fasfafafa");
+                        e.preventDefault();
                         if(name == 'many-many' || (name == 'one-many' && modifier == 'hasMany')){
                             let data = [];
                             let new_data = [];

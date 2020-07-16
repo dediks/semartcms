@@ -61,7 +61,6 @@ extend type Mutation {
 type Book {
     id: ID!
     	title:String
-	categories: [Category] @belongsToMany
 	orders: [Order] @belongsToMany
 
     created_at: DateTime!

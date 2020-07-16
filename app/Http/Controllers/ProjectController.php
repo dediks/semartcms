@@ -48,4 +48,22 @@ class ProjectController extends Controller
 
         dd($project);
     }
+
+    public function destroy()
+    {
+        return Project::find(request('id'))->entities()->get();
+    }
+
+    public function go()
+    {
+        $data = [
+            "id" => request('project_id'),
+            "name" => request('project_name')
+        ];
+
+        // save selected project data into session
+        session(['project' => $data]);
+
+        return view('dashboard.index');
+    }
 }
