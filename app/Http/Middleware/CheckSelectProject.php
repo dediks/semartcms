@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Project;
 use Closure;
 
 class CheckSelectProject

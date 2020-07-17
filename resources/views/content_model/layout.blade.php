@@ -129,40 +129,13 @@
 				<form>
 				<div class="modal-content">
 					<div class="modal-header">
-						<h5 class="modal-title" id="exampleModalLabel">Add Relation field</h5>
+						<h5 class="modal-title" id="exampleModalLabel">Delete this relation field</h5>
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
 						</button>
 					</div>
 					<div class="modal-body">
-							<div class="form-group">
-								<label for="name-relation">Name</label>
-								<input type="text" name="name-relation" class="form-control" id="name-relation-edit" placeholder="Enter relation name" required>
-							</div>
-							<div class="form-group">
-								<label for="relation-description">Description</label>
-								<textarea name="relation-description" id="relation-description-edit" cols="30" rows="10" class="form-control"></textarea>
-							</div>
-							<div class="form-group">
-								<label for="relation-option">Relation type</label>
-								<select name="relation-type" id="relation-option-edit" class="form-control" onclick="selectRelation()" required>
-									<option value="">Select Relation Type</option>
-									<option value="one-one">One on One</option>
-									<option value="one-many">One to Many</option>
-									<option value="many-many">Many to Many</option>
-								</select>
-							</div>
-							<div class="form-group">
-								<div id="whats"></div>
-								<div id="whats2"></div>
-								<div id="pivot-table-container"></div>
-								<div id="referenced-model">
-								</div>
-							</div>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-						<button type="button" class="btn btn-primary" onclick="setRelation()">Set Relation</button>
+						<button type="button" class="btn btn-danger" id="delete-relation" data-dismiss="modal">Yes Delete</button>
 					</div>
 				</form>
 				</div>
@@ -235,9 +208,9 @@
 		let info_cm = JSON.parse(localStorage.getItem('_content_model_generator_setting'));		
 
 		relation_element = `
-			<div class="for-relation form-group editor-draggable-element ui-droppable ui-draggable ui-draggable-handle" data-element-name="relation" data-element-db-type="references" id="${relation_name}RelationField" onClick="editRelationField()">
+			<div class="for-relation form-group editor-draggable-element ui-droppable ui-draggable ui-draggable-handle" data-element-name="relation" data-element-db-type="references" id="${relation_name}RelationField" onClick="editRelationField('${relation_name}')">
 				<label class="field_name" data-store-input-display-name="Relasi"> ${ relation_name} </label>
-				<input type="text" name="relasi" class="form-control bg-danger" disabled="disabled" data-store-input-name="reaasi" value="${relation_name}">
+				<input type="text" name="relasi" class="form-control bg-secondary" disabled="disabled" data-store-input-name="reaasi" value="${relation_name}">
 				 <div class="help-text">
 					${ info_cm.display_name } 
 					${ relation_type === 'many-many' ? "BelongsTo" : ''}
@@ -265,10 +238,6 @@
 		{
 			check_relation_element += relation_element;
 			localStorage.setItem('saved_relation_element', check_relation_element);
-			// $('#list-of-relations').append(check_relation_element);
-
-			
-			// return;
 		}else{
 			localStorage.setItem('saved_relation_element', relation_element);
 		}
@@ -276,7 +245,7 @@
 		$('#list-of-relations').append(relation_element);
 	}
 
-	function editRelationField()
+	function editRelationField(id)
 	{
 		$('#modalEditRelation').modal(
 			{
@@ -285,6 +254,23 @@
 				keyboard: true, 
 				focus: true
 			});
+	
+		element_id = "#"+ id + "RelationField";
+
+		// delete relation 
+		$('#delete-relation').click(function(){
+			// remove selected relation data from local Storage
+			relation_data = JSON.parse(localStorage.getItem('relation_data'));
+			new_relation_data = relation_data.filter(element => {
+				return element.nama != id;
+			});
+
+			new_relation_data = JSON.stringify(new_relation_data);
+			localStorage.setItem("relation_data", new_relation_data);
+
+			// // remove selected relation from view
+			$(element_id).remove();
+		});
 	}
 
 	function loadContentModel()

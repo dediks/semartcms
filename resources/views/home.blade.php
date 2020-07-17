@@ -86,7 +86,7 @@
           data : data,
           success: function(e){
             console.log(e);
-            if (e === true){
+            if (e === true || e === "success" ){
               window.location.reload()
             }
           }

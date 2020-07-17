@@ -28,21 +28,22 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('/submit', 'ContentModelController@submitRelatedModel')->name('submit-related-model');
             Route::post('/cek-name', 'ContentModelController@cekName')->name('cek_name');
         });
+
+        require base_path('routes/system/user.php');
+        require base_path('routes/system/role.php');
+        require base_path('routes/system/permission.php');
+        require base_path('routes/system/setting.php');
+        require base_path('routes/system/invite.php');
+
+        // route for content model generator system
+        require base_path('routes/system/content_model_generator.php');
+
+        // route for generated models
+        require base_path('routes/cm/cm_route.php');
     });
 
 
 
-    require base_path('routes/system/user.php');
-    require base_path('routes/system/role.php');
-    require base_path('routes/system/permission.php');
-    require base_path('routes/system/setting.php');
-    require base_path('routes/system/invite.php');
-
-    // route for content model generator system
-    require base_path('routes/system/content_model_generator.php');
-
-    // route for generated models
-    require base_path('routes/cm/cm_route.php');
 
     Route::get('logout', function () {
         Auth::logout();
