@@ -5,3 +5,21 @@
 
 
 
+
+
+Route::resource('blog-posts', 'BlogPostController');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

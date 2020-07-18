@@ -1,5 +1,7 @@
 <?php
 
+Route::get('/doc', 'DocController@index');
+
 Route::group(['middleware' => 'auth'], function () {
     require base_path('routes/system/project.php');
 
@@ -27,6 +29,10 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('/load-related-data', 'ContentModelController@loadRelatedModelData')->name('load_related_model_data');
             Route::post('/submit', 'ContentModelController@submitRelatedModel')->name('submit-related-model');
             Route::post('/cek-name', 'ContentModelController@cekName')->name('cek_name');
+        });
+
+        Route::prefix('content-model-data')->name('content_model.data.')->group(function () {
+            Route::post('/batch-destroy', 'ContentModelDataController@batchDestroy')->name('batch_destroy');
         });
 
         require base_path('routes/system/user.php');

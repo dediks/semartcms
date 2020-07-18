@@ -19,24 +19,8 @@
                     <h4>All {Plural}</h4>
                 </div>
                 <div class="card-body p-0">
-                    <div class="d-flex justify-content-between p-3">
-                        <div>
-                            <button class="btn btn-secondary">Delete Selected</button>
-                        </div>
-                            <div class="md-form ml-3 flex-grow-1 mr-3 mb-3">
-                                <input class="form-control" type="text" placeholder="Search" aria-label="Search">
-                            </div>
-                        <div>
-                            <div class="dropdown">
-                                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                  Sort by
-                                </button>
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                  <a class="dropdown-item" href="#">Asc</a>
-                                  <a class="dropdown-item" href="#">Desc</a>
-                                </div>
-                              </div>
-                        </div>
+                    <div class="p-3">
+                        <button class="btn btn-danger" id="btn-batch-delete" onclick="batchDelete('{var_plural}')">Delete Selected</button>
                     </div>
                     <div class="table-responsive table-invoice">
                         <table class="table table-striped">
@@ -49,7 +33,7 @@
                                 @endphp
                                 @foreach(${var_plural} as ${var})
                                 <tr>
-                                    <td class="text-center align-middle"><input type="checkbox" class="form-check-input" id="checkbox_${var_plural}" name="cb_${var_plural}[]"></td>
+                                    <td class="text-center align-middle"><input type="checkbox" class="form-check-input cb_{var_plural}" name="cb_{var_plural}[]" value="{{ ${var}->id }}"></td>
                                     {index_fields}
                                     <td class="text-right">
                                         <a class="btn btn-primary" href="{{ route('{route}.edit', ${var}->id) }}">

@@ -26,6 +26,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
 
-        View::composer('partials.cm-menu', CMMenuComposer::class);
+        View::composer(['partials.cm-menu', 'dashboard.index'], CMMenuComposer::class);
     }
 }

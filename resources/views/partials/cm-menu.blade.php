@@ -1,9 +1,12 @@
 @if(isset($menus))
 <li class="menu-header">Your Entity</li>
     @foreach ($menus as $menu)
-        <li class="{{ is_request_path($menu["table_name"].'*') ? ' active' : '' }}">
-            <a class="nav-link" href="{{ route($menu["table_name"].'.index') }}">
-            <i class="fas fa-circle"></i><span>{{ucfirst(trans($menu["table_name"]))}}</span>
+        @php
+            $menu = str_replace('_', '-', $menu["table_name"]);
+        @endphp
+        <li class="{{ is_request_path($menu.'*') ? ' active' : '' }}">
+            <a class="nav-link" href="{{ route($menu.'.index') }}">
+            <i class="fas fa-circle"></i><span>{{ucfirst(trans($menu))}}</span>
             </a>
         </li>    
     @endforeach
@@ -47,12 +50,3 @@
     </a>
 </li> --}}
 
-
-{{-- 
- --}}
-
-
-
-
-
- --}}

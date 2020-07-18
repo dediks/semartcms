@@ -18,7 +18,6 @@ class CMMenuComposer
       $project_id = session('project')['id'];
       if (isset($project_id)) {
         $entities = \App\Project::find($project_id)->entities()->get(['table_name']);
-
         $view->with('menus', $entities);
       }
     } else {

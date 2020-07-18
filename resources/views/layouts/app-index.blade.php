@@ -66,6 +66,7 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.nicescroll/3.7.6/jquery.nicescroll.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
   @stack('js-plugins')
   <script src="{{ asset('assets/js/stisla.js') }}"></script>
   <script src="{{ asset('assets/js/scripts.js') }}"></script>
@@ -179,4 +180,52 @@
       $('#relationModalLabel').html("<h5>"+target_name+"</h5>");
       $('#list-of-data').html(html_element);
   }
+
+
+  function batchDelete(table_name){
+    selector = ".cb_"+table_name+":checked";
+    checked = $(selector)
+    console.log(checked);
+    
+    if(checked.length > 0)
+    swal({
+    title: "Are you sure?",
+    text: "You will not be able to recover these data!",
+    icon: "warning",
+    buttons: [
+      'No!',
+      'Yes, I am sure'
+    ],
+    dangerMode: true,
+          }).then(function(isConfirm) {
+            if (isConfirm) {
+                data_id = [];
+                    for (let i = 0; i < checked.length; i++) {
+                        data_id.push(checked[i].value);
+                    }
+
+                    $.ajax({
+                        url: '{{ route('content_model.data.batch_destroy') }}',
+                        dataType: 'json',
+                        type: 'POST',
+                        data: {
+                            ids : data_id,
+                            table_name : table_name
+                        },
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(res) {
+                            console.log("delete sukses");
+
+                            window.location.reload(false);
+                        },
+                        error: function(x, e) {
+                            console.log("error");
+                            console.log(x);
+                        }
+                    });            
+            }
+        })
+    }
 </script>

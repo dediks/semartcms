@@ -76,7 +76,6 @@
   </div>
 </div>
   @push('scripts')
-  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
   <script type="text/javascript">
       function runAjax(url, data){
         $.ajax({
